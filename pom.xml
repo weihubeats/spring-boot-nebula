@@ -5,21 +5,22 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.github.weihubeats</groupId>
-	<artifactId>spring-boot-common</artifactId>
+	<artifactId>spring-boot-nebula</artifactId>
 	<packaging>pom</packaging>
 	<version>${revision}</version>
 
 	<modules>
-		<module>web-spring-boot-start</module>
+		<module>nebula-web-boot-start</module>
+		<module>nebula-boot-common-parent</module>
 	</modules>
 
-	<name>spring-boot-common</name>
+	<name>spring-boot-nebula</name>
 	<description>spring-boot-common</description>
 	<url>https://github.com/weihubeats/spring-boot-common</url>
 
 
 	<properties>
-		<revision>0.0.1</revision>
+		<revision>0.0.01</revision>
 		<flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
 		<maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
 	</properties>
@@ -30,7 +31,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>io.github.weihubeats</groupId>
-				<artifactId>boot-common-parent</artifactId>
+				<artifactId>nebula-boot-common-parent</artifactId>
 				<version>${revision}</version>
 				<type>pom</type>
 				<scope>import</scope>
