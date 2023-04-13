@@ -1,4 +1,4 @@
-# spring-boot-common
+# spring-boot-nebula
 
 ##  解决问题
 1. 统一公司所有`spring boot`项目的依赖管理 
