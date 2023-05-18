@@ -24,6 +24,8 @@
         <lombok.version>1.18.4</lombok.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
+        <guava.version>31.1-jre</guava.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
     </properties>
 
 
@@ -48,6 +50,19 @@
                 <artifactId>nebula-base</artifactId>
                 <version>${revision}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
+            </dependency>
+            
         </dependencies>
         
     </dependencyManagement>
