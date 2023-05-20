@@ -13,7 +13,8 @@
 		<module>nebula-web-boot-start</module>
 		<module>nebula-boot-common-parent</module>
         <module>nebula-base</module>
-    </modules>
+		<module>nebula-samples</module>
+	</modules>
 
 	<name>spring-boot-nebula</name>
 	<description>spring-boot-common</description>
