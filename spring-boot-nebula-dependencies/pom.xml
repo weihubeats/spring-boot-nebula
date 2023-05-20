@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.weihubeats</groupId>
-    <artifactId>nebula-boot-common-parent</artifactId>
+    <artifactId>spring-boot-nebula-dependencies</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
-    <name>nebula-boot-common-parent</name>
+    <name>spring-boot-nebula-dependencies</name>
     <description>spring boot 基础组件,快速构建spring boot项目</description>
     <url>https://github.com/weihubeats/spring-boot-common</url>
 
@@ -47,7 +47,13 @@
 
             <dependency>
                 <groupId>io.github.weihubeats</groupId>
-                <artifactId>nebula-base</artifactId>
+                <artifactId>spring-boot-nebula-common</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.weihubeats</groupId>
+                <artifactId>spring-boot-nebula-web</artifactId>
                 <version>${revision}</version>
             </dependency>
 

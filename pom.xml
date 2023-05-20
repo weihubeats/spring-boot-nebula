@@ -10,10 +10,10 @@
 	<version>${revision}</version>
 
 	<modules>
-		<module>nebula-web-boot-start</module>
-		<module>nebula-boot-common-parent</module>
-        <module>nebula-base</module>
-		<module>nebula-samples</module>
+		<module>spring-boot-nebula-web</module>
+		<module>spring-boot-nebula-dependencies</module>
+        <module>spring-boot-nebula-common</module>
+		<module>spring-boot-nebula-samples</module>
 	</modules>
 
 	<name>spring-boot-nebula</name>
@@ -33,7 +33,7 @@
 		<dependencies>
 			<dependency>
 				<groupId>io.github.weihubeats</groupId>
-				<artifactId>nebula-boot-common-parent</artifactId>
+				<artifactId>spring-boot-nebula-dependencies</artifactId>
 				<version>${revision}</version>
 				<type>pom</type>
 				<scope>import</scope>
