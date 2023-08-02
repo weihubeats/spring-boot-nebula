@@ -5,25 +5,15 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 import com.nebula.base.exception.ExceptionUtil;
-import com.sun.istack.internal.Nullable;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import lombok.extern.slf4j.Slf4j;
+import java.util.*;
 
 /**
  * @author : wh
@@ -40,7 +30,6 @@ public class JsonUtil {
      * @param <T>   T 泛型标记
      * @return jsonString json字符串
      */
-    @Nullable
     public static <T> String toJSONString(T value) {
         try {
             return getInstance().writeValueAsString(value);

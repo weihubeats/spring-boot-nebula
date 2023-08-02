@@ -1,11 +1,9 @@
 package com.nebula.web.boot.annotation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.nebula.base.utils.JsonUtil;
+
+import java.lang.annotation.*;
 
 /**
  * @author : wh
@@ -22,6 +20,6 @@ public @interface NebulaResponseBody {
      *
      * @return
      */
-    Class<? extends ObjectMapper> objectMapper();
+    Class<? extends ObjectMapper> objectMapper() default JsonUtil.JacksonObjectMapper.class;
 
 }

@@ -1,0 +1,9 @@
+spring:
+  profiles:
+    active: test
+  application:
+    name: web-test
+
+server:
+  port: 8081
+
