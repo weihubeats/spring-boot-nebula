@@ -5,5 +5,5 @@ spring:
     name: web-test
 
 server:
-  port: 8081
+  port: 8088
 

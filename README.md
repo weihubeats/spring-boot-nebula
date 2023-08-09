@@ -12,3 +12,31 @@
 
 ## demo
 使用参考 [spring-boot-nebula-samples](spring-boot-nebula-samples)模块
+
+1. 运行[Application.java](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fsample%2FApplication.java)
+2. 运行 [http-test-controller.http](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fhttp%2Fhttp-test-controller.http)中的`GET localhost:8088/test`
+
+原先web项目需要使用的返回值比如`Response<T> ss;
+```java
+    @GetMapping("/test")
+    public Response<String> test() {
+        return Response.success("小奏");
+    }
+```
+
+现在不需要将自己的返回对象包裹起来,只需要添加注解`@NebulaResponseBody`
+```java
+    @GetMapping("/test")
+    @NebulaResponseBody
+    public String test() {
+        return "小奏";
+    }
+```
+返回结果
+```json
+{
+  "code": 200,
+  "data": "小奏",
+  "msg": "success"
+}
+```

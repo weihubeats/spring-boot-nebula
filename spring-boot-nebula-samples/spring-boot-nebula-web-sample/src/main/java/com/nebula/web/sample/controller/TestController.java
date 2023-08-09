@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @description:
  */
 @RestController
-@RequestMapping("/test/eventBus/v1")
+@RequestMapping()
 public class TestController {
 
     
