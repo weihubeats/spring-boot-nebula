@@ -16,7 +16,7 @@
 1. 运行[Application.java](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fsample%2FApplication.java)
 2. 运行 [http-test-controller.http](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fhttp%2Fhttp-test-controller.http)中的`GET localhost:8088/test`
 
-原先web项目需要使用的返回值比如`Response<T> ss;
+原先web项目需要使用的返回值比如`Response<T> ss`;
 ```java
     @GetMapping("/test")
     public Response<String> test() {
