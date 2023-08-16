@@ -21,9 +21,7 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * @author XiaoLei
- * @date 2021/1/25 22:38
- * @description spring boot 所有的设置，主要是用于设置全局的中间件
+ * spring boot 所有的设置，主要是用于设置全局的中间件
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Configuration(proxyBeanMethods = false)
