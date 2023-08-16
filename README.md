@@ -40,3 +40,9 @@
   "msg": "success"
 }
 ```
+
+### 提供开箱即用的分页对象
+- [NebulaPage.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Fapi%2FNebulaPage.java)
+- [NebulaPageQuery.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Fapi%2FNebulaPageQuery.java)
+
+使用
