@@ -23,7 +23,7 @@ public class TimeUtil {
 
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern(YYYYMMdd);
 
-    public static final DateTimeFormatter TIME_FORMAT =  DateTimeFormatter.ofPattern(HHmmss);
+    public static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern(HHmmss);
 
     public static LocalDateTime toLocalDateTime(long unixTime, Integer zoneOffset) {
         Instant instant = Instant.ofEpochMilli(unixTime);

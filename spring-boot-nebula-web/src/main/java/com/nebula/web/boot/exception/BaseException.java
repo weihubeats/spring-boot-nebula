@@ -2,13 +2,14 @@ package com.nebula.web.boot.exception;
 
 import com.nebula.web.boot.api.IResultCode;
 import com.nebula.web.boot.enums.ResultCode;
+import lombok.Getter;
 
 /**
  * @author : wh
  * @date : 2023/4/13 10:11
  * @description:
  */
-public abstract class BaseException extends RuntimeException {
+@Getter public abstract class BaseException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,10 +33,6 @@ public abstract class BaseException extends RuntimeException {
     public BaseException(IResultCode code, String errMessage, Throwable e) {
         super(errMessage, e);
         this.code = code;
-    }
-
-    public IResultCode getCode() {
-        return code;
     }
 
 }

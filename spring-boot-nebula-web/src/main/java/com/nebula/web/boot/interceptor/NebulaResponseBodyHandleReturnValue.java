@@ -18,6 +18,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  * handler response value of all http api
  */
 public class NebulaResponseBodyHandleReturnValue implements HandlerMethodReturnValueHandler, AsyncHandlerMethodReturnValueHandler {
+
+    private static final String ContentType = "application/json;charset=utf-8";
     /**
      * 处理所有非异常的错误
      *
@@ -36,7 +38,7 @@ public class NebulaResponseBodyHandleReturnValue implements HandlerMethodReturnV
         mavContainer.setRequestHandled(true);
         HttpServletResponse response = webRequest.getNativeResponse(HttpServletResponse.class);
         assert response != null;
-        response.setContentType("application/json;charset=utf-8");
+        response.setContentType(ContentType);
         NebulaResponse<Object> baseResponse = new NebulaResponse<>();
         baseResponse.setCode(ResultCode.SUCCESS.getCode());
         baseResponse.setMsg(ResultCode.SUCCESS.getMessage());

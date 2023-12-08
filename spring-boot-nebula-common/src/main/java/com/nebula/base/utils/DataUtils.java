@@ -28,11 +28,11 @@ public class DataUtils {
             return true;
         }
         if (pObj instanceof String) {
-            return ((String) pObj).trim().length() == 0;
+            return ((String) pObj).trim().isEmpty();
         } else if (pObj instanceof Collection<?>) {
-            return ((Collection<?>) pObj).size() == 0;
+            return ((Collection<?>) pObj).isEmpty();
         } else if (pObj instanceof Map<?, ?>) {
-            return ((Map<?, ?>) pObj).size() == 0;
+            return ((Map<?, ?>) pObj).isEmpty();
         } else if (pObj instanceof Object[]) {
             return ((Object[]) pObj).length == 0;
         } else if (pObj instanceof boolean[]) {

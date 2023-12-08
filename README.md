@@ -13,6 +13,17 @@
 ## demo
 使用参考 [spring-boot-nebula-samples](spring-boot-nebula-samples)模块
 
+### [spring-boot-nebula-web](spring-boot-nebula-web) 使用
+
+1. 引入依赖
+```xml
+ <dependency>
+    <groupId>io.github.weihubeats</groupId>
+    <artifactId>spring-boot-nebula-web</artifactId>
+    <version>0.0.01</version>
+</dependency>
+```
+
 1. 运行[Application.java](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fsample%2FApplication.java)
 2. 运行 [http-test-controller.http](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fhttp%2Fhttp-test-controller.http)中的`GET localhost:8088/test`
 
@@ -41,7 +52,7 @@
 }
 ```
 
-### 提供开箱即用的分页对象
+#### 提供开箱即用的分页对象
 - [NebulaPage.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Fapi%2FNebulaPage.java)
 - [NebulaPageQuery.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Fapi%2FNebulaPageQuery.java)
 
