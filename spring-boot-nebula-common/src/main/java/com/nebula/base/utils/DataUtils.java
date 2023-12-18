@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.apache.commons.lang3.RandomUtils;
 
 /**
  * @author : wh
@@ -200,5 +201,9 @@ public class DataUtils {
             }
         }
         return true;
+    }
+
+    public static long randomLongId() {
+        return -RandomUtils.nextLong(0, 99999999999999L);
     }
 }

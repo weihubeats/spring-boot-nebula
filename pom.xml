@@ -14,7 +14,8 @@
 		<module>spring-boot-nebula-dependencies</module>
         <module>spring-boot-nebula-common</module>
 		<module>spring-boot-nebula-samples</module>
-	</modules>
+        <module>spring-boot-nebula-aggregate</module>
+    </modules>
 
 	<name>spring-boot-nebula</name>
 	<description>spring-boot-common</description>

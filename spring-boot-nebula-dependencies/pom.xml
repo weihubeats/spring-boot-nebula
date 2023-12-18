@@ -26,11 +26,12 @@
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <guava.version>31.1-jre</guava.version>
         <commons-collections4.version>4.4</commons-collections4.version>
+        <javers-core.version>6.6.5</javers-core.version>
     </properties>
 
 
     <dependencyManagement>
-        
+
         <dependencies>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -68,12 +69,17 @@
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons-collections4.version}</version>
             </dependency>
-            
+
+            <dependency>
+                <groupId>org.javers</groupId>
+                <artifactId>javers-core</artifactId>
+                <version>${javers-core.version}</version>
+            </dependency>
+
+
         </dependencies>
-        
+
     </dependencyManagement>
-    
-    
 
 
 </project>
