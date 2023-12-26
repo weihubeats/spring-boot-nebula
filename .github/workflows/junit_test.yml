@@ -33,4 +33,4 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - name: Test with Maven
-        run: mvn clean test -B -U -Psonatype
+        run: mvn clean test -B -U
