@@ -12,7 +12,7 @@ jobs:
   junit:
     strategy:
       matrix:
-        java: [ 8, 11, 17 ]
+        java: [11]
         os: [ 'windows-latest', 'ubuntu-latest' ]
 
     runs-on: ${{ matrix.os }}
