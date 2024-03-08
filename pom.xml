@@ -15,7 +15,8 @@
         <module>spring-boot-nebula-common</module>
 		<module>spring-boot-nebula-samples</module>
         <module>spring-boot-nebula-aggregate</module>
-    </modules>
+		<module>spring-boot-nebula-mybatis</module>
+	</modules>
 
 	<name>spring-boot-nebula</name>
 	<description>spring-boot-common</description>
