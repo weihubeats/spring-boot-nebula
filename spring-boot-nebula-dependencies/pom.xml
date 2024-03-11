@@ -27,6 +27,7 @@
         <guava.version>31.1-jre</guava.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <javers-core.version>6.6.5</javers-core.version>
+        <mybatis-plus-boot-starter.version>3.5.5</mybatis-plus-boot-starter.version>
     </properties>
 
 
@@ -74,6 +75,12 @@
                 <groupId>org.javers</groupId>
                 <artifactId>javers-core</artifactId>
                 <version>${javers-core.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus-boot-starter.version}</version>
             </dependency>
 
 
