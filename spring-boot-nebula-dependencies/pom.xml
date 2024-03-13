@@ -60,6 +60,12 @@
             </dependency>
 
             <dependency>
+                <groupId>io.github.weihubeats</groupId>
+                <artifactId>spring-boot-nebula-aop-base</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>

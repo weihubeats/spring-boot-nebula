@@ -16,6 +16,8 @@
 		<module>spring-boot-nebula-samples</module>
         <module>spring-boot-nebula-aggregate</module>
 		<module>spring-boot-nebula-mybatis</module>
+		<module>spring-boot-nebula-aop-base</module>
+		<module>spring-boot-nebula-distribute-lock</module>
 	</modules>
 
 	<name>spring-boot-nebula</name>
