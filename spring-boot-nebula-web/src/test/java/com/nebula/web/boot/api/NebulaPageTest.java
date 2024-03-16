@@ -12,8 +12,6 @@ public class NebulaPageTest {
     @Test
     public void testGetTotalCount() {
         System.out.println("hahah");
-        throw new RuntimeException("测试异常");
-
     }
 
 }

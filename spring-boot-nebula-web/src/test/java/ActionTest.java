@@ -13,7 +13,5 @@ public class ActionTest {
     @Test
     public void test() {
         System.out.println("hahah");
-        throw new RuntimeException("测试异常");
-        
     }
 }

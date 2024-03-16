@@ -9,6 +9,7 @@
     </parent>
     <modules>
         <module>spring-boot-nebula-web-sample</module>
+        <module>spring-boot-nebula-distribute-lock-sample</module>
     </modules>
 
     <modelVersion>4.0.0</modelVersion>
@@ -19,6 +20,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
 </project>

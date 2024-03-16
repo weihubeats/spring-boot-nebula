@@ -6,6 +6,11 @@
 - [spring-boot-nebula-dependencies](spring-boot-nebula-dependencies) 统一依赖
 - [spring-boot-nebula-samples](spring-boot-nebula-samples) 使用示例
 - [spring-boot-nebula-web](spring-boot-nebula-web) web封装组件(包括统一异常返回，简化返回，自定义异常报警)
+- [spring-boot-nebula-web-common](spring-boot-nebula-web-common) web模块基础工具类
+- [spring-boot-nebula-distribute-lock](spring-boot-nebula-distribute-lock) 分布式锁
+
+
+
 
 > 每个模块可单独引用使用，不耦合
 
@@ -76,4 +81,43 @@
     public String test(@GetTimestamp LocalDateTime time) {
         return time.toString();
     }
+```
+
+# 依赖 
+
+- web
+```xml
+
+<dependency>
+    <groupId>io.github.weihubeats</groupId>
+    <artifactId>spring-boot-nebula-web</artifactId>
+    <version>0.0.01</version>
+</dependency>
+```
+
+- 分布式锁
+```xml
+<dependency>
+    <groupId>io.github.weihubeats</groupId>
+    <artifactId>spring-boot-nebula-distribute-lock</artifactId>
+    <version>0.0.01</version>
+</dependency>
+```
+
+- ddd聚合根组件
+```xml
+<dependency>
+    <groupId>io.github.weihubeats</groupId>
+    <artifactId>spring-boot-nebula-aggregate</artifactId>
+    <version>0.0.01</version>
+</dependency>
+```
+
+- mybatis-plus
+```xml
+<dependency>
+    <groupId>io.github.weihubeats</groupId>
+    <artifactId>spring-boot-nebula-mybatis-plus</artifactId>
+    <version>0.0.01</version>
+</dependency>
 ```

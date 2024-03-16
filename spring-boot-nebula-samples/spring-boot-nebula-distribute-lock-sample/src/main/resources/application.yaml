@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: test
+  application:
+    name: web-test
+
+server:
+  port: 8088
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: 123456

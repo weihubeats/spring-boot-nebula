@@ -1,4 +1,4 @@
-package com.nebula.web.sample;
+package com.nebula.distribute.lock.sample;
 
 import java.util.TimeZone;
 import org.springframework.boot.SpringApplication;
@@ -9,10 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  */
 @SpringBootApplication
-public class Application {
+public class DistributeLockApplication {
 
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(DistributeLockApplication.class, args);
     }
 }
