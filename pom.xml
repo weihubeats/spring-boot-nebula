@@ -18,7 +18,8 @@
 		<module>spring-boot-nebula-mybatis</module>
 		<module>spring-boot-nebula-aop-base</module>
 		<module>spring-boot-nebula-distribute-lock</module>
-	</modules>
+        <module>spring-boot-nebula-web-common</module>
+    </modules>
 
 	<name>spring-boot-nebula</name>
 	<description>spring-boot-common</description>

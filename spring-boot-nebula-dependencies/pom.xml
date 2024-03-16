@@ -28,6 +28,7 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <javers-core.version>6.6.5</javers-core.version>
         <mybatis-plus-boot-starter.version>3.5.5</mybatis-plus-boot-starter.version>
+        <redission.version>3.17.3</redission.version>
     </properties>
 
 
@@ -66,6 +67,12 @@
             </dependency>
 
             <dependency>
+                <groupId>io.github.weihubeats</groupId>
+                <artifactId>spring-boot-nebula-web-common</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
@@ -87,6 +94,12 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus-boot-starter.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>${redission.version}</version>
             </dependency>
 
 
