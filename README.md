@@ -22,7 +22,7 @@
 </dependency>
 ```
 2. 编写一个启动类
-```xml
+```java
 @SpringBootApplication
     public class WebApplication {
 
