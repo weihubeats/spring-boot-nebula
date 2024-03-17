@@ -57,13 +57,13 @@
 - a项目使用了 redission 3.14 b项目 使用3.61,然后导致相同代码可能运行结果不一致
   - 统一使用`spring-boot-nebula-dependencies`作为p'a'r'a'm
   在`boot-common-parent`管理公司的所有依赖，以后应用项目无需手动指定各种依赖版本只需引用依赖即可，统一在`boot-common-parent`管理即可
-4. 提供开箱即用的`web-spring-boot-start`模块，解决web开发需要手动封装工具类的痛点
-5. 提供统一异常处理
-6. 提供优雅的时间戳转`LocalDateTime`注解
-7. 提供开箱即用的分页对象
-8. 提供开箱即用的分布式锁
-9. 提供开箱即用的`mybatis-plus`模块
-10. 提供开箱即用的`ddd`聚合根模块
+2. 提供开箱即用的`web-spring-boot-start`模块，解决web开发需要手动封装工具类的痛点
+3. 提供统一异常处理
+4. 提供优雅的时间戳转`LocalDateTime`注解
+5. 提供开箱即用的分页对象
+6. 提供开箱即用的分布式锁
+7. 提供开箱即用的`mybatis-plus`模块
+8. 提供开箱即用的`ddd`聚合根模块
 
 
 ## demo
