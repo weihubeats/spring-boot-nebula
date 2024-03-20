@@ -19,7 +19,8 @@
 		<module>spring-boot-nebula-aop-base</module>
 		<module>spring-boot-nebula-distribute-lock</module>
         <module>spring-boot-nebula-web-common</module>
-    </modules>
+		<module>spring-boot-nebula-all</module>
+	</modules>
 
 	<name>spring-boot-nebula</name>
 	<description>spring-boot-common</description>
