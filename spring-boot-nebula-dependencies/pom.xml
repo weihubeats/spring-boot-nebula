@@ -68,6 +68,12 @@
 
             <dependency>
                 <groupId>io.github.weihubeats</groupId>
+                <artifactId>spring-boot-nebula-mybatis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.weihubeats</groupId>
                 <artifactId>spring-boot-nebula-web-common</artifactId>
                 <version>${revision}</version>
             </dependency>
