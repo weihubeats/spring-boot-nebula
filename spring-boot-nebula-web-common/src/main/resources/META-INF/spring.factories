@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.nebula.web.common.autoconfigure.NebulaApplicationContextAware
+  com.nebula.web.common.autoconfigure.NebulaWebCommonAutoConfiguration
