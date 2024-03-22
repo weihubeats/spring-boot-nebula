@@ -18,6 +18,8 @@ public class NebulaSysWebUtils {
 
     private static final String TEST = "test";
 
+    private static final String STAGE = "stage";
+
     private static final String PRD = "prd";
 
     /**
@@ -32,16 +34,20 @@ public class NebulaSysWebUtils {
     @Value("${spring.application.name:unknown}")
     private String applicationName;
 
-    public boolean isPrd() {
-        return Objects.equals(active, PRD);
-    }
-
     public boolean isDev() {
         return Objects.equals(active, DEV);
     }
 
     public boolean isTest() {
         return Objects.equals(active, TEST);
+    }
+
+    public boolean isPrd() {
+        return Objects.equals(active, PRD);
+    }
+
+    public boolean isStage() {
+        return Objects.equals(active, STAGE);
     }
 
 }
