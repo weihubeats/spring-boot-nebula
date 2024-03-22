@@ -152,3 +152,8 @@
 - [spring-boot-nebula-web-common](spring-boot-nebula-web-common) web模块基础工具类
 - [spring-boot-nebula-distribute-lock](spring-boot-nebula-distribute-lock) 分布式锁
 
+## [spring-boot-nebula-web-common](spring-boot-nebula-web-common)
+- 提供[SpringBeanUtils.java](spring-boot-nebula-web-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fcommon%2Futils%2FSpringBeanUtils.java)获取spring bean
+- 提供[NebulaSysWebUtils.java](spring-boot-nebula-web-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fcommon%2Futils%2FNebulaSysWebUtils.java) 获取spring 环境信息
+- 提供[ExpressionUtil.java](spring-boot-nebula-web-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fcommon%2Futils%2FExpressionUtil.java) 解析el表达式
+
