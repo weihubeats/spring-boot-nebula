@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>spring-boot-nebula</artifactId>
         <groupId>io.github.weihubeats</groupId>
+        <artifactId>spring-boot-nebula</artifactId>
         <version>${revision}</version>
     </parent>
+
+    <artifactId>spring-boot-nebula-samples</artifactId>
+    <packaging>pom</packaging>
     <modules>
         <module>spring-boot-nebula-web-sample</module>
         <module>spring-boot-nebula-distribute-lock-sample</module>
     </modules>
-
-    <modelVersion>4.0.0</modelVersion>
-    <packaging>pom</packaging>
-
-    <artifactId>spring-boot-nebula-samples</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

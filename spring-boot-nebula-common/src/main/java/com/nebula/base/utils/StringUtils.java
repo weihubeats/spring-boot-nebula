@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.base.utils;
 
 import com.google.common.base.Joiner;
@@ -26,7 +43,7 @@ import org.slf4j.helpers.FormattingTuple;
  * @description:
  */
 public class StringUtils {
-
+    
     public static final String SPACE = " ";
     public static final String TAB = "	";
     public static final String DOT = ".";
@@ -45,7 +62,7 @@ public class StringUtils {
     public static final String BRACKET_START = "[";
     public static final String BRACKET_END = "]";
     public static final String COLON = ":";
-
+    
     /**
      * 将var2参数替换成var1中出现的{}
      * <pre>
@@ -62,11 +79,11 @@ public class StringUtils {
     public static String stringFormat(String var1, Object... var2) {
         return MessageFormatter.arrayFormat(var1, var2).getMessage();
     }
-
+    
     public static boolean startsWithIgnoreCase(String str, String prefix) {
         return str != null && prefix != null && str.length() >= prefix.length() && str.regionMatches(true, 0, prefix, 0, prefix.length());
     }
-
+    
     /**
      * 判断字符串是否为整数
      *
@@ -77,7 +94,7 @@ public class StringUtils {
         Pattern pattern = Pattern.compile("^[0-9]*$");
         return pattern.matcher(str).matches();
     }
-
+    
     /**
      * EMOJI encode
      *
@@ -99,7 +116,7 @@ public class StringUtils {
         }
         throw new RuntimeException("emoji filter error");
     }
-
+    
     /**
      * EMOJI decode
      *
@@ -121,29 +138,29 @@ public class StringUtils {
         }
         throw new RuntimeException("emoji decode error");
     }
-
+    
     public static String[] splitc(final String src, final char[] delimiters) {
         if ((delimiters.length == 0) || (src.isEmpty())) {
-            return new String[] {src};
+            return new String[]{src};
         }
         final char[] srcc = src.toCharArray();
-
+        
         final int maxparts = srcc.length + 1;
         final int[] start = new int[maxparts];
         final int[] end = new int[maxparts];
-
+        
         int count = 0;
-
+        
         start[0] = 0;
         int s = 0, e;
-        if (CharUtil.equalsOne(srcc[0], delimiters)) {    // string starts with delimiter
+        if (CharUtil.equalsOne(srcc[0], delimiters)) { // string starts with delimiter
             end[0] = 0;
             count++;
             s = CharUtil.findFirstDiff(srcc, 1, delimiters);
-            if (s == -1) {                            // nothing after delimiters
-                return new String[] {EMPTY, EMPTY};
+            if (s == -1) { // nothing after delimiters
+                return new String[]{EMPTY, EMPTY};
             }
-            start[1] = s;                            // new start
+            start[1] = s; // new start
         }
         while (true) {
             // find new end
@@ -153,7 +170,7 @@ public class StringUtils {
                 break;
             }
             end[count] = e;
-
+            
             // find new start
             count++;
             s = CharUtil.findFirstDiff(srcc, e, delimiters);
@@ -170,29 +187,29 @@ public class StringUtils {
         }
         return result;
     }
-
+    
     public static String[] splitc(final String src, final char delimiter) {
         if (src.isEmpty()) {
-            return new String[] {EMPTY};
+            return new String[]{EMPTY};
         }
         final char[] srcc = src.toCharArray();
-
+        
         final int maxparts = srcc.length + 1;
         final int[] start = new int[maxparts];
         final int[] end = new int[maxparts];
-
+        
         int count = 0;
-
+        
         start[0] = 0;
         int s = 0, e;
-        if (srcc[0] == delimiter) {    // string starts with delimiter
+        if (srcc[0] == delimiter) { // string starts with delimiter
             end[0] = 0;
             count++;
             s = CharUtil.findFirstDiff(srcc, 1, delimiter);
-            if (s == -1) {                            // nothing after delimiters
-                return new String[] {EMPTY, EMPTY};
+            if (s == -1) { // nothing after delimiters
+                return new String[]{EMPTY, EMPTY};
             }
-            start[1] = s;                            // new start
+            start[1] = s; // new start
         }
         while (true) {
             // find new end
@@ -202,7 +219,7 @@ public class StringUtils {
                 break;
             }
             end[count] = e;
-
+            
             // find new start
             count++;
             s = CharUtil.findFirstDiff(srcc, e, delimiter);
@@ -219,32 +236,33 @@ public class StringUtils {
         }
         return result;
     }
-
+    
     public static String[] splitc(final String src, final String d) {
         if ((d.isEmpty()) || (src.isEmpty())) {
-            return new String[] {src};
+            return new String[]{src};
         }
         return splitc(src, d.toCharArray());
     }
-
+    
     public static class MessageFormatter {
+        
         static final char DELIM_START = '{';
         static final char DELIM_STOP = '}';
         static final String DELIM_STR = "{}";
         private static final char ESCAPE_CHAR = '\\';
-
+        
         static Throwable getThrowableCandidate(Object[] argArray) {
             if (argArray == null || argArray.length == 0) {
                 return null;
             }
-
+            
             final Object lastEntry = argArray[argArray.length - 1];
             if (lastEntry instanceof Throwable) {
                 return (Throwable) lastEntry;
             }
             return null;
         }
-
+        
         public static FormattingTuple arrayFormat(final String messagePattern, final Object[] argArray) {
             Throwable throwableCandidate = getThrowableCandidate(argArray);
             Object[] args = argArray;
@@ -253,7 +271,7 @@ public class StringUtils {
             }
             return arrayFormat(messagePattern, args, throwableCandidate);
         }
-
+        
         private static Object[] trimmedCopy(Object[] argArray) {
             if (argArray == null || argArray.length == 0) {
                 throw new IllegalStateException("non-sensical empty or null argument array");
@@ -263,28 +281,28 @@ public class StringUtils {
             System.arraycopy(argArray, 0, trimmed, 0, trimemdLen);
             return trimmed;
         }
-
+        
         final public static FormattingTuple arrayFormat(final String messagePattern, final Object[] argArray,
-            Throwable throwable) {
-
+                                                        Throwable throwable) {
+            
             if (messagePattern == null) {
                 return new FormattingTuple(null, argArray, throwable);
             }
-
+            
             if (argArray == null) {
                 return new FormattingTuple(messagePattern);
             }
-
+            
             int i = 0;
             int j;
             // use string builder for better multicore performance
             StringBuilder sbuf = new StringBuilder(messagePattern.length() + 50);
-
+            
             int L;
             for (L = 0; L < argArray.length; L++) {
-
+                
                 j = messagePattern.indexOf(DELIM_STR, i);
-
+                
                 if (j == -1) {
                     // no more variables
                     if (i == 0) { // this is a simple string
@@ -321,9 +339,9 @@ public class StringUtils {
             sbuf.append(messagePattern, i, messagePattern.length());
             return new FormattingTuple(sbuf.toString(), argArray, throwable);
         }
-
+        
         final static boolean isEscapedDelimeter(String messagePattern, int delimeterStartIndex) {
-
+            
             if (delimeterStartIndex == 0) {
                 return false;
             }
@@ -334,7 +352,7 @@ public class StringUtils {
                 return false;
             }
         }
-
+        
         final static boolean isDoubleEscaped(String messagePattern, int delimeterStartIndex) {
             if (delimeterStartIndex >= 2 && messagePattern.charAt(delimeterStartIndex - 2) == ESCAPE_CHAR) {
                 return true;
@@ -342,7 +360,7 @@ public class StringUtils {
                 return false;
             }
         }
-
+        
         // special treatment of array values was suggested by 'lizongbo'
         private static void deeplyAppendParameter(StringBuilder sbuf, Object o, Map<Object[], Object> seenMap) {
             if (o == null) {
@@ -375,7 +393,7 @@ public class StringUtils {
                 }
             }
         }
-
+        
         private static void safeObjectAppend(StringBuilder sbuf, Object o) {
             try {
                 String oAsString = o.toString();
@@ -386,9 +404,9 @@ public class StringUtils {
                 t.printStackTrace();
                 sbuf.append("[FAILED toString()]");
             }
-
+            
         }
-
+        
         private static void objectArrayAppend(StringBuilder sbuf, Object[] a, Map<Object[], Object> seenMap) {
             sbuf.append('[');
             if (!seenMap.containsKey(a)) {
@@ -406,7 +424,7 @@ public class StringUtils {
             }
             sbuf.append(']');
         }
-
+        
         private static void booleanArrayAppend(StringBuilder sbuf, boolean[] a) {
             sbuf.append('[');
             final int len = a.length;
@@ -417,7 +435,7 @@ public class StringUtils {
             }
             sbuf.append(']');
         }
-
+        
         private static void byteArrayAppend(StringBuilder sbuf, byte[] a) {
             sbuf.append('[');
             final int len = a.length;
@@ -428,7 +446,7 @@ public class StringUtils {
             }
             sbuf.append(']');
         }
-
+        
         private static void charArrayAppend(StringBuilder sbuf, char[] a) {
             sbuf.append('[');
             final int len = a.length;
@@ -439,7 +457,7 @@ public class StringUtils {
             }
             sbuf.append(']');
         }
-
+        
         private static void shortArrayAppend(StringBuilder sbuf, short[] a) {
             sbuf.append('[');
             final int len = a.length;
@@ -450,7 +468,7 @@ public class StringUtils {
             }
             sbuf.append(']');
         }
-
+        
         private static void intArrayAppend(StringBuilder sbuf, int[] a) {
             sbuf.append('[');
             final int len = a.length;
@@ -461,7 +479,7 @@ public class StringUtils {
             }
             sbuf.append(']');
         }
-
+        
         private static void longArrayAppend(StringBuilder sbuf, long[] a) {
             sbuf.append('[');
             final int len = a.length;
@@ -472,7 +490,7 @@ public class StringUtils {
             }
             sbuf.append(']');
         }
-
+        
         private static void floatArrayAppend(StringBuilder sbuf, float[] a) {
             sbuf.append('[');
             final int len = a.length;
@@ -483,7 +501,7 @@ public class StringUtils {
             }
             sbuf.append(']');
         }
-
+        
         private static void doubleArrayAppend(StringBuilder sbuf, double[] a) {
             sbuf.append('[');
             final int len = a.length;
@@ -495,16 +513,16 @@ public class StringUtils {
             sbuf.append(']');
         }
     }
-
+    
     public static String emojiFilter(String str) {
         if (str == null) {
             return null;
         }
         String patternString = "([\\x{10000}-\\x{10ffff}\ud800-\udfff])";
-
+        
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(str);
-
+        
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             try {
@@ -514,10 +532,10 @@ public class StringUtils {
             }
         }
         matcher.appendTail(sb);
-
+        
         return sb.toString();
     }
-
+    
     public static String parseCurrency(String currency) {
         if (DataUtils.isEmpty(currency)) {
             return "";
@@ -535,7 +553,7 @@ public class StringUtils {
                 return null;
         }
     }
-
+    
     public static String getExceptionStackTrace(Exception e) {
         try {
             StringWriter sw = new StringWriter();
@@ -546,11 +564,11 @@ public class StringUtils {
             return "bad get Error StackTrace From Exception";
         }
     }
-
+    
     public static List<String> split(String str, String reg) {
         return Arrays.stream(str.split(reg)).collect(Collectors.toList());
     }
-
+    
     /**
      * 逗号字符串 变成 long 的list
      */
@@ -559,12 +577,12 @@ public class StringUtils {
             return Lists.newArrayList();
         }
         return Splitter.on(",").omitEmptyStrings()
-            .trimResults().splitToList(str.trim())
-            .stream()
-            .filter(NumberUtils::isDigits)
-            .map(Long::parseLong).collect(Collectors.toList());
+                .trimResults().splitToList(str.trim())
+                .stream()
+                .filter(NumberUtils::isDigits)
+                .map(Long::parseLong).collect(Collectors.toList());
     }
-
+    
     /**
      * 逗号字符串 变成 Integer 的list
      */
@@ -573,12 +591,12 @@ public class StringUtils {
             return Lists.newArrayList();
         }
         return Splitter.on(",").omitEmptyStrings()
-            .trimResults().splitToList(str.trim())
-            .stream()
-            .filter(NumberUtils::isDigits)
-            .map(Integer::parseInt).collect(Collectors.toList());
+                .trimResults().splitToList(str.trim())
+                .stream()
+                .filter(NumberUtils::isDigits)
+                .map(Integer::parseInt).collect(Collectors.toList());
     }
-
+    
     /**
      *
      */
@@ -588,11 +606,11 @@ public class StringUtils {
         }
         return Splitter.on(",").omitEmptyStrings().trimResults().splitToList(str.trim());
     }
-
+    
     public static <T> String joinCollection(Collection<T> originList) {
         return Joiner.on(",").join(originList);
     }
-
+    
     /**
      * 解析 xml 节点数据
      *
@@ -605,7 +623,7 @@ public class StringUtils {
     public static String parsXmlNode(String str, String key) {
         return parsXmlNode(str, key, 0);
     }
-
+    
     /**
      * 解析 xml节点
      *
@@ -633,7 +651,7 @@ public class StringUtils {
         }
         return "";
     }
-
+    
     /**
      * 判断首字符是否为韩文
      *
@@ -646,16 +664,16 @@ public class StringUtils {
         }
         char c = s.charAt(0);
         return (c > 0x3130 && c < 0x318F)
-            || (c >= 0xAC00 && c <= 0xD7A3);
+                || (c >= 0xAC00 && c <= 0xD7A3);
     }
-
+    
     /**
      * 去除字符串所有空格
      */
     public static String trimAnySpace(String str) {
         return str.replaceAll("\\s*", "");
     }
-
+    
     /**
      * 首字母小写
      */
@@ -667,7 +685,7 @@ public class StringUtils {
         chars[0] += 32;
         return String.valueOf(chars);
     }
-
+    
     /**
      * 首字母大写
      */
@@ -679,11 +697,11 @@ public class StringUtils {
         cs[0] -= 32;
         return String.valueOf(cs);
     }
-
+    
     public static boolean equalsIgnoreCase(final CharSequence str1, final CharSequence str2) {
         return org.apache.commons.lang3.StringUtils.equalsIgnoreCase(str1, str2);
     }
-
+    
     /**
      * 判断所有字符串是否都相等，null和1个也是返回true
      * <p>
@@ -708,30 +726,30 @@ public class StringUtils {
         }
         return true;
     }
-
+    
     public static <T extends CharSequence> T defaultIfEmpty(final T str, final T defaultStr) {
         return org.apache.commons.lang3.StringUtils.defaultIfEmpty(str, defaultStr);
     }
-
+    
     public static <T extends CharSequence> T nullIfEmpty(final T str) {
         return org.apache.commons.lang3.StringUtils.defaultIfEmpty(str, null);
     }
-
+    
     public static String substringAfter(final String str, final String separator) {
         return org.apache.commons.lang3.StringUtils.substringAfter(str, separator);
     }
-
+    
     public static String toString(final Object value) {
         if (value == null) {
             return null;
         }
         return value.toString();
     }
-
+    
     public static int indexOfChars(final String string, final String chars) {
         return indexOfChars(string, chars, 0);
     }
-
+    
     public static int indexOfChars(final String string, final String chars, int startindex) {
         final int stringLen = string.length();
         final int charsLen = chars.length();
@@ -748,7 +766,7 @@ public class StringUtils {
         }
         return -1;
     }
-
+    
     public static String replace(final String s, final String sub, final String with) {
         if (sub.isEmpty()) {
             return s;
@@ -764,21 +782,20 @@ public class StringUtils {
             sb.append(s, c, i);
             sb.append(with);
             c = i + sub.length();
-        }
-        while ((i = s.indexOf(sub, c)) != -1);
+        } while ((i = s.indexOf(sub, c)) != -1);
         if (c < length) {
             sb.append(s, c, length);
         }
         return sb.toString();
     }
-
+    
     public static boolean startsWithChar(final String s, final char c) {
         if (s.isEmpty()) {
             return false;
         }
         return s.charAt(0) == c;
     }
-
+    
     public static boolean containsOnlyDigitsAndSigns(final CharSequence string) {
         final int size = string.length();
         for (int i = 0; i < size; i++) {
@@ -789,7 +806,7 @@ public class StringUtils {
         }
         return true;
     }
-
+    
     public static boolean containsOnlyDigits(final CharSequence string) {
         final int size = string.length();
         for (int i = 0; i < size; i++) {
@@ -800,29 +817,29 @@ public class StringUtils {
         }
         return true;
     }
-
+    
     public static String toHexString(final byte[] bytes) {
         final char[] chars = new char[bytes.length * 2];
-
+        
         int i = 0;
         for (final byte b : bytes) {
             chars[i++] = CharUtil.int2hex((b & 0xF0) >> 4);
             chars[i++] = CharUtil.int2hex(b & 0x0F);
         }
-
+        
         return new String(chars);
     }
-
+    
     public static String decapitalize(final String name) {
         if (name.isEmpty()) {
             return name;
         }
         if (name.length() > 1 &&
-            Character.isUpperCase(name.charAt(1)) &&
-            Character.isUpperCase(name.charAt(0))) {
+                Character.isUpperCase(name.charAt(1)) &&
+                Character.isUpperCase(name.charAt(0))) {
             return name;
         }
-
+        
         final char[] chars = name.toCharArray();
         final char c = chars[0];
         final char modifiedChar = Character.toLowerCase(c);
@@ -832,11 +849,11 @@ public class StringUtils {
         chars[0] = modifiedChar;
         return new String(chars);
     }
-
+    
     public static int count(final String source, final char c) {
         return count(source, c, 0);
     }
-
+    
     public static int count(final String source, final char c, final int start) {
         int count = 0;
         int j = start;
@@ -850,7 +867,7 @@ public class StringUtils {
         }
         return count;
     }
-
+    
     public static String repeat(final String source, int count) {
         final StringBuilder result = new StringBuilder(source.length() * count);
         while (count > 0) {
@@ -859,7 +876,7 @@ public class StringUtils {
         }
         return result.toString();
     }
-
+    
     public static String repeat(final char c, final int count) {
         final char[] result = new char[count];
         for (int i = 0; i < count; i++) {
@@ -867,5 +884,5 @@ public class StringUtils {
         }
         return new String(result);
     }
-
+    
 }

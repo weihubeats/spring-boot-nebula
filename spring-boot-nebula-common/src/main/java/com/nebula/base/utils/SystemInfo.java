@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.base.utils;
 
 import java.io.File;
@@ -12,39 +29,40 @@ import java.util.ArrayList;
  * @description:
  */
 public class SystemInfo {
-
+    
     // ---------------------------------------------------------------- host
-
+    
     /**
      * Delegate host info to be resolved lazy.
      * Android detection will initialize this class too and since {@code InetAddress.getLocalHost()}
      * is forbidden in Android, we will get an exception.
      */
     private static class HostInfoLazy {
+        
         private final String HOST_NAME;
         private final String HOST_ADDRESS;
-
+        
         public HostInfoLazy() {
             String hostName;
             String hostAddress;
-
+            
             try {
                 final InetAddress localhost = InetAddress.getLocalHost();
-
+                
                 hostName = localhost.getHostName();
                 hostAddress = localhost.getHostAddress();
             } catch (final UnknownHostException uhex) {
                 hostName = "localhost";
                 hostAddress = "127.0.0.2";
             }
-
+            
             this.HOST_NAME = hostName;
             this.HOST_ADDRESS = hostAddress;
         }
     }
-
+    
     private static HostInfoLazy hostInfoLazy;
-
+    
     /**
      * Returns host name.
      */
@@ -54,7 +72,7 @@ public class SystemInfo {
         }
         return hostInfoLazy.HOST_NAME;
     }
-
+    
     /**
      * Returns host IP address.
      */
@@ -64,9 +82,9 @@ public class SystemInfo {
         }
         return hostInfoLazy.HOST_ADDRESS;
     }
-
+    
     // ---------------------------------------------------------------- JVM
-
+    
     private final String JAVA_VM_NAME = SystemUtil.get("java.vm.name");
     private final String JAVA_VM_VERSION = SystemUtil.get("java.vm.version");
     private final String JAVA_VM_VENDOR = SystemUtil.get("java.vm.vendor");
@@ -74,49 +92,49 @@ public class SystemInfo {
     private final String JAVA_VM_SPECIFICATION_NAME = SystemUtil.get("java.vm.specification.name");
     private final String JAVA_VM_SPECIFICATION_VERSION = SystemUtil.get("java.vm.specification.version");
     private final String JAVA_VM_SPECIFICATION_VENDOR = SystemUtil.get("java.vm.specification.vendor");
-
+    
     /**
      * Returns JVM name.
      */
     public final String getJvmName() {
         return JAVA_VM_NAME;
     }
-
+    
     /**
      * Returns JVM version.
      */
     public final String getJvmVersion() {
         return JAVA_VM_VERSION;
     }
-
+    
     /**
      * Returns VM vendor.
      */
     public final String getJvmVendor() {
         return JAVA_VM_VENDOR;
     }
-
+    
     /**
      * Returns additional VM information.
      */
     public final String getJvmInfo() {
         return JAVA_VM_INFO;
     }
-
+    
     public final String getJvmSpecificationName() {
         return JAVA_VM_SPECIFICATION_NAME;
     }
-
+    
     public final String getJvmSpecificationVersion() {
         return JAVA_VM_SPECIFICATION_VERSION;
     }
-
+    
     public final String getJvmSpecificationVendor() {
         return JAVA_VM_SPECIFICATION_VENDOR;
     }
-
+    
     // ---------------------------------------------------------------- JAVA
-
+    
     private final String JAVA_VERSION = SystemUtil.get("java.version");
     private final int JAVA_VERSION_NUMBER = detectJavaVersionNumber();
     private final String JAVA_VENDOR = SystemUtil.get("java.vendor");
@@ -125,7 +143,7 @@ public class SystemInfo {
     private final String JAVA_SPECIFICATION_NAME = SystemUtil.get("java.specification.name");
     private final String JAVA_SPECIFICATION_VENDOR = SystemUtil.get("java.specification.vendor");
     private final String[] JRE_PACKAGES = buildJrePackages(JAVA_VERSION_NUMBER);
-
+    
     /**
      * Returns Java version string, as specified in system property.
      * Returned string contain major version, minor version and revision.
@@ -133,58 +151,58 @@ public class SystemInfo {
     public String getJavaVersion() {
         return JAVA_VERSION;
     }
-
+    
     /**
      * Returns unified Java version as an integer.
      */
     public int getJavaVersionNumber() {
         return JAVA_VERSION_NUMBER;
     }
-
+    
     /**
      * Returns Java vendor.
      */
     public String getJavaVendor() {
         return JAVA_VENDOR;
     }
-
+    
     /**
      * Returns Java vendor URL.
      */
     public String getJavaVendorURL() {
         return JAVA_VENDOR_URL;
     }
-
+    
     /**
      * Retrieves the version of the currently running JVM.
      */
     public String getJavaSpecificationVersion() {
         return JAVA_SPECIFICATION_VERSION;
     }
-
+    
     public final String getJavaSpecificationName() {
         return JAVA_SPECIFICATION_NAME;
     }
-
+    
     public final String getJavaSpecificationVendor() {
         return JAVA_SPECIFICATION_VENDOR;
     }
-
+    
     // ---------------------------------------------------------------- packages
-
+    
     /**
      * Returns list of packages, build into runtime jars.
      */
     public String[] getJrePackages() {
         return JRE_PACKAGES;
     }
-
+    
     /**
      * Builds a set of java core packages.
      */
     private String[] buildJrePackages(final int javaVersionNumber) {
         final ArrayList<String> packages = new ArrayList<>();
-
+        
         switch (javaVersionNumber) {
             case 9:
             case 8:
@@ -228,21 +246,20 @@ public class SystemInfo {
                 packages.add("javax");
                 break;
         }
-
+        
         return packages.toArray(new String[0]);
     }
-
-
+    
     // ---------------------------------------------------------------- java checks
-
+    
     private int detectJavaVersionNumber() {
         String javaVersion = JAVA_VERSION;
-
+        
         final int lastDashNdx = javaVersion.lastIndexOf('-');
         if (lastDashNdx != -1) {
             javaVersion = javaVersion.substring(0, lastDashNdx);
         }
-
+        
         if (javaVersion.startsWith("1.")) {
             // up to java 8
             final int index = javaVersion.indexOf('.', 2);
@@ -252,7 +269,7 @@ public class SystemInfo {
             return Integer.parseInt(index == -1 ? javaVersion : javaVersion.substring(0, index));
         }
     }
-
+    
     /**
      * Checks if the currently running JVM is at least compliant
      * with provided JDK version.
@@ -260,19 +277,18 @@ public class SystemInfo {
     public boolean isAtLeastJavaVersion(final int version) {
         return JAVA_VERSION_NUMBER >= version;
     }
-
+    
     /**
      * Checks if the currently running JVM is equal to provided version.
      */
     public boolean isJavaVersion(final int version) {
         return JAVA_VERSION_NUMBER == version;
     }
-
-
+    
     private final String OS_VERSION = SystemUtil.get("os.version");
     private final String OS_ARCH = SystemUtil.get("os.arch");
     private final String OS_NAME = SystemUtil.get("os.name");
-
+    
     private final boolean IS_ANDROID = isAndroid0();
     private final boolean IS_OS_AIX = matchOS("AIX");
     private final boolean IS_OS_HP_UX = matchOS("HP-UX");
@@ -290,31 +306,31 @@ public class SystemInfo {
     private final boolean IS_OS_WINDOWS_ME = matchOS("Windows", "4.9");
     private final boolean IS_OS_WINDOWS_NT = matchOS("Windows NT");
     private final boolean IS_OS_WINDOWS_XP = matchOS("Windows", "5.1");
-
+    
     private final String FILE_SEPARATOR = SystemUtil.get("file.separator");
     private final String LINE_SEPARATOR = SystemUtil.get("line.separator");
     private final String PATH_SEPARATOR = SystemUtil.get("path.separator");
     private final String FILE_ENCODING = SystemUtil.get("file.encoding");
-
+    
     public final String getOsArchitecture() {
         return OS_ARCH;
     }
-
+    
     public final String getOsName() {
         return OS_NAME;
     }
-
+    
     public final String getOsVersion() {
         return OS_VERSION;
     }
-
+    
     /**
      * Returns <code>true</code> if system is android.
      */
     public boolean isAndroid() {
         return IS_ANDROID;
     }
-
+    
     private static boolean isAndroid0() {
         try {
             Class.forName("android.app.Application", false, ClassLoaderUtil.getSystemClassLoader());
@@ -323,165 +339,163 @@ public class SystemInfo {
             return false;
         }
     }
-
-
+    
     public final boolean isAix() {
         return IS_OS_AIX;
     }
-
+    
     public final boolean isHpUx() {
         return IS_OS_HP_UX;
     }
-
+    
     public final boolean isIrix() {
         return IS_OS_IRIX;
     }
-
+    
     public final boolean isLinux() {
         return IS_OS_LINUX;
     }
-
+    
     public final boolean isMac() {
         return IS_OS_MAC;
     }
-
+    
     public final boolean isMacOsX() {
         return IS_OS_MAC_OSX;
     }
-
+    
     public final boolean isOs2() {
         return IS_OS_OS2;
     }
-
+    
     public final boolean isSolaris() {
         return IS_OS_SOLARIS;
     }
-
+    
     public final boolean isSunOS() {
         return IS_OS_SUN_OS;
     }
-
+    
     public final boolean isWindows() {
         return IS_OS_WINDOWS;
     }
-
+    
     public final boolean isWindows2000() {
         return IS_OS_WINDOWS_2000;
     }
-
+    
     public final boolean isWindows95() {
         return IS_OS_WINDOWS_95;
     }
-
+    
     public final boolean isWindows98() {
         return IS_OS_WINDOWS_98;
     }
-
+    
     public final boolean isWindowsME() {
         return IS_OS_WINDOWS_ME;
     }
-
+    
     public final boolean isWindowsNT() {
         return IS_OS_WINDOWS_NT;
     }
-
+    
     public final boolean isWindowsXP() {
         return IS_OS_WINDOWS_XP;
     }
-
+    
     // ---------------------------------------------------------------- file
-
+    
     public final String getFileSeparator() {
         return FILE_SEPARATOR;
     }
-
+    
     public final String getLineSeparator() {
         return LINE_SEPARATOR;
     }
-
+    
     public final String getPathSeparator() {
         return PATH_SEPARATOR;
     }
-
+    
     public final String getFileEncoding() {
         return FILE_ENCODING;
     }
-
+    
     // ---------------------------------------------------------------- util
-
+    
     private boolean matchOS(final String osNamePrefix) {
         if (OS_NAME == null) {
             return false;
         }
-
+        
         return OS_NAME.startsWith(osNamePrefix);
     }
-
+    
     private boolean matchOS(final String osNamePrefix, final String osVersionPrefix) {
         if ((OS_NAME == null) || (OS_VERSION == null)) {
             return false;
         }
-
+        
         return OS_NAME.startsWith(osNamePrefix) && OS_VERSION.startsWith(osVersionPrefix);
-
+        
     }
-
+    
     // ---------------------------------------------------------------- runtime
-
+    
     private final Runtime runtime = Runtime.getRuntime();
-
+    
     /**
      * Returns MAX memory.
      */
-    public final long getMaxMemory(){
+    public final long getMaxMemory() {
         return runtime.maxMemory();
     }
-
+    
     /**
      * Returns TOTAL memory.
      */
-    public final long getTotalMemory(){
+    public final long getTotalMemory() {
         return runtime.totalMemory();
     }
-
+    
     /**
      * Returns FREE memory.
      */
-    public final long getFreeMemory(){
+    public final long getFreeMemory() {
         return runtime.freeMemory();
     }
-
+    
     /**
      * Returns usable memory.
      */
-    public final long getAvailableMemory(){
+    public final long getAvailableMemory() {
         return runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory();
     }
-
+    
     /**
      * Returns used memory.
      */
-    public final long getUsedMemory(){
+    public final long getUsedMemory() {
         return runtime.totalMemory() - runtime.freeMemory();
     }
-
+    
     /**
      * Returns PID of current Java process.
      */
     public final long getCurrentPID() {
         return Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
     }
-
+    
     /**
      * Returns number of CPUs.
      */
     public final long getCPUs() {
         return runtime.availableProcessors();
     }
-
+    
     // ---------------------------------------------------------------- user
-
-
+    
     private final String USER_NAME = SystemUtil.get("user.name");
     private final String USER_HOME = nosep(SystemUtil.get("user.home"));
     private final String USER_DIR = nosep(SystemUtil.get("user.dir"));
@@ -490,46 +504,46 @@ public class SystemInfo {
     private final String JAVA_IO_TMPDIR = SystemUtil.get("java.io.tmpdir");
     private final String JAVA_HOME = nosep(SystemUtil.get("java.home"));
     private final String[] SYSTEM_CLASS_PATH = StringUtils.splitc(SystemUtil.get("java.class.path"), File.pathSeparator);
-
+    
     public final String getUserName() {
         return USER_NAME;
     }
-
+    
     public final String getHomeDir() {
         return USER_HOME;
     }
-
+    
     public final String getWorkingDir() {
         return USER_DIR;
     }
-
+    
     public final String getTempDir() {
         return JAVA_IO_TMPDIR;
     }
-
+    
     public final String getUserLanguage() {
         return USER_LANGUAGE;
     }
-
+    
     public final String getUserCountry() {
         return USER_COUNTRY;
     }
-
+    
     public String getJavaHomeDir() {
         return JAVA_HOME;
     }
-
+    
     public String[] getSystemClasspath() {
         return SYSTEM_CLASS_PATH;
     }
-
+    
     // ---------------------------------------------------------------- util
-
+    
     protected String nosep(final String in) {
         if (in.endsWith(File.separator)) {
             return in.substring(0, in.length() - 1);
         }
         return in;
     }
-
+    
 }
