@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.base.utils;
 
 import com.nebula.base.utils.io.IOUtil;
@@ -16,11 +33,11 @@ import java.util.jar.Manifest;
  * @description:
  */
 public class ClassLoaderUtil {
-
+    
     public static ClassLoaderStrategy classLoaderStrategy = new ClassLoaderStrategy.DefaultClassLoaderStrategy();
-
+    
     // ---------------------------------------------------------------- default class loader
-
+    
     /**
      * Returns default class loader. By default, it is {@link #getContextClassLoader() threads context class loader}.
      * If this one is <code>null</code>, then class loader of the <b>caller class</b> is returned.
@@ -33,7 +50,7 @@ public class ClassLoaderUtil {
         }
         return cl;
     }
-
+    
     /**
      * Returns thread context class loader.
      */
@@ -42,10 +59,10 @@ public class ClassLoaderUtil {
             return Thread.currentThread().getContextClassLoader();
         } else {
             return AccessController.doPrivileged(
-                (PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
+                    (PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
         }
     }
-
+    
     /**
      * Returns system class loader.
      */
@@ -54,20 +71,20 @@ public class ClassLoaderUtil {
             return ClassLoader.getSystemClassLoader();
         } else {
             return AccessController.doPrivileged(
-                (PrivilegedAction<ClassLoader>) ClassLoader::getSystemClassLoader);
+                    (PrivilegedAction<ClassLoader>) ClassLoader::getSystemClassLoader);
         }
     }
-
+    
     // ---------------------------------------------------------------- classpath
-
+    
     private static final String[] MANIFESTS = {"Manifest.mf", "manifest.mf", "MANIFEST.MF"};
-
+    
     /**
      * Returns classpath item manifest or <code>null</code> if not found.
      */
     public static Manifest getClasspathItemManifest(final File classpathItem) {
         Manifest manifest = null;
-
+        
         if (classpathItem.isFile()) {
             FileInputStream fis = null;
             try {
@@ -101,10 +118,10 @@ public class ClassLoaderUtil {
                 }
             }
         }
-
+        
         return manifest;
     }
-
+    
     /**
      * Returns base folder for classpath item. If item is a (jar) file,
      * its parent is returned. If item is a directory, its name is returned.
@@ -118,16 +135,16 @@ public class ClassLoaderUtil {
         }
         return base;
     }
-
+    
     // ---------------------------------------------------------------- class stream
-
+    
     /**
      * Opens a class of the specified name for reading using class classloader.
      */
     public static InputStream getClassAsStream(final Class clazz) throws IOException {
         return ResourcesUtil.getResourceAsStream(ClassUtil.convertClassNameToFileName(clazz), clazz.getClassLoader());
     }
-
+    
     /**
      * Opens a class of the specified name for reading. No specific classloader is used
      * for loading class.
@@ -135,17 +152,17 @@ public class ClassLoaderUtil {
     public static InputStream getClassAsStream(final String className) throws IOException {
         return ResourcesUtil.getResourceAsStream(ClassUtil.convertClassNameToFileName(className));
     }
-
+    
     /**
      * Opens a class of the specified name for reading using provided class loader.
      */
     public static InputStream getClassAsStream(final String className,
-        final ClassLoader classLoader) throws IOException {
+                                               final ClassLoader classLoader) throws IOException {
         return ResourcesUtil.getResourceAsStream(ClassUtil.convertClassNameToFileName(className), classLoader);
     }
-
+    
     // ---------------------------------------------------------------- load class
-
+    
     /**
      * Loads a class using default class loader strategy.
      *
@@ -154,7 +171,7 @@ public class ClassLoaderUtil {
     public static Class loadClass(final String className) throws ClassNotFoundException {
         return classLoaderStrategy.loadClass(className, null);
     }
-
+    
     /**
      * Loads a class using default class loader strategy.
      *
@@ -163,9 +180,9 @@ public class ClassLoaderUtil {
     public static Class loadClass(final String className, final ClassLoader classLoader) throws ClassNotFoundException {
         return classLoaderStrategy.loadClass(className, classLoader);
     }
-
+    
     // ---------------------------------------------------------------- class location
-
+    
     /**
      * Returns location of the class. If class is not in a jar, it's classpath
      * is returned; otherwise the jar location.
@@ -173,5 +190,5 @@ public class ClassLoaderUtil {
     public static String classLocation(final Class clazz) {
         return clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
     }
-
+    
 }

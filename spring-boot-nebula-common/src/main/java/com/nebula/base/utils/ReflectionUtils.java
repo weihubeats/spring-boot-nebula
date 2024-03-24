@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.base.utils;
 
 import java.beans.BeanInfo;
@@ -20,12 +37,11 @@ import org.slf4j.LoggerFactory;
  * @description:
  */
 public class ReflectionUtils {
-
+    
     private static final String METHOD = "writeReplace";
-
+    
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
-
-
+    
     /**
      * 获取 Function 名
      * @param func
@@ -46,7 +62,7 @@ public class ReflectionUtils {
             throw new RuntimeException(e);
         }
     }
-
+    
     private static String resolveFieldName(String getMethodName) {
         if (getMethodName.startsWith("get")) {
             getMethodName = getMethodName.substring(3);
@@ -56,14 +72,14 @@ public class ReflectionUtils {
         // 小写第一个字母
         return firstToLowerCase(getMethodName);
     }
-
+    
     private static String firstToLowerCase(String param) {
         if (DataUtils.isEmpty(param)) {
             return "";
         }
         return param.substring(0, 1).toLowerCase() + param.substring(1);
     }
-
+    
     /**
      * class 是否存在属性
      * @param fieldName 属性名
@@ -72,9 +88,9 @@ public class ReflectionUtils {
      */
     public static <T> boolean isExistFieldName(String fieldName, Class<T> clazz) {
         boolean flag = false;
-        //获取这个类的所有属性
+        // 获取这个类的所有属性
         Field[] fields = clazz.getDeclaredFields();
-        //循环遍历所有的fields
+        // 循环遍历所有的fields
         for (Field field : fields) {
             if (field.getName().equals(fieldName)) {
                 flag = true;
@@ -83,12 +99,12 @@ public class ReflectionUtils {
         }
         return flag;
     }
-
+    
     public static <T, V extends Annotation> boolean isExistFieldName(String fieldName, Class<T> clazz, Class<V> annotationClass) {
         boolean flag = false;
-        //获取这个类的所有属性
+        // 获取这个类的所有属性
         Field[] fields = clazz.getDeclaredFields();
-        //循环遍历所有的fields
+        // 循环遍历所有的fields
         for (Field field : fields) {
             if (field.getName().equals(fieldName) && Objects.nonNull(field.getAnnotation(annotationClass))) {
                 flag = true;
@@ -97,8 +113,7 @@ public class ReflectionUtils {
         }
         return flag;
     }
-
-
+    
     /**
      * 获取指定属性
      *
@@ -117,7 +132,7 @@ public class ReflectionUtils {
             return null;
         }
     }
-
+    
     /**
      * 设置属性值
      *
@@ -134,7 +149,7 @@ public class ReflectionUtils {
             logger.error("setPropertyValue exception", e);
         }
     }
-
+    
     /**
      * 获取构造器
      * @param clazzPath
@@ -147,7 +162,7 @@ public class ReflectionUtils {
         Class<?> operationClazz = Class.forName(clazzPath);
         return operationClazz.getDeclaredConstructor(parameterTypes);
     }
-
+    
     /**
      * 根据Getter方法拿到字段名
      */
@@ -163,5 +178,5 @@ public class ReflectionUtils {
         }
         return Optional.empty();
     }
-
+    
 }
