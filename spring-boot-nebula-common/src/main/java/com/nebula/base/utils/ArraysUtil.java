@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.base.utils;
 
 import java.lang.reflect.Array;
@@ -8,10 +25,9 @@ import java.lang.reflect.Array;
  * @description:
  */
 public class ArraysUtil {
-
-
+    
     // ---------------------------------------------------------------- wrap
-
+    
     /**
      * Wraps elements into an array.
      */
@@ -19,66 +35,65 @@ public class ArraysUtil {
     public static <T> T[] array(final T... elements) {
         return elements;
     }
-
+    
     /**
      * Wraps elements into an array.
      */
     public static byte[] bytes(final byte... elements) {
         return elements;
     }
-
+    
     /**
      * Wraps elements into an array.
      */
     public static char[] chars(final char... elements) {
         return elements;
     }
-
+    
     /**
      * Wraps elements into an array.
      */
     public static short[] shorts(final short... elements) {
         return elements;
     }
-
+    
     /**
      * Wraps elements into an array.
      */
     public static int[] ints(final int... elements) {
         return elements;
     }
-
+    
     /**
      * Wraps elements into an array.
      */
     public static long[] longs(final long... elements) {
         return elements;
     }
-
+    
     /**
      * Wraps elements into an array.
      */
     public static float[] floats(final float... elements) {
         return elements;
     }
-
+    
     /**
      * Wraps elements into an array.
      */
     public static double[] doubles(final double... elements) {
         return elements;
     }
-
+    
     /**
      * Wraps elements into an array.
      */
     public static boolean[] booleans(final boolean... elements) {
         return elements;
     }
-
-
+    
     // ---------------------------------------------------------------- join
-
+    
     /**
      * Joins arrays. Component type is resolved from the array argument.
      */
@@ -87,7 +102,7 @@ public class ArraysUtil {
         final Class<T> componentType = (Class<T>) arrays.getClass().getComponentType().getComponentType();
         return join(componentType, arrays);
     }
-
+    
     /**
      * Joins arrays using provided component type.
      */
@@ -101,7 +116,7 @@ public class ArraysUtil {
             length += array.length;
         }
         final T[] result = (T[]) Array.newInstance(componentType, length);
-
+        
         length = 0;
         for (final T[] array : arrays) {
             System.arraycopy(array, 0, result, length, array.length);
@@ -109,8 +124,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
-
+    
     /**
      * Join <code>String</code> arrays.
      */
@@ -133,7 +147,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Join <code>byte</code> arrays.
      */
@@ -156,7 +170,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Join <code>char</code> arrays.
      */
@@ -179,7 +193,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Join <code>short</code> arrays.
      */
@@ -202,7 +216,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Join <code>int</code> arrays.
      */
@@ -225,7 +239,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Join <code>long</code> arrays.
      */
@@ -248,7 +262,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Join <code>float</code> arrays.
      */
@@ -271,7 +285,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Join <code>double</code> arrays.
      */
@@ -294,7 +308,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Join <code>boolean</code> arrays.
      */
@@ -317,10 +331,9 @@ public class ArraysUtil {
         }
         return result;
     }
-
-
+    
     // ---------------------------------------------------------------- resize
-
+    
     /**
      * Resizes an array.
      */
@@ -330,8 +343,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
-
+    
     /**
      * Resizes a <code>String</code> array.
      */
@@ -340,7 +352,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
+    
     /**
      * Resizes a <code>byte</code> array.
      */
@@ -349,7 +361,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
+    
     /**
      * Resizes a <code>char</code> array.
      */
@@ -358,7 +370,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
+    
     /**
      * Resizes a <code>short</code> array.
      */
@@ -367,7 +379,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
+    
     /**
      * Resizes a <code>int</code> array.
      */
@@ -376,7 +388,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
+    
     /**
      * Resizes a <code>long</code> array.
      */
@@ -385,7 +397,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
+    
     /**
      * Resizes a <code>float</code> array.
      */
@@ -394,7 +406,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
+    
     /**
      * Resizes a <code>double</code> array.
      */
@@ -403,7 +415,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
+    
     /**
      * Resizes a <code>boolean</code> array.
      */
@@ -412,10 +424,9 @@ public class ArraysUtil {
         System.arraycopy(buffer, 0, temp, 0, Math.min(buffer.length, newSize));
         return temp;
     }
-
-
+    
     // ---------------------------------------------------------------- append
-
+    
     /**
      * Appends an element to array.
      */
@@ -424,7 +435,7 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
+    
     /**
      * Appends an element to <code>String</code> array.
      */
@@ -433,7 +444,7 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
+    
     /**
      * Appends an element to <code>byte</code> array.
      */
@@ -442,7 +453,7 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
+    
     /**
      * Appends an element to <code>char</code> array.
      */
@@ -451,7 +462,7 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
+    
     /**
      * Appends an element to <code>short</code> array.
      */
@@ -460,7 +471,7 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
+    
     /**
      * Appends an element to <code>int</code> array.
      */
@@ -469,7 +480,7 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
+    
     /**
      * Appends an element to <code>long</code> array.
      */
@@ -478,7 +489,7 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
+    
     /**
      * Appends an element to <code>float</code> array.
      */
@@ -487,7 +498,7 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
+    
     /**
      * Appends an element to <code>double</code> array.
      */
@@ -496,7 +507,7 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
+    
     /**
      * Appends an element to <code>boolean</code> array.
      */
@@ -505,10 +516,9 @@ public class ArraysUtil {
         t[buffer.length] = newElement;
         return t;
     }
-
-
+    
     // ---------------------------------------------------------------- remove
-
+    
     /**
      * Removes sub-array.
      */
@@ -516,7 +526,7 @@ public class ArraysUtil {
         final Class<T> componentType = (Class<T>) buffer.getClass().getComponentType();
         return remove(buffer, offset, length, componentType);
     }
-
+    
     /**
      * Removes sub-array.
      */
@@ -528,7 +538,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
+    
     /**
      * Removes sub-array from <code>String</code> array.
      */
@@ -539,7 +549,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
+    
     /**
      * Removes sub-array from <code>byte</code> array.
      */
@@ -550,7 +560,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
+    
     /**
      * Removes sub-array from <code>char</code> array.
      */
@@ -561,7 +571,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
+    
     /**
      * Removes sub-array from <code>short</code> array.
      */
@@ -572,7 +582,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
+    
     /**
      * Removes sub-array from <code>int</code> array.
      */
@@ -583,7 +593,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
+    
     /**
      * Removes sub-array from <code>long</code> array.
      */
@@ -594,7 +604,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
+    
     /**
      * Removes sub-array from <code>float</code> array.
      */
@@ -605,7 +615,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
+    
     /**
      * Removes sub-array from <code>double</code> array.
      */
@@ -616,7 +626,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
+    
     /**
      * Removes sub-array from <code>boolean</code> array.
      */
@@ -627,10 +637,9 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset + length, temp, offset, len2 - offset);
         return temp;
     }
-
-
+    
     // ---------------------------------------------------------------- subarray
-
+    
     /**
      * Returns subarray.
      */
@@ -638,7 +647,7 @@ public class ArraysUtil {
         final Class<T> componentType = (Class<T>) buffer.getClass().getComponentType();
         return subarray(buffer, offset, length, componentType);
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -648,7 +657,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -657,7 +666,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -666,7 +675,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -675,7 +684,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -684,7 +693,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -693,7 +702,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -702,7 +711,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -711,7 +720,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -720,7 +729,7 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
+    
     /**
      * Returns subarray.
      */
@@ -729,10 +738,9 @@ public class ArraysUtil {
         System.arraycopy(buffer, offset, temp, 0, length);
         return temp;
     }
-
-
+    
     // ---------------------------------------------------------------- insert
-
+    
     /**
      * Inserts one array into another array.
      */
@@ -747,7 +755,7 @@ public class ArraysUtil {
         final Class<T> componentType = (Class<T>) dest.getClass().getComponentType();
         return insert(dest, src, offset, componentType);
     }
-
+    
     /**
      * Inserts one array into another array.
      */
@@ -770,7 +778,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another <code>String</code> array.
      */
@@ -781,7 +789,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, src.length + offset, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one element into another <code>String</code> array.
      */
@@ -792,7 +800,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another <code>byte</code> array.
      */
@@ -803,7 +811,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, src.length + offset, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one element into another <code>byte</code> array.
      */
@@ -814,7 +822,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another <code>char</code> array.
      */
@@ -825,7 +833,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, src.length + offset, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one element into another <code>char</code> array.
      */
@@ -836,7 +844,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another <code>short</code> array.
      */
@@ -847,7 +855,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, src.length + offset, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one element into another <code>short</code> array.
      */
@@ -858,7 +866,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another <code>int</code> array.
      */
@@ -869,7 +877,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, src.length + offset, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one element into another <code>int</code> array.
      */
@@ -880,7 +888,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another <code>long</code> array.
      */
@@ -891,7 +899,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, src.length + offset, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one element into another <code>long</code> array.
      */
@@ -902,7 +910,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another <code>float</code> array.
      */
@@ -913,7 +921,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, src.length + offset, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one element into another <code>float</code> array.
      */
@@ -924,7 +932,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another <code>double</code> array.
      */
@@ -935,7 +943,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, src.length + offset, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one element into another <code>double</code> array.
      */
@@ -946,7 +954,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another <code>boolean</code> array.
      */
@@ -957,7 +965,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, src.length + offset, dest.length - offset);
         return temp;
     }
-
+    
     /**
      * Inserts one element into another <code>boolean</code> array.
      */
@@ -968,10 +976,9 @@ public class ArraysUtil {
         System.arraycopy(dest, offset, temp, offset + 1, dest.length - offset);
         return temp;
     }
-
-
+    
     // ---------------------------------------------------------------- insertAt
-
+    
     /**
      * Inserts one array into another at given offset.
      */
@@ -979,7 +986,7 @@ public class ArraysUtil {
         final Class<T> componentType = (Class<T>) dest.getClass().getComponentType();
         return insertAt(dest, src, offset, componentType);
     }
-
+    
     /**
      * Inserts one array into another at given offset.
      */
@@ -991,7 +998,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another by replacing specified offset.
      */
@@ -1002,7 +1009,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another by replacing specified offset.
      */
@@ -1013,7 +1020,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another by replacing specified offset.
      */
@@ -1024,7 +1031,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another by replacing specified offset.
      */
@@ -1035,7 +1042,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another by replacing specified offset.
      */
@@ -1046,7 +1053,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another by replacing specified offset.
      */
@@ -1057,7 +1064,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another by replacing specified offset.
      */
@@ -1068,7 +1075,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another by replacing specified offset.
      */
@@ -1079,7 +1086,7 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
+    
     /**
      * Inserts one array into another by replacing specified offset.
      */
@@ -1090,11 +1097,9 @@ public class ArraysUtil {
         System.arraycopy(dest, offset + 1, temp, src.length + offset, dest.length - offset - 1);
         return temp;
     }
-
-
+    
     // ---------------------------------------------------------------- convert
-
-
+    
     /**
      * Converts to primitive array.
      */
@@ -1118,8 +1123,7 @@ public class ArraysUtil {
         }
         return dest;
     }
-
-
+    
     /**
      * Converts to primitive array.
      */
@@ -1143,8 +1147,7 @@ public class ArraysUtil {
         }
         return dest;
     }
-
-
+    
     /**
      * Converts to primitive array.
      */
@@ -1168,8 +1171,7 @@ public class ArraysUtil {
         }
         return dest;
     }
-
-
+    
     /**
      * Converts to primitive array.
      */
@@ -1193,8 +1195,7 @@ public class ArraysUtil {
         }
         return dest;
     }
-
-
+    
     /**
      * Converts to primitive array.
      */
@@ -1218,8 +1219,7 @@ public class ArraysUtil {
         }
         return dest;
     }
-
-
+    
     /**
      * Converts to primitive array.
      */
@@ -1243,8 +1243,7 @@ public class ArraysUtil {
         }
         return dest;
     }
-
-
+    
     /**
      * Converts to primitive array.
      */
@@ -1268,8 +1267,7 @@ public class ArraysUtil {
         }
         return dest;
     }
-
-
+    
     /**
      * Converts to primitive array.
      */
@@ -1293,12 +1291,9 @@ public class ArraysUtil {
         }
         return dest;
     }
-
-
-
+    
     // ---------------------------------------------------------------- indexof
-
-
+    
     /**
      * Finds the first occurrence of an element in an array.
      */
@@ -1338,7 +1333,7 @@ public class ArraysUtil {
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence of an element in an array.
      */
@@ -1378,7 +1373,7 @@ public class ArraysUtil {
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence of an element in an array.
      */
@@ -1418,7 +1413,7 @@ public class ArraysUtil {
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence of an element in an array.
      */
@@ -1458,7 +1453,7 @@ public class ArraysUtil {
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence of an element in an array.
      */
@@ -1498,7 +1493,7 @@ public class ArraysUtil {
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence of an element in an array.
      */
@@ -1538,7 +1533,7 @@ public class ArraysUtil {
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence of value in <code>float</code> array.
      */
@@ -1579,7 +1574,7 @@ public class ArraysUtil {
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence of value in <code>double</code> array.
      */
@@ -1620,7 +1615,7 @@ public class ArraysUtil {
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence in an array.
      */
@@ -1635,7 +1630,7 @@ public class ArraysUtil {
     public static boolean contains(final Object[] array, final Object value) {
         return indexOf(array, value) != -1;
     }
-
+    
     /**
      * Finds the first occurrence in an array from specified given position.
      */
@@ -1650,13 +1645,9 @@ public class ArraysUtil {
     public static boolean contains(final Object[] array, final Object value, final int startIndex) {
         return indexOf(array, value, startIndex) != -1;
     }
-
-
-
-
+    
     // ---------------------------------------------------------------- indexof 2
-
-
+    
     /**
      * Finds the first occurrence in an array.
      */
@@ -1666,15 +1657,14 @@ public class ArraysUtil {
     public static boolean contains(final byte[] array, final byte[] sub) {
         return indexOf(array, sub) != -1;
     }
-
-
+    
     /**
      * Finds the first occurrence in an array from specified given position.
      */
     public static int indexOf(final byte[] array, final byte[] sub, final int startIndex) {
         return indexOf(array, sub, startIndex, array.length);
     }
-
+    
     /**
      * Finds the first occurrence in an array from specified given position and upto given length.
      */
@@ -1685,8 +1675,7 @@ public class ArraysUtil {
         }
         final int total = endIndex - sublen + 1;
         final byte c = sub[0];
-        mainloop:
-        for (int i = startIndex; i < total; i++) {
+        mainloop: for (int i = startIndex; i < total; i++) {
             if (array[i] != c) {
                 continue;
             }
@@ -1696,13 +1685,14 @@ public class ArraysUtil {
                 if (sub[j] != array[k]) {
                     continue mainloop;
                 }
-                j++; k++;
+                j++;
+                k++;
             }
             return i;
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence in an array.
      */
@@ -1712,15 +1702,14 @@ public class ArraysUtil {
     public static boolean contains(final char[] array, final char[] sub) {
         return indexOf(array, sub) != -1;
     }
-
-
+    
     /**
      * Finds the first occurrence in an array from specified given position.
      */
     public static int indexOf(final char[] array, final char[] sub, final int startIndex) {
         return indexOf(array, sub, startIndex, array.length);
     }
-
+    
     /**
      * Finds the first occurrence in an array from specified given position and upto given length.
      */
@@ -1731,8 +1720,7 @@ public class ArraysUtil {
         }
         final int total = endIndex - sublen + 1;
         final char c = sub[0];
-        mainloop:
-        for (int i = startIndex; i < total; i++) {
+        mainloop: for (int i = startIndex; i < total; i++) {
             if (array[i] != c) {
                 continue;
             }
@@ -1742,13 +1730,14 @@ public class ArraysUtil {
                 if (sub[j] != array[k]) {
                     continue mainloop;
                 }
-                j++; k++;
+                j++;
+                k++;
             }
             return i;
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence in an array.
      */
@@ -1758,15 +1747,14 @@ public class ArraysUtil {
     public static boolean contains(final short[] array, final short[] sub) {
         return indexOf(array, sub) != -1;
     }
-
-
+    
     /**
      * Finds the first occurrence in an array from specified given position.
      */
     public static int indexOf(final short[] array, final short[] sub, final int startIndex) {
         return indexOf(array, sub, startIndex, array.length);
     }
-
+    
     /**
      * Finds the first occurrence in an array from specified given position and upto given length.
      */
@@ -1777,8 +1765,7 @@ public class ArraysUtil {
         }
         final int total = endIndex - sublen + 1;
         final short c = sub[0];
-        mainloop:
-        for (int i = startIndex; i < total; i++) {
+        mainloop: for (int i = startIndex; i < total; i++) {
             if (array[i] != c) {
                 continue;
             }
@@ -1788,13 +1775,14 @@ public class ArraysUtil {
                 if (sub[j] != array[k]) {
                     continue mainloop;
                 }
-                j++; k++;
+                j++;
+                k++;
             }
             return i;
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence in an array.
      */
@@ -1804,15 +1792,14 @@ public class ArraysUtil {
     public static boolean contains(final int[] array, final int[] sub) {
         return indexOf(array, sub) != -1;
     }
-
-
+    
     /**
      * Finds the first occurrence in an array from specified given position.
      */
     public static int indexOf(final int[] array, final int[] sub, final int startIndex) {
         return indexOf(array, sub, startIndex, array.length);
     }
-
+    
     /**
      * Finds the first occurrence in an array from specified given position and upto given length.
      */
@@ -1823,8 +1810,7 @@ public class ArraysUtil {
         }
         final int total = endIndex - sublen + 1;
         final int c = sub[0];
-        mainloop:
-        for (int i = startIndex; i < total; i++) {
+        mainloop: for (int i = startIndex; i < total; i++) {
             if (array[i] != c) {
                 continue;
             }
@@ -1834,13 +1820,14 @@ public class ArraysUtil {
                 if (sub[j] != array[k]) {
                     continue mainloop;
                 }
-                j++; k++;
+                j++;
+                k++;
             }
             return i;
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence in an array.
      */
@@ -1850,15 +1837,14 @@ public class ArraysUtil {
     public static boolean contains(final long[] array, final long[] sub) {
         return indexOf(array, sub) != -1;
     }
-
-
+    
     /**
      * Finds the first occurrence in an array from specified given position.
      */
     public static int indexOf(final long[] array, final long[] sub, final int startIndex) {
         return indexOf(array, sub, startIndex, array.length);
     }
-
+    
     /**
      * Finds the first occurrence in an array from specified given position and upto given length.
      */
@@ -1869,8 +1855,7 @@ public class ArraysUtil {
         }
         final int total = endIndex - sublen + 1;
         final long c = sub[0];
-        mainloop:
-        for (int i = startIndex; i < total; i++) {
+        mainloop: for (int i = startIndex; i < total; i++) {
             if (array[i] != c) {
                 continue;
             }
@@ -1880,13 +1865,14 @@ public class ArraysUtil {
                 if (sub[j] != array[k]) {
                     continue mainloop;
                 }
-                j++; k++;
+                j++;
+                k++;
             }
             return i;
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence in an array.
      */
@@ -1896,15 +1882,14 @@ public class ArraysUtil {
     public static boolean contains(final boolean[] array, final boolean[] sub) {
         return indexOf(array, sub) != -1;
     }
-
-
+    
     /**
      * Finds the first occurrence in an array from specified given position.
      */
     public static int indexOf(final boolean[] array, final boolean[] sub, final int startIndex) {
         return indexOf(array, sub, startIndex, array.length);
     }
-
+    
     /**
      * Finds the first occurrence in an array from specified given position and upto given length.
      */
@@ -1915,8 +1900,7 @@ public class ArraysUtil {
         }
         final int total = endIndex - sublen + 1;
         final boolean c = sub[0];
-        mainloop:
-        for (int i = startIndex; i < total; i++) {
+        mainloop: for (int i = startIndex; i < total; i++) {
             if (array[i] != c) {
                 continue;
             }
@@ -1926,13 +1910,14 @@ public class ArraysUtil {
                 if (sub[j] != array[k]) {
                     continue mainloop;
                 }
-                j++; k++;
+                j++;
+                k++;
             }
             return i;
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence in an array.
      */
@@ -1942,15 +1927,14 @@ public class ArraysUtil {
     public static boolean contains(final float[] array, final float[] sub) {
         return indexOf(array, sub) != -1;
     }
-
-
+    
     /**
      * Finds the first occurrence in an array from specified given position.
      */
     public static int indexOf(final float[] array, final float[] sub, final int startIndex) {
         return indexOf(array, sub, startIndex, array.length);
     }
-
+    
     /**
      * Finds the first occurrence in an array from specified given position and upto given length.
      */
@@ -1961,8 +1945,7 @@ public class ArraysUtil {
         }
         final int total = endIndex - sublen + 1;
         final float c = sub[0];
-        mainloop:
-        for (int i = startIndex; i < total; i++) {
+        mainloop: for (int i = startIndex; i < total; i++) {
             if (Float.compare(array[i], c) != 0) {
                 continue;
             }
@@ -1972,13 +1955,14 @@ public class ArraysUtil {
                 if (Float.compare(sub[j], array[k]) != 0) {
                     continue mainloop;
                 }
-                j++; k++;
+                j++;
+                k++;
             }
             return i;
         }
         return -1;
     }
-
+    
     /**
      * Finds the first occurrence in an array.
      */
@@ -1988,15 +1972,14 @@ public class ArraysUtil {
     public static boolean contains(final double[] array, final double[] sub) {
         return indexOf(array, sub) != -1;
     }
-
-
+    
     /**
      * Finds the first occurrence in an array from specified given position.
      */
     public static int indexOf(final double[] array, final double[] sub, final int startIndex) {
         return indexOf(array, sub, startIndex, array.length);
     }
-
+    
     /**
      * Finds the first occurrence in an array from specified given position and upto given length.
      */
@@ -2007,8 +1990,7 @@ public class ArraysUtil {
         }
         final int total = endIndex - sublen + 1;
         final double c = sub[0];
-        mainloop:
-        for (int i = startIndex; i < total; i++) {
+        mainloop: for (int i = startIndex; i < total; i++) {
             if (Double.compare(array[i], c) != 0) {
                 continue;
             }
@@ -2018,16 +2000,16 @@ public class ArraysUtil {
                 if (Double.compare(sub[j], array[k]) != 0) {
                     continue mainloop;
                 }
-                j++; k++;
+                j++;
+                k++;
             }
             return i;
         }
         return -1;
     }
-
-
+    
     // ---------------------------------------------------------------- toString
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2048,7 +2030,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2069,7 +2051,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2090,7 +2072,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2111,7 +2093,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2132,7 +2114,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2153,7 +2135,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2174,7 +2156,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2195,7 +2177,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2216,7 +2198,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
+    
     /**
      * Converts an array to string. Elements are separated by comma.
      * Returned string contains no brackets.
@@ -2237,8 +2219,7 @@ public class ArraysUtil {
         }
         return sb.toString();
     }
-
-
+    
     /**
      * Converts an array to string array.
      */
@@ -2252,7 +2233,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Converts an array to string array.
      */
@@ -2266,7 +2247,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Converts an array to string array.
      */
@@ -2280,7 +2261,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Converts an array to string array.
      */
@@ -2294,7 +2275,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Converts an array to string array.
      */
@@ -2308,7 +2289,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Converts an array to string array.
      */
@@ -2322,7 +2303,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Converts an array to string array.
      */
@@ -2336,7 +2317,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Converts an array to string array.
      */
@@ -2350,7 +2331,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Converts an array to string array.
      */
@@ -2364,7 +2345,7 @@ public class ArraysUtil {
         }
         return result;
     }
-
+    
     /**
      * Converts an array to string array.
      */
