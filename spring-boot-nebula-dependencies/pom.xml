@@ -29,9 +29,6 @@
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
 
     </properties>
-    
-
-
 
     <dependencyManagement>
 
