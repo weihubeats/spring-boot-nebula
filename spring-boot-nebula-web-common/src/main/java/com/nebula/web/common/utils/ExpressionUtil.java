@@ -20,6 +20,7 @@ package com.nebula.web.common.utils;
 import com.nebula.base.utils.DataUtils;
 import java.lang.reflect.Method;
 import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -46,20 +47,21 @@ public class ExpressionUtil {
         }
         // 获取被拦截方法参数名列表
         LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
-        String[] paramNameArr = discoverer.getParameterNames(method);
+        // SPEL解析
+        String[] paramNames = discoverer.getParameterNames(method);
+        if (paramNames == null || args == null || paramNames.length != args.length) {
+            throw new IllegalArgumentException("Method parameter names and argument values do not match.");
+        }
         // SPEL解析
         ExpressionParser parser = new SpelExpressionParser();
         StandardEvaluationContext context = new StandardEvaluationContext();
-        for (int i = 0; i < Objects.requireNonNull(paramNameArr).length; i++) {
-            context.setVariable(paramNameArr[i], args[i]);
+        for (int i = 0; i < Objects.requireNonNull(paramNames).length; i++) {
+            context.setVariable(paramNames[i], args[i]);
         }
         return parser.parseExpression(expressionString).getValue(context);
     }
     
     public static boolean isEl(String param) {
-        if (DataUtils.isEmpty(param)) {
-            return false;
-        }
-        return Objects.equals(param.substring(0, 1), "#");
+        return !StringUtils.isEmpty(param) && param.startsWith("#");
     }
 }
