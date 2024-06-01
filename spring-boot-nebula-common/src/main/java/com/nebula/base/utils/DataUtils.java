@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.base.utils;
 
 import java.lang.reflect.Field;
@@ -13,7 +30,7 @@ import org.apache.commons.lang3.RandomUtils;
  * @description:
  */
 public class DataUtils {
-
+    
     /**
      * 判断对象是否Empty(null或元素为0)<br>
      * 实用于对如下对象做判断:String Collection及其子类 Map及其子类
@@ -55,7 +72,7 @@ public class DataUtils {
         }
         return false;
     }
-
+    
     /**
      * 判断对象是否为NotEmpty(!null或元素>0)<br>
      * 实用于对如下对象做判断:String Collection及其子类 Map及其子类
@@ -66,7 +83,7 @@ public class DataUtils {
     public static boolean isNotEmpty(Object pObj) {
         return !isEmpty(pObj);
     }
-
+    
     /**
      * 判断对象是否全部不为null
      */
@@ -78,7 +95,7 @@ public class DataUtils {
         }
         return true;
     }
-
+    
     public static boolean isAllEmpty(Object... objects) {
         for (Object object : objects) {
             if (isNotEmpty(object)) {
@@ -87,7 +104,7 @@ public class DataUtils {
         }
         return true;
     }
-
+    
     public static boolean isAnyIsEmpty(Object... objects) {
         for (Object object : objects) {
             if (isEmpty(object)) {
@@ -96,7 +113,7 @@ public class DataUtils {
         }
         return false;
     }
-
+    
     public static boolean isAnyNotEmpty(Object... objects) {
         for (Object object : objects) {
             if (isNotEmpty(object)) {
@@ -105,7 +122,7 @@ public class DataUtils {
         }
         return false;
     }
-
+    
     /**
      * 得到默认值
      *
@@ -117,7 +134,7 @@ public class DataUtils {
     public static <T> T getDefaultValue(T value, T defaultValue) {
         return getDefaultValue(value, defaultValue, a -> a);
     }
-
+    
     /**
      * 得到默认值, 如果原值不为空可以处理
      *
@@ -129,10 +146,10 @@ public class DataUtils {
      */
     public static <T, S> T getDefaultValue(S value, T defaultValue, Function<S, T> function) {
         return isNotEmpty(value)
-            ? function.apply(value)
-            : defaultValue;
+                ? function.apply(value)
+                : defaultValue;
     }
-
+    
     /**
      * 得到默认值, 如果原值不为空可以处理
      *
@@ -145,13 +162,13 @@ public class DataUtils {
     public static <T, S> T getDefaultValueSafety(S value, T defaultValue, Function<S, T> function) {
         try {
             return isNotEmpty(value)
-                ? function.apply(value)
-                : defaultValue;
+                    ? function.apply(value)
+                    : defaultValue;
         } catch (Exception e) {
             return defaultValue;
         }
     }
-
+    
     /**
      * 得到值, 如果原值不为空可以处理
      *
@@ -167,7 +184,7 @@ public class DataUtils {
             return defaultValue;
         }
     }
-
+    
     public static boolean tryParseLong(String value) {
         try {
             Long.parseLong(value);
@@ -176,7 +193,7 @@ public class DataUtils {
             return false;
         }
     }
-
+    
     public static boolean isAllNotNull(Object... objects) {
         for (Object object : objects) {
             if (isEmpty(object)) {
@@ -185,7 +202,7 @@ public class DataUtils {
         }
         return true;
     }
-
+    
     /**
      * 检查一个对象的所有属性是不是都为空
      *
@@ -202,7 +219,7 @@ public class DataUtils {
         }
         return true;
     }
-
+    
     public static long randomLongId() {
         return -RandomUtils.nextLong(0, 99999999999999L);
     }

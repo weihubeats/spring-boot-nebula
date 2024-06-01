@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.mybatis.handler;
 
 import java.math.BigDecimal;
@@ -21,15 +38,16 @@ import org.apache.ibatis.type.TypeException;
 @MappedJdbcTypes(JdbcType.ARRAY)
 @MappedTypes({Integer[].class, String[].class, Boolean[].class, Double[].class, Long[].class, BigDecimal[].class})
 public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
+    
     private static final String TYPE_NAME_VARCHAR = "varchar";
     private static final String TYPE_NAME_INTEGER = "integer";
     private static final String TYPE_NAME_BOOLEAN = "boolean";
     private static final String TYPE_NAME_NUMERIC = "numeric";
     private static final String TYPE_NAME_BIGINT = "bigint";
-
+    
     @Override
     public void setNonNullParameter(
-        PreparedStatement ps, int i, Object[] parameter, JdbcType jdbcType) throws SQLException {
+                                    PreparedStatement ps, int i, Object[] parameter, JdbcType jdbcType) throws SQLException {
         String typeName = null;
         if (parameter instanceof Integer[]) {
             typeName = TYPE_NAME_INTEGER;
@@ -44,31 +62,31 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         } else if (parameter instanceof BigDecimal[]) {
             typeName = TYPE_NAME_NUMERIC;
         }
-
+        
         if (typeName == null) {
             throw new TypeException("ArrayTypeHandler parameter typeName error, your type is " + parameter.getClass().getName());
         }
-
+        
         Connection conn = ps.getConnection();
         Array array = conn.createArrayOf(typeName, parameter);
         ps.setArray(i, array);
     }
-
+    
     @Override
     public Object[] getNullableResult(ResultSet resultSet, String s) throws SQLException {
         return getArray(resultSet.getArray(s));
     }
-
+    
     @Override
     public Object[] getNullableResult(ResultSet resultSet, int i) throws SQLException {
         return getArray(resultSet.getArray(i));
     }
-
+    
     @Override
     public Object[] getNullableResult(CallableStatement callableStatement, int i) throws SQLException {
         return getArray(callableStatement.getArray(i));
     }
-
+    
     private Object[] getArray(Array array) {
         if (array == null) {
             return null;
@@ -79,5 +97,5 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         }
         return null;
     }
-
+    
 }
