@@ -30,6 +30,8 @@
         <mybatis-plus-boot-starter.version>3.5.5</mybatis-plus-boot-starter.version>
         <redission.version>3.17.3</redission.version>
     </properties>
+    
+
 
 
     <dependencyManagement>
