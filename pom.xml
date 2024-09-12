@@ -200,7 +200,7 @@
 
         </plugins>
     </build>
-    <url>https://github.com/weihubeats/spring-boot-common</url>
+    <url>https://github.com/weihubeats/spring-boot-nebula</url>
 
     <licenses>
         <license>
@@ -219,14 +219,14 @@
     </developers>
 
     <scm>
-        <connection>scm:git@github.com:weihubeats/spring-boot-common.git</connection>
-        <developerConnection>scm:git@github.com:weihubeats/spring-boot-common.git</developerConnection>
-        <url>git@github.com:weihubeats/spring-boot-common.git</url>
+        <connection>scm:git@github.com:weihubeats/spring-boot-nebula.git</connection>
+        <developerConnection>scm:git@github.com:weihubeats/spring-boot-nebula.git</developerConnection>
+        <url>git@github.com:weihubeats/spring-boot-nebula.git</url>
     </scm>
 
     <issueManagement>
         <system>Github Issue</system>
-        <url>https://github.com/weihubeats/spring-boot-common/issues</url>
+        <url>https://github.com/weihubeats/spring-boot-nebula/issues</url>
     </issueManagement>
 
     <distributionManagement>
