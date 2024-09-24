@@ -38,7 +38,9 @@ public class NebulaSysWebUtils {
     private static final String STAGE = "stage";
     
     private static final String PRD = "prd";
-    
+
+
+    private static final String SRE = "dd";
     /**
      * 开发环境
      */
