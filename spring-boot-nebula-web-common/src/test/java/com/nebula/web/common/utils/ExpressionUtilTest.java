@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.expression.spel.SpelParseException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @date : 2024/9/13 16:19
  * @description:
  */
+@ExtendWith(MockitoExtension.class)
 public class ExpressionUtilTest {
 
     @Test
