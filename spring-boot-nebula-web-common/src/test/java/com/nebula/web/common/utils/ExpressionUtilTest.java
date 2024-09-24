@@ -20,6 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ExpressionUtilTest {
 
     @Test
+    public void test() {
+        System.out.println("ggggg");
+    }
+
+    @Test
     void testParseWithMethodAndArgs() throws NoSuchMethodException {
         Method method = TestClass.class.getDeclaredMethod("testMethod", String.class, int.class);
         Object[] args = {"Hello", 5};
