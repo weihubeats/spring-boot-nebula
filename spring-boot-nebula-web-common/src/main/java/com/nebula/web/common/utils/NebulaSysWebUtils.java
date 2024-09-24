@@ -41,8 +41,8 @@ public class NebulaSysWebUtils {
 
 
     private static final String SRE = "dd";
-    private static final String RE = "dd";
-    /**
+
+    private static final String RE = "6666";    /**
      * 开发环境
      */
     @Value("${spring.profiles.active:dev}")
