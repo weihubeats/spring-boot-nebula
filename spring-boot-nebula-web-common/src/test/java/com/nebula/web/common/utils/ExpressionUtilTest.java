@@ -24,9 +24,9 @@ public class ExpressionUtilTest {
         Method method = TestClass.class.getDeclaredMethod("testMethod", String.class, int.class);
         Object[] args = {"Hello", 5};
 
-        assertEquals("Hello", ExpressionUtil.parse("#param1", method, args));
+        assertEquals("Hello1", ExpressionUtil.parse("#param1", method, args));
         assertEquals(5, ExpressionUtil.parse("#param2", method, args));
-        assertEquals("Hello5", ExpressionUtil.parse("#param1 + #param2", method, args));
+        assertEquals("Hello51", ExpressionUtil.parse("#param1 + #param2", method, args));
     }
 
     @Test
