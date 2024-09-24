@@ -18,12 +18,14 @@
 package com.nebula.mybatis.entity;
 
 import java.time.LocalDateTime;
+import lombok.Data;
 
 /**
  * @author : wh
  * @date : 2024/3/11 13:06
  * @description:
  */
+@Data
 public class BaseDO {
     
     private Long id;
