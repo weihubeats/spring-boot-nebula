@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.web.common.utils;
 
 import com.nebula.web.common.autoconfigure.NebulaWebCommonAutoConfiguration;
+
 import java.util.Objects;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -38,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @SpringBootTest(classes = SpringBeanUtilsTest.TestConfig.class)
 public class SpringBeanUtilsTest {
-    
+
     @Test
     public void getBean() {
         Object bean = SpringBeanUtils.getBean("testBean");
@@ -46,26 +48,26 @@ public class SpringBeanUtilsTest {
         TestBean bean1 = SpringBeanUtils.getBean(TestBean.class);
         assertTrue(Objects.nonNull(bean1));
         assertThrowsExactly(NoSuchBeanDefinitionException.class, () -> SpringBeanUtils.getBean(NoTestBean.class));
-        
+
     }
-    
+
     static final class TestBean {
     }
-    
+
     static final class NoTestBean {
     }
-    
+
     @Configuration
     @EnableAutoConfiguration
     @ImportAutoConfiguration({NebulaWebCommonAutoConfiguration.class})
     public static class TestConfig {
-        
+
         @Bean
         public TestBean testBean() {
             return new TestBean();
-            
+
         }
-        
+
     }
-    
+
 }
