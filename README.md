@@ -151,6 +151,7 @@
 - [spring-boot-nebula-web](spring-boot-nebula-web) web封装组件(包括统一异常返回，简化返回，自定义异常报警)
 - [spring-boot-nebula-web-common](spring-boot-nebula-web-common) web模块基础工具类
 - [spring-boot-nebula-distribute-lock](spring-boot-nebula-distribute-lock) 分布式锁
+- [spring-boot-nebula-mybatis](spring-boot-nebula-mybatis) mybatis的一些封装，比如提供基础的`BaseDO`，一些常用的类型处理器，比如数组
 
 ## [spring-boot-nebula-web-common](spring-boot-nebula-web-common)
 - 提供[SpringBeanUtils.java](spring-boot-nebula-web-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fcommon%2Futils%2FSpringBeanUtils.java)获取spring bean

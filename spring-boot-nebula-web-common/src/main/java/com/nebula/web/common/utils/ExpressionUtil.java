@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.web.common.utils;
 
-import com.nebula.base.utils.DataUtils;
 import java.lang.reflect.Method;
-import java.util.Objects;
-import org.apache.commons.lang3.StringUtils;
+import java.util.Map;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
@@ -32,36 +32,127 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * @description:
  */
 public class ExpressionUtil {
-    
+
+    private static final ExpressionParser parser = new SpelExpressionParser();
+
+    private static final LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
+
     /**
-     * el表达式解析
+     * 解析EL表达式
      *
-     * @param expressionString 解析值
+     * @param expressionString 表达式字符串
      * @param method           方法
      * @param args             参数
-     * @return
+     * @return 解析结果
      */
     public static Object parse(String expressionString, Method method, Object[] args) {
-        if (DataUtils.isEmpty(expressionString)) {
+        if (isEmpty(expressionString)) {
             return null;
         }
-        // 获取被拦截方法参数名列表
-        LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
-        // SPEL解析
-        String[] paramNames = discoverer.getParameterNames(method);
-        if (paramNames == null || args == null || paramNames.length != args.length) {
-            throw new IllegalArgumentException("Method parameter names and argument values do not match.");
-        }
-        // SPEL解析
-        ExpressionParser parser = new SpelExpressionParser();
-        StandardEvaluationContext context = new StandardEvaluationContext();
-        for (int i = 0; i < Objects.requireNonNull(paramNames).length; i++) {
-            context.setVariable(paramNames[i], args[i]);
-        }
-        return parser.parseExpression(expressionString).getValue(context);
+        EvaluationContext context = createEvaluationContext(method, args);
+        return parseExpression(expressionString, context);
     }
-    
+
+    /**
+     * 解析EL表达式
+     *
+     * @param expressionString 表达式字符串
+     * @param rootObject       根对象
+     * @return 解析结果
+     */
+    public static Object parse(String expressionString, Object rootObject) {
+        if (isEmpty(expressionString)) {
+            return null;
+        }
+        return parseExpression(expressionString, rootObject);
+    }
+
+    /**
+     * 解析EL表达式
+     *
+     * @param expressionString 表达式字符串
+     * @param variables        变量Map
+     * @return 解析结果
+     */
+    public static Object parse(String expressionString, Map<String, Object> variables) {
+        if (isEmpty(expressionString)) {
+            return null;
+        }
+        EvaluationContext context = createEvaluationContext(variables);
+        return parseExpression(expressionString, context);
+    }
+
+    /**
+     * 判断是否为EL表达式
+     *
+     * @param param 待判断的字符串
+     * @return 是否为EL表达式
+     */
     public static boolean isEl(String param) {
-        return !StringUtils.isEmpty(param) && param.startsWith("#");
+        return !isEmpty(param) && param.startsWith("#");
+    }
+
+    /**
+     * 创建EvaluationContext
+     *
+     * @param method 方法
+     * @param args   参数
+     * @return EvaluationContext
+     */
+    private static EvaluationContext createEvaluationContext(Method method, Object[] args) {
+        String[] paramNames = discoverer.getParameterNames(method);
+        EvaluationContext context = new StandardEvaluationContext();
+        if (paramNames != null) {
+            for (int i = 0; i < paramNames.length; i++) {
+                context.setVariable(paramNames[i], args[i]);
+            }
+        }
+        return context;
+    }
+
+    /**
+     * 创建EvaluationContext
+     *
+     * @param variables 变量Map
+     * @return EvaluationContext
+     */
+    private static EvaluationContext createEvaluationContext(Map<String, Object> variables) {
+        EvaluationContext context = new StandardEvaluationContext();
+        variables.forEach(context::setVariable);
+        return context;
+    }
+
+    /**
+     * 解析表达式
+     *
+     * @param expressionString 表达式字符串
+     * @param context          EvaluationContext
+     * @return 解析结果
+     */
+    private static Object parseExpression(String expressionString, EvaluationContext context) {
+        Expression expression = parser.parseExpression(expressionString);
+        return expression.getValue(context);
+    }
+
+    /**
+     * 解析表达式
+     *
+     * @param expressionString 表达式字符串
+     * @param rootObject       根对象
+     * @return 解析结果
+     */
+    private static Object parseExpression(String expressionString, Object rootObject) {
+        Expression expression = parser.parseExpression(expressionString);
+        return expression.getValue(rootObject);
+    }
+
+    /**
+     * 判断字符串是否为空
+     *
+     * @param str 待判断的字符串
+     * @return 是否为空
+     */
+    private static boolean isEmpty(String str) {
+        return str == null || str.trim().isEmpty();
     }
 }
