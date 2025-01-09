@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.api;
+package com.nebula.base.model;
 
 /**
  * @author : wh

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.api;
+package com.nebula.base.model;
 
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * @date : 2023/8/16 10:02
  * @description: 基础分页对象
  */
-public class NebulaPage<T> {
+public class NebulaPageRes<T> {
     
     private long totalCount = 0;
     
@@ -75,13 +75,15 @@ public class NebulaPage<T> {
      * @param <T>
      * @return
      */
-    public static <T> NebulaPage<T> of(Collection<T> list, long total, int pageSize) {
-        NebulaPage<T> page = new NebulaPage<>();
+    public static <T> NebulaPageRes<T> of(Collection<T> list, long total, int pageSize) {
+        NebulaPageRes<T> page = new NebulaPageRes<>();
         page.setList(list);
         page.setTotalCount(total);
         page.setPageSize(pageSize);
         return page;
     }
+
+
     
     /**
      * 内存分页
@@ -91,18 +93,18 @@ public class NebulaPage<T> {
      * @param <T>
      * @return
      */
-    public static <T> NebulaPage<T> ofMemory(Collection<T> list, NebulaPageQuery pageQuery) {
+    public static <T> NebulaPageRes<T> ofMemory(Collection<T> list, NebulaPageQuery pageQuery) {
         List<T> pageList = list.stream().skip((long) (pageQuery.getPageIndex() - 1) * pageQuery.getPageSize())
                 .limit(pageQuery.getPageSize()).collect(Collectors.toList());
-        NebulaPage<T> page = new NebulaPage<>();
+        NebulaPageRes<T> page = new NebulaPageRes<>();
         page.setList(pageList);
         page.setTotalCount(list.size());
         page.setPageSize(pageQuery.getPageSize());
         return page;
     }
     
-    public static <T, R> NebulaPage<R> copy(NebulaPage<T> source, Function<T, R> converterFunction) {
-        NebulaPage<R> Page = new NebulaPage<>();
+    public static <T, R> NebulaPageRes<R> copy(NebulaPageRes<T> source, Function<T, R> converterFunction) {
+        NebulaPageRes<R> Page = new NebulaPageRes<>();
         Page.setList(source.getList().stream().map(converterFunction).collect(Collectors.toList()));
         Page.setTotalCount(source.getTotalCount());
         Page.setPageSize(source.getPageSize());
