@@ -7,6 +7,7 @@ import com.nebula.mybatis.entity.NebulaMetaObjectHandler;
 import com.nebula.mybatis.handler.ArrayTypeHandler;
 import javax.sql.DataSource;
 import org.apache.ibatis.type.JdbcType;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -18,6 +19,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * @description:
  */
 @Configuration
+@MapperScan({"com.nebula.mybatis.sample.dao.mapper"})
 public class MybatisPlusConfig {
 
 

@@ -25,7 +25,7 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <javers-core.version>6.6.5</javers-core.version>
         <mybatis-plus-boot-starter.version>3.5.5</mybatis-plus-boot-starter.version>
-        <pagehelper-spring-boot-starter.version>2.1.0</pagehelper-spring-boot-starter.version>
+        <pagehelper-spring-boot-starter.version>1.4.2</pagehelper-spring-boot-starter.version>
         <redission.version>3.17.3</redission.version>
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
 

@@ -2,6 +2,7 @@ package com.nebula.mybatis.sample.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
@@ -10,13 +11,14 @@ import lombok.Data;
  * @description:
  */
 @Data
+@TableName("student")
 public class StudentDO {
 
-    @TableId(type = IdType.AUTO)    private Long id;
-    
+    @TableId(type = IdType.AUTO)
+    private Long id;
+
     private String name;
-    
-    
+
     private Integer age;
-    
+
 }
