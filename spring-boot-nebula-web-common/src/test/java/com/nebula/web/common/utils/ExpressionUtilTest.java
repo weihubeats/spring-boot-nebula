@@ -4,6 +4,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.expression.spel.SpelParseException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,16 +19,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @date : 2024/9/13 16:19
  * @description:
  */
+@ExtendWith(MockitoExtension.class)
 public class ExpressionUtilTest {
 
     @Test
     void testParseWithMethodAndArgs() throws NoSuchMethodException {
         Method method = TestClass.class.getDeclaredMethod("testMethod", String.class, int.class);
-        Object[] args = {"Hello", 5};
+        Object[] args = {"Hello1", 5};
 
         assertEquals("Hello", ExpressionUtil.parse("#param1", method, args));
         assertEquals(5, ExpressionUtil.parse("#param2", method, args));
-        assertEquals("Hello5", ExpressionUtil.parse("#param1 + #param2", method, args));
+        assertEquals("Hello", ExpressionUtil.parse("#param1 + #param2", method, args));
     }
 
     @Test
