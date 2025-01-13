@@ -82,8 +82,6 @@ public class NebulaPageRes<T> {
         page.setPageSize(pageSize);
         return page;
     }
-
-
     
     /**
      * 内存分页

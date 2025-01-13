@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.mybatis.sample.config;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -21,10 +38,9 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 @Configuration
 @MapperScan({"com.nebula.mybatis.sample.dao.mapper"})
 public class MybatisPlusConfig {
-
-
+    
     @Bean
-    public MybatisSqlSessionFactoryBean mybatisSqlSessionFactoryBean (DataSource dataSource) throws Exception{
+    public MybatisSqlSessionFactoryBean mybatisSqlSessionFactoryBean(DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         factoryBean.setDataSource(dataSource);
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
@@ -33,7 +49,7 @@ public class MybatisPlusConfig {
         // 实体类别名 别名冲突暂时不使用别名 WarehouseLocationDO
         factoryBean.setTypeAliasesPackage("com.nebula.mybatis.sample.entity");
         MybatisConfiguration configuration = new MybatisConfiguration();
-        //开启下划线转驼峰
+        // 开启下划线转驼峰
         configuration.setMapUnderscoreToCamelCase(true);
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         GlobalConfig globalConfig = new GlobalConfig();

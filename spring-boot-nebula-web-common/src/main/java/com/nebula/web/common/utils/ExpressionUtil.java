@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package com.nebula.web.common.utils;
 
 import java.lang.reflect.Method;
@@ -32,11 +32,11 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * @description:
  */
 public class ExpressionUtil {
-
+    
     private static final ExpressionParser parser = new SpelExpressionParser();
-
+    
     private static final LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
-
+    
     /**
      * 解析EL表达式
      *
@@ -52,7 +52,7 @@ public class ExpressionUtil {
         EvaluationContext context = createEvaluationContext(method, args);
         return parseExpression(expressionString, context);
     }
-
+    
     /**
      * 解析EL表达式
      *
@@ -66,7 +66,7 @@ public class ExpressionUtil {
         }
         return parseExpression(expressionString, rootObject);
     }
-
+    
     /**
      * 解析EL表达式
      *
@@ -81,7 +81,7 @@ public class ExpressionUtil {
         EvaluationContext context = createEvaluationContext(variables);
         return parseExpression(expressionString, context);
     }
-
+    
     /**
      * 判断是否为EL表达式
      *
@@ -91,7 +91,7 @@ public class ExpressionUtil {
     public static boolean isEl(String param) {
         return !isEmpty(param) && param.startsWith("#");
     }
-
+    
     /**
      * 创建EvaluationContext
      *
@@ -109,7 +109,7 @@ public class ExpressionUtil {
         }
         return context;
     }
-
+    
     /**
      * 创建EvaluationContext
      *
@@ -121,7 +121,7 @@ public class ExpressionUtil {
         variables.forEach(context::setVariable);
         return context;
     }
-
+    
     /**
      * 解析表达式
      *
@@ -133,7 +133,7 @@ public class ExpressionUtil {
         Expression expression = parser.parseExpression(expressionString);
         return expression.getValue(context);
     }
-
+    
     /**
      * 解析表达式
      *
@@ -145,7 +145,7 @@ public class ExpressionUtil {
         Expression expression = parser.parseExpression(expressionString);
         return expression.getValue(rootObject);
     }
-
+    
     /**
      * 判断字符串是否为空
      *
