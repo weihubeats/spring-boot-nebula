@@ -22,8 +22,7 @@
             <groupId>io.github.weihubeats</groupId>
             <artifactId>spring-boot-nebula-common</artifactId>
         </dependency>
-        
-        
+
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
@@ -44,7 +43,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-        
+
     </dependencies>
 
 </project>

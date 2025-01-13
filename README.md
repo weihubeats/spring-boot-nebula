@@ -18,7 +18,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>0.0.01</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 2. 编写一个启动类
@@ -76,7 +76,7 @@
  <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>0.0.01</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
@@ -112,7 +112,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>0.0.01</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
@@ -121,7 +121,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-distribute-lock</artifactId>
-    <version>0.0.01</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
@@ -130,7 +130,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-aggregate</artifactId>
-    <version>0.0.01</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
@@ -139,7 +139,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-mybatis-plus</artifactId>
-    <version>0.0.01</version>
+    <version>0.0.2</version>
 </dependency>
 ```
 
