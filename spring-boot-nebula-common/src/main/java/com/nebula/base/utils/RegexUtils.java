@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.base.utils;
 
 import java.util.ArrayList;
@@ -15,7 +32,7 @@ import java.util.regex.Pattern;
  * @description:
  */
 public class RegexUtils {
-
+    
     /**
      * 给定内容是否匹配正则表达式
      *
@@ -26,7 +43,7 @@ public class RegexUtils {
     public static boolean isMatch(String regex, String content) {
         return DataUtils.isEmpty(regex) || !DataUtils.isEmpty(content) && isMatch(Pattern.compile(regex), content);
     }
-
+    
     /**
      * 给定内容是否匹配正则
      *
@@ -37,7 +54,7 @@ public class RegexUtils {
     public static boolean isMatch(Pattern pattern, String content) {
         return DataUtils.isEmpty(pattern) || !DataUtils.isEmpty(content) && pattern.matcher(content).matches();
     }
-
+    
     /**
      * 删除匹配正则表达式的全部内容
      *
@@ -51,7 +68,7 @@ public class RegexUtils {
         }
         return deleteAll(Pattern.compile(regex), content);
     }
-
+    
     /**
      * 删除匹配正则表达式的全部内容
      *
@@ -65,7 +82,7 @@ public class RegexUtils {
         }
         return pattern.matcher(content).replaceAll(StringUtils.EMPTY);
     }
-
+    
     /**
      * 取得内容中匹配的所有结果
      *
@@ -76,7 +93,7 @@ public class RegexUtils {
     public static List<String> findAll(String regex, String content) {
         return findAll(regex, content, new ArrayList<>());
     }
-
+    
     /**
      * 取得内容中匹配的所有结果
      *
@@ -87,7 +104,7 @@ public class RegexUtils {
     public static List<String> findAll(Pattern pattern, String content) {
         return findAll(pattern, content, new ArrayList<>());
     }
-
+    
     /**
      * 取得内容中匹配的所有结果
      *
@@ -103,7 +120,7 @@ public class RegexUtils {
         }
         return findAll(Pattern.compile(regex), content, 0, collection);
     }
-
+    
     /**
      * 取得内容中匹配的所有结果
      *
@@ -116,7 +133,7 @@ public class RegexUtils {
     public static <T extends Collection<String>> T findAll(Pattern pattern, String content, T collection) {
         return findAll(pattern, content, 0, collection);
     }
-
+    
     /**
      * 取得内容中匹配的所有结果
      *
@@ -131,7 +148,7 @@ public class RegexUtils {
         Pattern pattern = Pattern.compile(regex);
         return findAll(pattern, content, group, collection);
     }
-
+    
     /**
      * 取得内容中匹配的所有结果
      *
@@ -155,7 +172,7 @@ public class RegexUtils {
         }
         return collection;
     }
-
+    
     /**
      * 替换内容中匹配的所有结果
      *
@@ -167,7 +184,7 @@ public class RegexUtils {
     public static String replaceAll(String regex, String content, String replacementTemplate) {
         return replaceAll(content, Pattern.compile(regex), replacementTemplate);
     }
-
+    
     /**
      * 替换内容中匹配的所有结果
      *
@@ -200,7 +217,7 @@ public class RegexUtils {
         matcher.appendTail(sb);
         return sb.toString();
     }
-
+    
     /**
      * 替换内容中匹配的所有结果
      *
@@ -214,7 +231,7 @@ public class RegexUtils {
         Pattern pattern = Pattern.compile(regex);
         return replaceAll(content, pattern, function, group);
     }
-
+    
     /**
      * 替换内容中匹配的所有结果
      *
@@ -238,7 +255,7 @@ public class RegexUtils {
         matcher.appendTail(sb);
         return sb.toString();
     }
-
+    
     /**
      * 替换内容中匹配的所有结果
      *
@@ -250,7 +267,7 @@ public class RegexUtils {
     public static String replaceAll(String content, Pattern pattern, Function<String, String> function) {
         return replaceAll(content, pattern, function, 0);
     }
-
+    
     /**
      * 将星号字符转为可正则匹配的字段, * 表示任何长度的[0-9][a-z][A-Z]
      *
@@ -264,20 +281,20 @@ public class RegexUtils {
      * @return 符合正则规则的字段
      */
     public static String asteriskMatching(String str) {
-
+        
         var firstIndex = str.indexOf("*");
         var lastIndexOf = str.lastIndexOf("*");
         var length = str.length() - 1;
-
+        
         int fuzzyLength = lastIndexOf - firstIndex + 1;
-        //todo 后续再重构兼容星不连续类型字段
+        // todo 后续再重构兼容星不连续类型字段
         if (fuzzyLength == length + 1) {
             throw new RuntimeException("暂时不兼容该类型字段");
         }
-
+        
         String fuzzyPattern = "(\\\\w)*";
         var patterStr = str.replaceAll("\\*".repeat(Math.max(0, fuzzyLength)), fuzzyPattern);
         return "^" + patterStr + "$";
     }
-
+    
 }

@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.aggregate.core;
 
 import com.google.common.collect.Lists;
@@ -41,17 +58,17 @@ import org.javers.core.metamodel.annotation.Id;
  */
 @Slf4j
 public class AggregateDiff {
-
+    
     private static final ConcurrentHashMap<String, List<String>> PROPERTIES_CACHE = new ConcurrentHashMap<>();
-
+    
     private static final Javers javers = JaversBuilder.javers().withListCompareAlgorithm(ListCompareAlgorithm.LEVENSHTEIN_DISTANCE).build();
-
+    
     private final Diff diff;
-
+    
     public AggregateDiff(Object oldVersion, Object currentVersion) {
         this.diff = javers.compare(oldVersion, currentVersion);
     }
-
+    
     /**
      * 构建diff
      *
@@ -61,15 +78,15 @@ public class AggregateDiff {
     public <T extends AbstractAggregate<T>> AggregateDiff(T currentVersion) {
         this.diff = javers.compare(currentVersion.getOld(), currentVersion);
     }
-
+    
     public boolean hasChanges() {
         return diff.hasChanges();
     }
-
+    
     public boolean propertyHasChange(String propertyName) {
         return propertyHasChange(Lists.newArrayList(propertyName));
     }
-
+    
     /**
      * 判断两个对象是否有变化
      * <p>
@@ -79,7 +96,7 @@ public class AggregateDiff {
         Diff objectDiff = javers.compare(oldObject, newObject);
         return !objectDiff.getChanges().isEmpty();
     }
-
+    
     /**
      * 判断对象里面的属性值是否发生了变化,list需要单独判断,对象也需要单独判断
      *
@@ -89,7 +106,7 @@ public class AggregateDiff {
     public boolean propertyHasChange(List<String> propertyNameList) {
         return propertyNameList.stream().anyMatch(s -> !diff.getPropertyChanges(s).isEmpty());
     }
-
+    
     /**
      * 判断对象里面的属性值是否发生了变化
      *
@@ -102,7 +119,7 @@ public class AggregateDiff {
     public final <T, R> boolean propertyHasChange(PropertyFunc<T, R>... function) {
         return Arrays.stream(function).anyMatch(s -> !diff.getPropertyChanges(ReflectionUtils.getFieldName(s)).isEmpty());
     }
-
+    
     /**
      * 对象变化
      *
@@ -112,9 +129,9 @@ public class AggregateDiff {
      * @param <T>
      */
     public <T> void objectChangeFunction(Consumer<T> addConsume,
-        Consumer<T> updateConsume,
-        Consumer<T> deleteConsume,
-        Class<T> clazz) {
+                                         Consumer<T> updateConsume,
+                                         Consumer<T> deleteConsume,
+                                         Class<T> clazz) {
         Changes changes = this.diff.getChanges();
         for (Change change : changes) {
             if ((change instanceof NewObject && Objects.nonNull(addConsume))) {
@@ -131,7 +148,7 @@ public class AggregateDiff {
             }
         }
     }
-
+    
     /**
      * @param oldList       旧list
      * @param newList       新list
@@ -143,27 +160,27 @@ public class AggregateDiff {
      */
     @SuppressWarnings("unchecked")
     public static <T> void listChangeFunction(List<T> oldList,
-        List<T> newList,
-        Class<T> clazz,
-        Consumer<List<T>> addConsume,
-        Consumer<List<T>> updateConsume,
-        Consumer<List<T>> removeConsume) {
-
+                                              List<T> newList,
+                                              Class<T> clazz,
+                                              Consumer<List<T>> addConsume,
+                                              Consumer<List<T>> updateConsume,
+                                              Consumer<List<T>> removeConsume) {
+        
         initNegativeId(clazz, newList);
         Diff listDiff = javers.compareCollections(oldList, newList, clazz);
         Map<String, T> addMap = new HashMap<>();
         Map<String, T> removeMap = new HashMap<>();
         Map<String, T> updateMap = new HashMap<>();
-
+        
         for (Change change : listDiff.getChanges()) {
             if ((change instanceof NewObject)) {
                 addMap.put(change.getAffectedLocalId().toString(), (T) change.getAffectedObject().get());
             }
-
+            
             if ((change instanceof ObjectRemoved)) {
                 removeMap.put(change.getAffectedLocalId().toString(), (T) change.getAffectedObject().get());
             }
-
+            
             if ((change instanceof PropertyChange)) {
                 if (change.getAffectedLocalId() != null) {
                     updateMap.put(change.getAffectedLocalId().toString(), (T) change.getAffectedObject().get());
@@ -180,7 +197,7 @@ public class AggregateDiff {
             removeConsume.accept((new ArrayList<>(removeMap.values())));
         }
     }
-
+    
     /**
      * id初始化负数
      *
@@ -199,11 +216,11 @@ public class AggregateDiff {
             }
         }
     }
-
+    
     public static <T> void initNegativeId(Class<T> clazz, Collection<T> list) {
         initNegativeId(clazz, list, "id");
     }
-
+    
     /**
      * map 里面的key 是@id 的值,需要用到long类型 需要自己强转
      *
@@ -217,27 +234,27 @@ public class AggregateDiff {
      */
     @SuppressWarnings("unchecked")
     public static <T> void collectionChangeFunction(Collection<T> oldList,
-        Collection<T> newList,
-        Class<T> clazz,
-        Consumer<Map<String, T>> addConsume,
-        Consumer<Map<String, T>> updateConsume,
-        Consumer<Map<String, T>> removeConsume) {
-
+                                                    Collection<T> newList,
+                                                    Class<T> clazz,
+                                                    Consumer<Map<String, T>> addConsume,
+                                                    Consumer<Map<String, T>> updateConsume,
+                                                    Consumer<Map<String, T>> removeConsume) {
+        
         Diff listDiff = javers.compareCollections(oldList, newList, clazz);
-
+        
         Map<String, T> addMap = new HashMap<>();
         Map<String, T> removeMap = new HashMap<>();
         Map<String, T> updateMap = new HashMap<>();
-
+        
         for (Change change : listDiff.getChanges()) {
             if ((change instanceof NewObject)) {
                 addMap.put(change.getAffectedLocalId().toString(), (T) change.getAffectedObject().get());
             }
-
+            
             if ((change instanceof ObjectRemoved)) {
                 removeMap.put(change.getAffectedLocalId().toString(), (T) change.getAffectedObject().get());
             }
-
+            
             if ((change instanceof PropertyChange)) {
                 if (change.getAffectedLocalId() != null) {
                     updateMap.put(change.getAffectedLocalId().toString(), (T) change.getAffectedObject().get());
@@ -254,7 +271,7 @@ public class AggregateDiff {
             removeConsume.accept(removeMap);
         }
     }
-
+    
     /**
      * 获取需要比较的简单属性
      *
@@ -283,7 +300,7 @@ public class AggregateDiff {
             return properties;
         });
     }
-
+    
     /**
      * 用于Long和Integer类型的比较
      *
@@ -291,16 +308,16 @@ public class AggregateDiff {
      */
     @SuppressWarnings("unchecked")
     public static <T> void simpleListChangeFunction(Collection<T> oldList,
-        Collection<T> newList,
-        Class<T> clazz,
-        Consumer<List<T>> addConsume,
-        Consumer<List<T>> removeConsume) {
-
+                                                    Collection<T> newList,
+                                                    Class<T> clazz,
+                                                    Consumer<List<T>> addConsume,
+                                                    Consumer<List<T>> removeConsume) {
+        
         Diff listDiff = javers.compareCollections(oldList, newList, clazz);
-
+        
         List<T> addList = new ArrayList<>();
         List<T> removeList = new ArrayList<>();
-
+        
         for (Change change : listDiff.getChanges()) {
             if (change instanceof ListChange && change.getAffectedLocalId() == null) {
                 for (ContainerElementChange containerElementChange : ((ListChange) change).getChanges()) {

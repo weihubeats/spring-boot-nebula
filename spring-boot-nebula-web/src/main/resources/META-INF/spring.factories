@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.nebula.web.boot.error.NebulaRestExceptionHandler,\
   com.nebula.web.boot.config.BaseWebMvcConfig

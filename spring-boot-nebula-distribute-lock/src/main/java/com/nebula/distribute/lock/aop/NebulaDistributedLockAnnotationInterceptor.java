@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.distribute.lock.aop;
 
 import com.nebula.base.utils.DataUtils;
@@ -20,16 +37,16 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 @Slf4j
 public class NebulaDistributedLockAnnotationInterceptor implements MethodInterceptor {
-
+    
     private final NebulaDistributedLockTemplate lock;
-
+    
     public NebulaDistributedLockAnnotationInterceptor(NebulaDistributedLockTemplate lock) {
         if (DataUtils.isEmpty(lock)) {
             throw new RuntimeException("DistributedLockTemplate is null");
         }
         this.lock = lock;
     }
-
+    
     @Nullable
     @Override
     public Object invoke(@Nonnull MethodInvocation methodInvocation) {
@@ -43,11 +60,12 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
         boolean fairLock = annotation.fairLock();
         if (annotation.tryLock()) {
             return lock.tryLock(new DistributedLock<>() {
+                
                 @Override
                 public Object process() {
                     return proceed(methodInvocation);
                 }
-
+                
                 @Override
                 public String lockName() {
                     return lockName;
@@ -55,11 +73,12 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
             }, annotation.tryWaitTime(), annotation.outTime(), annotation.timeUnit(), fairLock);
         } else {
             return lock.lock(new DistributedLock<>() {
+                
                 @Override
                 public Object process() {
                     return proceed(methodInvocation);
                 }
-
+                
                 @Override
                 public String lockName() {
                     return lockName;
@@ -67,16 +86,16 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
             }, annotation.outTime(), annotation.timeUnit(), fairLock);
         }
     }
-
+    
     public Object proceed(MethodInvocation methodInvocation) {
         try {
             return methodInvocation.proceed();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-
+        
     }
-
+    
     /**
      * 获取锁名字，优先获取注解中锁名
      *
@@ -92,14 +111,14 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
         String lockNamePre = nebulaDistributedLock.lockNamePre();
         String lockNamePost = nebulaDistributedLock.lockNamePost();
         String separator = nebulaDistributedLock.separator();
-
+        
         if (ExpressionUtil.isEl(lockNamePre)) {
             lockNamePre = (String) ExpressionUtil.parse(lockNamePre, method, args);
         }
         if (ExpressionUtil.isEl(lockNamePost)) {
             lockNamePost = Objects.requireNonNull(ExpressionUtil.parse(lockNamePost, method, args)).toString();
         }
-
+        
         StringBuilder sb = new StringBuilder();
         if (DataUtils.isNotEmpty(lockNamePre)) {
             sb.append(lockNamePre);

@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.web.boot.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -11,10 +28,10 @@ import org.springframework.lang.Nullable;
  * MappingApiJackson2HttpMessageConverter
  */
 public class MappingApiJackson2HttpMessageConverter extends AbstractReadWriteJackson2HttpMessageConverter {
-
+    
     @Nullable
     private String jsonPrefix;
-
+    
     /**
      * Construct a new {@link MappingApiJackson2HttpMessageConverter} using default configuration
      * provided by {@link Jackson2ObjectMapperBuilder}.
@@ -22,7 +39,7 @@ public class MappingApiJackson2HttpMessageConverter extends AbstractReadWriteJac
     public MappingApiJackson2HttpMessageConverter() {
         this(Jackson2ObjectMapperBuilder.json().build());
     }
-
+    
     /**
      * Construct a new {@link MappingApiJackson2HttpMessageConverter} with a custom {@link ObjectMapper}.
      * You can use {@link Jackson2ObjectMapperBuilder} to build it easily.
@@ -33,12 +50,12 @@ public class MappingApiJackson2HttpMessageConverter extends AbstractReadWriteJac
     public MappingApiJackson2HttpMessageConverter(ObjectMapper objectMapper) {
         super(objectMapper, initWriteObjectMapper(objectMapper), MediaType.APPLICATION_JSON, new MediaType("application", "*+json"));
     }
-
+    
     private static ObjectMapper initWriteObjectMapper(ObjectMapper readObjectMapper) {
         // 拷贝 readObjectMapper
         return readObjectMapper.copy();
     }
-
+    
     /**
      * Specify a custom prefix to use for this view's JSON output.
      * Default is none.
@@ -49,7 +66,7 @@ public class MappingApiJackson2HttpMessageConverter extends AbstractReadWriteJac
     public void setJsonPrefix(String jsonPrefix) {
         this.jsonPrefix = jsonPrefix;
     }
-
+    
     /**
      * Indicate whether the JSON output by this view should be prefixed with ")]}', ". Default is false.
      * <p>Prefixing the JSON string in this manner is used to help prevent JSON Hijacking.
@@ -62,12 +79,12 @@ public class MappingApiJackson2HttpMessageConverter extends AbstractReadWriteJac
     public void setPrefixJson(boolean prefixJson) {
         this.jsonPrefix = (prefixJson ? ")]}', " : null);
     }
-
+    
     @Override
     protected void writePrefix(JsonGenerator generator, Object object) throws IOException {
         if (this.jsonPrefix != null) {
             generator.writeRaw(this.jsonPrefix);
         }
     }
-
+    
 }

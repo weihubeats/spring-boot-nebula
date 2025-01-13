@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.web.boot.jackson;
 
 import com.fasterxml.jackson.core.JsonEncoding;
@@ -32,36 +49,37 @@ import org.springframework.util.TypeUtils;
  * AbstractReadWriteJackson2HttpMessageConverter
  */
 public abstract class AbstractReadWriteJackson2HttpMessageConverter extends AbstractJackson2HttpMessageConverter {
+    
     private static final java.nio.charset.Charset DEFAULT_CHARSET = Charsets.UTF_8;
-
+    
     private final ObjectMapper writeObjectMapper;
     @Nullable
     private PrettyPrinter ssePrettyPrinter;
-
+    
     public AbstractReadWriteJackson2HttpMessageConverter(ObjectMapper readObjectMapper, ObjectMapper writeObjectMapper) {
         super(readObjectMapper);
         this.writeObjectMapper = writeObjectMapper;
         initSsePrettyPrinter();
     }
-
+    
     public AbstractReadWriteJackson2HttpMessageConverter(ObjectMapper readObjectMapper, ObjectMapper writeObjectMapper, MediaType supportedMediaType) {
         this(readObjectMapper, writeObjectMapper);
         setSupportedMediaTypes(Collections.singletonList(supportedMediaType));
         initSsePrettyPrinter();
     }
-
+    
     public AbstractReadWriteJackson2HttpMessageConverter(ObjectMapper readObjectMapper, ObjectMapper writeObjectMapper, MediaType... supportedMediaTypes) {
         this(readObjectMapper, writeObjectMapper);
         setSupportedMediaTypes(Arrays.asList(supportedMediaTypes));
     }
-
+    
     private void initSsePrettyPrinter() {
         setDefaultCharset(DEFAULT_CHARSET);
         DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
         prettyPrinter.indentObjectsWith(new DefaultIndenter("  ", "\ndata:"));
         this.ssePrettyPrinter = prettyPrinter;
     }
-
+    
     @Override
     public boolean canWrite(Class<?> clazz, @Nullable MediaType mediaType) {
         if (!canWrite(mediaType)) {
@@ -74,22 +92,21 @@ public abstract class AbstractReadWriteJackson2HttpMessageConverter extends Abst
         logWarningIfNecessary(clazz, causeRef.get());
         return false;
     }
-
+    
     @Override
-    protected void writeInternal(Object object, @Nullable Type type, HttpOutputMessage outputMessage)
-            throws IOException, HttpMessageNotWritableException {
-
+    protected void writeInternal(Object object, @Nullable Type type, HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
+        
         MediaType contentType = outputMessage.getHeaders().getContentType();
         JsonEncoding encoding = getJsonEncoding(contentType);
         JsonGenerator generator = this.writeObjectMapper.getFactory().createGenerator(outputMessage.getBody(), encoding);
         try {
             writePrefix(generator, object);
-
+            
             Object value = object;
             Class<?> serializationView = null;
             FilterProvider filters = null;
             JavaType javaType = null;
-
+            
             if (object instanceof MappingJacksonValue) {
                 MappingJacksonValue container = (MappingJacksonValue) object;
                 value = container.getValue();
@@ -99,9 +116,8 @@ public abstract class AbstractReadWriteJackson2HttpMessageConverter extends Abst
             if (type != null && TypeUtils.isAssignable(type, value.getClass())) {
                 javaType = getJavaType(type, null);
             }
-
-            ObjectWriter objectWriter = (serializationView != null ?
-                    this.writeObjectMapper.writerWithView(serializationView) : this.writeObjectMapper.writer());
+            
+            ObjectWriter objectWriter = (serializationView != null ? this.writeObjectMapper.writerWithView(serializationView) : this.writeObjectMapper.writer());
             if (filters != null) {
                 objectWriter = objectWriter.with(filters);
             }
@@ -114,7 +130,7 @@ public abstract class AbstractReadWriteJackson2HttpMessageConverter extends Abst
                 objectWriter = objectWriter.with(this.ssePrettyPrinter);
             }
             objectWriter.writeValue(generator, value);
-
+            
             writeSuffix(generator, object);
             generator.flush();
         } catch (InvalidDefinitionException ex) {
@@ -123,5 +139,5 @@ public abstract class AbstractReadWriteJackson2HttpMessageConverter extends Abst
             throw new HttpMessageNotWritableException("Could not write JSON: " + ex.getOriginalMessage(), ex);
         }
     }
-
+    
 }
