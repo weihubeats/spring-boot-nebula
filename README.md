@@ -89,8 +89,36 @@
 
 
 #### 提供开箱即用的分页对象
-- [NebulaPage.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Fapi%2FNebulaPage.java)
-- [NebulaPageQuery.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Fapi%2FNebulaPageQuery.java)
+
+- [NebulaPageRes.java](spring-boot-nebula-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fbase%2Fmodel%2FNebulaPageRes.java)
+
+```java
+    @GetMapping("/list")
+    public NebulaPageRes<StudentVO> list(StudentDTO studentDTO) {
+        return studentService.list(studentDTO);
+}
+```
+
+分页查询继承[NebulaPageQuery.java](spring-boot-nebula-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fbase%2Fmodel%2FNebulaPageQuery.java)即可
+
+```java
+
+@GetMapping("/list")
+public NebulaPageRes<StudentVO> list(StudentDTO studentDTO) {
+  return studentService.list(studentDTO);
+}
+
+@Data
+public class StudentDTO extends NebulaPageQuery {
+    
+    private Long id;
+    
+    private String name;
+    
+    private Integer age;
+}
+
+```
 
 
 #### 时间戳自动转`LocalDateTime`注解
