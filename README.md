@@ -119,7 +119,8 @@ public class StudentDTO extends NebulaPageQuery {
 }
 
 ```
-
+#### 统一异常处理
+`spring-boot-nebula-web`对常见的异常进行了统一封装处理 参考[NebulaRestExceptionHandler.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Ferror%2FNebulaRestExceptionHandler.java)
 
 #### 时间戳自动转`LocalDateTime`注解
 @GetTimestamp
@@ -131,6 +132,27 @@ public class StudentDTO extends NebulaPageQuery {
         return time.toString();
     }
 ```
+
+#### 无需手动引入探针依赖
+
+如果是新建项目要部署到`kubernete`经常会忘记引入探针相关的依赖，`spring-boot-nebula-web`已经内置集成了探针依赖
+
+探针开启仅需添加配置即可
+
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,beans,trace
+```
+
+测试
+```http request
+GET http://localhost:8088/actuator/health
+```
+
+
 
 # 依赖 
 
