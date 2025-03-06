@@ -12,19 +12,18 @@
     <description>spring boot 基础组件,快速构建spring boot项目</description>
 
     <properties>
-        <revision>0.0.2</revision>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <revision>3.0.0</revision>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
-        <spring-boot.version>2.7.0</spring-boot.version>
+        <spring-boot.version>3.4.1</spring-boot.version>
         <lombok.version>1.18.4</lombok.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <guava.version>31.1-jre</guava.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <javers-core.version>6.6.5</javers-core.version>
-        <mybatis-plus-boot-starter.version>3.5.5</mybatis-plus-boot-starter.version>
+        <mybatis-plus-spring-boot3-starter-version>3.5.9</mybatis-plus-spring-boot3-starter-version>
         <pagehelper-spring-boot-starter.version>1.4.2</pagehelper-spring-boot-starter.version>
         <redission.version>3.17.3</redission.version>
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
@@ -103,8 +102,20 @@
 
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus-boot-starter.version}</version>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+                <version>${mybatis-plus-spring-boot3-starter-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-annotation</artifactId>
+                <version>${mybatis-plus-spring-boot3-starter-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-autoconfigure</artifactId>
+                <version>3.0.4</version>
             </dependency>
 
             <dependency>
