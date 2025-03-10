@@ -19,7 +19,7 @@ package com.nebula.web.common.utils;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.DefaultParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -35,7 +35,7 @@ public class ExpressionUtil {
     
     private static final ExpressionParser parser = new SpelExpressionParser();
     
-    private static final LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
+    private static final DefaultParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
     
     /**
      * 解析EL表达式

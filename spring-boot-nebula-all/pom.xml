@@ -10,8 +10,6 @@
 
     <artifactId>spring-boot-nebula-all</artifactId>
 
-
-
     <dependencies>
 
         <dependency>
