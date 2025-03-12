@@ -50,6 +50,8 @@
 }
 ```
 
+> 如果code状态码需要自定义可以通过设置`nebula.web.responseCode`进行设置
+
 ##  功能
 1. 统一公司所有`spring boot`项目的依赖管理 
  
@@ -79,6 +81,8 @@
     <version>0.0.2</version>
 </dependency>
 ```
+
+> spring boot 3使用 3.0.0版本
 
 1. 运行[Application.java](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fsample%2FApplication.java)
 2. 运行 [http-test-controller.http](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fhttp%2Fhttp-test-controller.http)中的`GET localhost:8088/test`
