@@ -12,7 +12,7 @@
     <description>spring boot 基础组件,快速构建spring boot项目</description>
 
     <properties>
-        <revision>3.0.0</revision>
+        <revision>3.0.1</revision>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

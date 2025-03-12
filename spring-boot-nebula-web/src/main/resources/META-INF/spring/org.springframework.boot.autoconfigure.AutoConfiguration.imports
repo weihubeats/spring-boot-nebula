@@ -1,2 +1,2 @@
 com.nebula.web.boot.error.NebulaRestExceptionHandler
-com.nebula.web.boot.config.BaseWebMvcConfig
+com.nebula.web.boot.config.NebulaWebAutoConfiguration
