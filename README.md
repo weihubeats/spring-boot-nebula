@@ -50,13 +50,15 @@
 }
 ```
 
+> 如果code状态码需要自定义可以通过设置`nebula.web.responseCode`进行设置
+
 ##  功能
-1. 统一公司所有`spring boot`项目的依赖管理 
- 
-不使用`spring-boot-nebula-dependencies`可能存在的问题: 
+1. 统一公司所有`spring boot`项目的依赖管理
+
+不使用`spring-boot-nebula-dependencies`可能存在的问题:
 - a项目使用了 redission 3.14 b项目 使用3.61,然后导致相同代码可能运行结果不一致
-  - 统一使用`spring-boot-nebula-dependencies`作为p'a'r'a'm
-  在`boot-common-parent`管理公司的所有依赖，以后应用项目无需手动指定各种依赖版本只需引用依赖即可，统一在`boot-common-parent`管理即可
+    - 统一使用`spring-boot-nebula-dependencies`作为p'a'r'a'm
+      在`boot-common-parent`管理公司的所有依赖，以后应用项目无需手动指定各种依赖版本只需引用依赖即可，统一在`boot-common-parent`管理即可
 2. 提供开箱即用的`web-spring-boot-start`模块，解决web开发需要手动封装工具类的痛点
 3. 提供统一异常处理
 4. 提供优雅的时间戳转`LocalDateTime`注解
@@ -79,6 +81,8 @@
     <version>0.0.2</version>
 </dependency>
 ```
+
+> spring boot 3使用 3.0.0版本
 
 1. 运行[Application.java](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fsample%2FApplication.java)
 2. 运行 [http-test-controller.http](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fhttp%2Fhttp-test-controller.http)中的`GET localhost:8088/test`
@@ -154,7 +158,7 @@ GET http://localhost:8088/actuator/health
 
 
 
-# 依赖 
+# 依赖
 
 - web
 ```xml
