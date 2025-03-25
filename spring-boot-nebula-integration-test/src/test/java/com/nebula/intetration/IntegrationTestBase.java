@@ -15,31 +15,20 @@
  * limitations under the License.
  */
  
-package com.nebula.mybatis.entity;
+package com.nebula.intetration;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import lombok.Data;
+import com.nebula.integration.IntegrationApplication;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * @author : wh
- * @date : 2024/3/11 13:06
+ * @date : 2025/3/21 14:34
  * @description:
  */
-@Data
-public class BaseDO implements Serializable {
-    
-    @TableId(type = IdType.AUTO)
-    private Long id;
-    
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
+@SpringBootTest(classes = IntegrationApplication.class)
+@ActiveProfiles("dev")
+@AutoConfigureMockMvc
+public class IntegrationTestBase {
 }

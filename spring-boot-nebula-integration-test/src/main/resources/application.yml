@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: integration-service
+  profiles:
+    active: dev
+
+logging:
+  config: classpath:integration-logback.xml
+nebula:
+  web:
+    monitor-open: true
+    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxx

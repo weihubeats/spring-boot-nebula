@@ -38,7 +38,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
  */
 @RequiredArgsConstructor
 public class NebulaResponseBodyHandleReturnValue implements HandlerMethodReturnValueHandler, AsyncHandlerMethodReturnValueHandler {
-
+    
     private final NebulaWebProperties nebulaWebProperties;
     
     private static final String ContentType = "application/json;charset=utf-8";

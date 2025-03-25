@@ -15,31 +15,23 @@
  * limitations under the License.
  */
  
-package com.nebula.mybatis.entity;
+package com.nebula.integration;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import lombok.Data;
+import java.util.TimeZone;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author : wh
- * @date : 2024/3/11 13:06
+ * @date : 2025/3/21 14:29
  * @description:
  */
-@Data
-public class BaseDO implements Serializable {
+@SpringBootApplication
+public class IntegrationApplication {
     
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    public static void main(String[] args) {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
+        SpringApplication.run(IntegrationApplication.class, args);
+    }
     
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
 }

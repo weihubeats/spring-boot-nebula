@@ -15,31 +15,18 @@
  * limitations under the License.
  */
  
-package com.nebula.mybatis.entity;
+package com.nebula.integration.dao.mapper;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import lombok.Data;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.nebula.integration.dao.entity.StudentDO;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @author : wh
- * @date : 2024/3/11 13:06
+ * @date : 2025/1/8 16:43
  * @description:
  */
-@Data
-public class BaseDO implements Serializable {
+@Mapper
+public interface StudentMapper extends BaseMapper<StudentDO> {
     
-    @TableId(type = IdType.AUTO)
-    private Long id;
-    
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
 }

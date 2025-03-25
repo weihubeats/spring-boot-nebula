@@ -15,31 +15,31 @@
  * limitations under the License.
  */
  
-package com.nebula.mybatis.entity;
+package com.nebula.integration.converter;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import lombok.Data;
+import com.nebula.integration.dao.entity.StudentDO;
+import com.nebula.integration.vo.StudentVO;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author : wh
- * @date : 2024/3/11 13:06
+ * @date : 2025/1/8 18:20
  * @description:
  */
-@Data
-public class BaseDO implements Serializable {
+public class StudentConverter {
     
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    public static List<StudentVO> toStudentVOs(List<StudentDO> dos) {
+        List<StudentVO> vos = dos.stream().map(StudentConverter::toStudentVO).collect(Collectors.toList());
+        return vos;
+    }
     
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
+    public static StudentVO toStudentVO(StudentDO studentDO) {
+        StudentVO studentVO = new StudentVO();
+        studentVO.setId(studentDO.getId());
+        studentVO.setName(studentDO.getName());
+        studentVO.setAge(studentDO.getAge());
+        return studentVO;
+    }
+    
 }
