@@ -15,31 +15,16 @@
  * limitations under the License.
  */
  
-package com.nebula.mybatis.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import lombok.Data;
+package com.nebula.web.boot.enums;
 
 /**
  * @author : wh
- * @date : 2024/3/11 13:06
+ * @date : 2025/3/24
  * @description:
  */
-@Data
-public class BaseDO implements Serializable {
+public enum ActionEnum {
     
-    @TableId(type = IdType.AUTO)
-    private Long id;
-    
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
+    SUCCESS,
+    FAIL;
+
 }

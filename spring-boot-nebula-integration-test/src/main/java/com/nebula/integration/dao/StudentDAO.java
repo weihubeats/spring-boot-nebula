@@ -15,31 +15,20 @@
  * limitations under the License.
  */
  
-package com.nebula.mybatis.entity;
+package com.nebula.integration.dao;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import lombok.Data;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.nebula.base.model.NebulaPageRes;
+import com.nebula.integration.dao.entity.StudentDO;
+import com.nebula.integration.dto.StudentDTO;
+import com.nebula.integration.vo.StudentVO;
 
 /**
  * @author : wh
- * @date : 2024/3/11 13:06
+ * @date : 2025/1/8 17:10
  * @description:
  */
-@Data
-public class BaseDO implements Serializable {
+public interface StudentDAO extends IService<StudentDO> {
     
-    @TableId(type = IdType.AUTO)
-    private Long id;
-    
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
+    NebulaPageRes<StudentVO> getStudents(StudentDTO dto);
 }

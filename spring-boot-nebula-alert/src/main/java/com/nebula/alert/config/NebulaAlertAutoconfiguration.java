@@ -15,31 +15,24 @@
  * limitations under the License.
  */
  
-package com.nebula.mybatis.entity;
+package com.nebula.alert.config;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import lombok.Data;
+import com.nebula.alert.feishu.FeiShuRoot;
+import com.nebula.web.common.utils.NebulaSysWebUtils;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * @author : wh
- * @date : 2024/3/11 13:06
+ * @date : 2025/3/19 14:17
  * @description:
  */
-@Data
-public class BaseDO implements Serializable {
+@Configuration(proxyBeanMethods = false)
+public class NebulaAlertAutoconfiguration {
     
-    @TableId(type = IdType.AUTO)
-    private Long id;
+    @Bean
+    public FeiShuRoot feiShuRoot(NebulaSysWebUtils nebulaSysWebUtils) {
+        return new FeiShuRoot(nebulaSysWebUtils);
+    }
     
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
 }

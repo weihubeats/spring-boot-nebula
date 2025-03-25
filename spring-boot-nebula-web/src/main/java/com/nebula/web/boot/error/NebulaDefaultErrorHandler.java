@@ -15,31 +15,16 @@
  * limitations under the License.
  */
  
-package com.nebula.mybatis.entity;
+package com.nebula.web.boot.error;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import lombok.Data;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author : wh
- * @date : 2024/3/11 13:06
+ * @date : 2025/3/18 17:39
  * @description:
  */
-@Data
-public class BaseDO implements Serializable {
+public interface NebulaDefaultErrorHandler {
     
-    @TableId(type = IdType.AUTO)
-    private Long id;
-    
-    /**
-     * 创建时间
-     */
-    private LocalDateTime createTime;
-    /**
-     * 更新时间
-     */
-    private LocalDateTime updateTime;
 }
