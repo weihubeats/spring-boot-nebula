@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  
-package com.nebula.mybatis.sample.config;
+package com.nebula.integration.config;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -32,11 +32,11 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 
 /**
  * @author : wh
- * @date : 2025/1/8 16:37
+ * @date : 2025/1/8
  * @description:
  */
 @Configuration
-@MapperScan({"com.nebula.mybatis.sample.dao.mapper"})
+@MapperScan({"com.nebula.integration.dao.mapper"})
 public class MybatisPlusConfig {
     
     @Bean
@@ -46,7 +46,7 @@ public class MybatisPlusConfig {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         factoryBean.setMapperLocations(resolver.getResources("classpath:/mybatis/**/*.xml"));
         factoryBean.setTypeHandlers(new ArrayTypeHandler());
-        factoryBean.setTypeAliasesPackage("com.nebula.mybatis.sample.dao.entity");
+        factoryBean.setTypeAliasesPackage("com.nebula.integration.dao.entity");
         MybatisConfiguration configuration = new MybatisConfiguration();
         // 开启下划线转驼峰
         configuration.setMapUnderscoreToCamelCase(true);

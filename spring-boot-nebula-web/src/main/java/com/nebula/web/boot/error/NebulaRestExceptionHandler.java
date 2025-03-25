@@ -18,14 +18,18 @@
 package com.nebula.web.boot.error;
 
 import com.nebula.web.boot.api.NebulaResponse;
+import com.nebula.web.boot.config.NebulaWebProperties;
 import com.nebula.web.boot.enums.ResultCode;
 import com.nebula.web.boot.exception.BizException;
 import com.nebula.web.boot.exception.RpcException;
 import com.nebula.web.boot.exception.UnauthorizedException;
+import com.nebula.web.common.utils.NebulaSysWebUtils;
+import java.util.Objects;
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Configuration;
@@ -46,7 +50,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 /**
  * @author : wh
- * @date : 2024/3/18 13:26
+ * @date : 2024/3/18
  * @description:
  */
 @Slf4j
@@ -55,6 +59,20 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 @RestControllerAdvice
 public class NebulaRestExceptionHandler {
+    
+    private final NebulaSysWebUtils nebulaSysWebUtils;
+    
+    private final NebulaWebProperties nebulaWebProperties;
+    
+    private final NebulaErrorMonitor nebulaErrorMonitor;
+    
+    public NebulaRestExceptionHandler(NebulaSysWebUtils nebulaSysWebUtils, NebulaWebProperties nebulaWebProperties,
+                                      @Autowired(required = false) NebulaErrorMonitor nebulaErrorMonitor) {
+        this.nebulaSysWebUtils = nebulaSysWebUtils;
+        this.nebulaWebProperties = nebulaWebProperties;
+        this.nebulaErrorMonitor = nebulaErrorMonitor;
+        
+    }
     
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -134,7 +152,13 @@ public class NebulaRestExceptionHandler {
                                                 Object handler, Exception ex) {
         NebulaResponse<?> baseResponse = new NebulaResponse<>();
         baseResponse.setCode(ResultCode.INTERNAL_SERVER_ERROR.getCode());
-        baseResponse.setMsg("Server busy");
+        if (nebulaSysWebUtils.isPrd() && nebulaWebProperties.isMonitorOpen() && !Objects.isNull(nebulaErrorMonitor)) {
+            nebulaErrorMonitor.monitorError(request, response, handler, ex);
+            baseResponse.setMsg("Server busy");
+        } else {
+            baseResponse.setMsg("错误消息:" + ex.getMessage());
+        }
+        log.error("server error ", ex);
         return baseResponse;
     }
     
