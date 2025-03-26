@@ -47,9 +47,11 @@ public class BaseWebMvcConfig implements WebMvcConfigurer {
     
     private final ObjectMapper objectMapper;
     
+    private final NebulaWebProperties nebulaWebProperties;
+    
     @Override
     public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
-        returnValueHandlers.add(new NebulaResponseBodyHandleReturnValue());
+        returnValueHandlers.add(new NebulaResponseBodyHandleReturnValue(nebulaWebProperties));
     }
     
     /**

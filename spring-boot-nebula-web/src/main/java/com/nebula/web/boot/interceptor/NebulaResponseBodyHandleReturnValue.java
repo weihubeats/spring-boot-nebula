@@ -22,8 +22,10 @@ import com.nebula.base.utils.DataUtils;
 import com.nebula.base.utils.JsonUtil;
 import com.nebula.web.boot.annotation.NebulaResponseBody;
 import com.nebula.web.boot.api.NebulaResponse;
+import com.nebula.web.boot.config.NebulaWebProperties;
 import com.nebula.web.boot.enums.ResultCode;
 import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -34,7 +36,10 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 /**
  * handler response value of all http api
  */
+@RequiredArgsConstructor
 public class NebulaResponseBodyHandleReturnValue implements HandlerMethodReturnValueHandler, AsyncHandlerMethodReturnValueHandler {
+    
+    private final NebulaWebProperties nebulaWebProperties;
     
     private static final String ContentType = "application/json;charset=utf-8";
     /**
@@ -57,7 +62,7 @@ public class NebulaResponseBodyHandleReturnValue implements HandlerMethodReturnV
         assert response != null;
         response.setContentType(ContentType);
         NebulaResponse<Object> baseResponse = new NebulaResponse<>();
-        baseResponse.setCode(ResultCode.SUCCESS.getCode());
+        baseResponse.setCode(nebulaWebProperties.getResponseCode());
         baseResponse.setMsg(ResultCode.SUCCESS.getMessage());
         baseResponse.setData(returnValue);
         

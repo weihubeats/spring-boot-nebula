@@ -18,7 +18,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 2. 编写一个启动类
@@ -50,13 +50,15 @@
 }
 ```
 
+> 如果code状态码需要自定义可以通过设置`nebula.web.responseCode`进行设置
+
 ##  功能
-1. 统一公司所有`spring boot`项目的依赖管理 
- 
-不使用`spring-boot-nebula-dependencies`可能存在的问题: 
+1. 统一公司所有`spring boot`项目的依赖管理
+
+不使用`spring-boot-nebula-dependencies`可能存在的问题:
 - a项目使用了 redission 3.14 b项目 使用3.61,然后导致相同代码可能运行结果不一致
-  - 统一使用`spring-boot-nebula-dependencies`作为p'a'r'a'm
-  在`boot-common-parent`管理公司的所有依赖，以后应用项目无需手动指定各种依赖版本只需引用依赖即可，统一在`boot-common-parent`管理即可
+    - 统一使用`spring-boot-nebula-dependencies`作为p'a'r'a'm
+      在`boot-common-parent`管理公司的所有依赖，以后应用项目无需手动指定各种依赖版本只需引用依赖即可，统一在`boot-common-parent`管理即可
 2. 提供开箱即用的`web-spring-boot-start`模块，解决web开发需要手动封装工具类的痛点
 3. 提供统一异常处理
 4. 提供优雅的时间戳转`LocalDateTime`注解
@@ -64,6 +66,7 @@
 6. 提供开箱即用的分布式锁
 7. 提供开箱即用的`mybatis-plus`模块
 8. 提供开箱即用的`ddd`聚合根模块
+9. 自动拦截所有未统一异常进行webhook报警
 
 
 ## demo
@@ -80,6 +83,8 @@
 </dependency>
 ```
 
+> spring boot 3使用 3.0.0版本
+
 1. 运行[Application.java](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fsample%2FApplication.java)
 2. 运行 [http-test-controller.http](spring-boot-nebula-samples%2Fspring-boot-nebula-web-sample%2Fsrc%2Fmain%2Fhttp%2Fhttp-test-controller.http)中的`GET localhost:8088/test`
 
@@ -89,9 +94,38 @@
 
 
 #### 提供开箱即用的分页对象
-- [NebulaPage.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Fapi%2FNebulaPage.java)
-- [NebulaPageQuery.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Fapi%2FNebulaPageQuery.java)
 
+- [NebulaPageRes.java](spring-boot-nebula-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fbase%2Fmodel%2FNebulaPageRes.java)
+
+```java
+    @GetMapping("/list")
+    public NebulaPageRes<StudentVO> list(StudentDTO studentDTO) {
+        return studentService.list(studentDTO);
+}
+```
+
+分页查询继承[NebulaPageQuery.java](spring-boot-nebula-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fbase%2Fmodel%2FNebulaPageQuery.java)即可
+
+```java
+
+@GetMapping("/list")
+public NebulaPageRes<StudentVO> list(StudentDTO studentDTO) {
+  return studentService.list(studentDTO);
+}
+
+@Data
+public class StudentDTO extends NebulaPageQuery {
+    
+    private Long id;
+    
+    private String name;
+    
+    private Integer age;
+}
+
+```
+#### 统一异常处理
+`spring-boot-nebula-web`对常见的异常进行了统一封装处理 参考[NebulaRestExceptionHandler.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Ferror%2FNebulaRestExceptionHandler.java)
 
 #### 时间戳自动转`LocalDateTime`注解
 @GetTimestamp
@@ -104,15 +138,40 @@
     }
 ```
 
-# 依赖 
+#### 无需手动引入探针依赖
+
+如果是新建项目要部署到`kubernete`经常会忘记引入探针相关的依赖，`spring-boot-nebula-web`已经内置集成了探针依赖
+
+探针开启仅需添加配置即可
+
+```yaml
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,beans,trace
+```
+
+测试
+```http request
+GET http://localhost:8088/actuator/health
+```
+
+
+
+# 依赖
+
+- version: 0.0.3
+
 
 - web
+- 
 ```xml
 
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>0.0.2</version>
+    <version>${version}</version>
 </dependency>
 ```
 
@@ -121,7 +180,8 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-distribute-lock</artifactId>
-    <version>0.0.2</version>
+    <version>${version}</version>
+
 </dependency>
 ```
 
@@ -130,7 +190,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-aggregate</artifactId>
-    <version>0.0.2</version>
+    <version>${version}</version>
 </dependency>
 ```
 
@@ -139,7 +199,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-mybatis-plus</artifactId>
-    <version>0.0.2</version>
+    <version>${version}</version>
 </dependency>
 ```
 
@@ -152,6 +212,7 @@
 - [spring-boot-nebula-web-common](spring-boot-nebula-web-common) web模块基础工具类
 - [spring-boot-nebula-distribute-lock](spring-boot-nebula-distribute-lock) 分布式锁
 - [spring-boot-nebula-mybatis](spring-boot-nebula-mybatis) mybatis的一些封装，比如提供基础的`BaseDO`，一些常用的类型处理器，比如数组
+- [spring-boot-nebula-alert](spring-boot-nebula-alert) 报警模块
 
 ## [spring-boot-nebula-web-common](spring-boot-nebula-web-common)
 - 提供[SpringBeanUtils.java](spring-boot-nebula-web-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fcommon%2Futils%2FSpringBeanUtils.java)获取spring bean

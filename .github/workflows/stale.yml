@@ -16,17 +16,17 @@ jobs:
       - uses: actions/stale@v5
         with:
           operations-per-run: 128  # 每次运行最多处理 128 个 issues/PRs
-          days-before-issue-stale: 87  # 87 天不活跃后标记为 stale（90 天关闭前 3 天）
-          days-before-issue-close: 90  # 90 天不活跃后关闭
+          days-before-issue-stale: 180  
+          days-before-issue-close: 3 
           exempt-issue-labels: "no stale"  # 带有 "no stale" 标签的 issues 不会被标记
           stale-issue-label: "stale"  # 标记 stale 时添加的标签
-          stale-issue-message: "This issue is stale because it has been open for 87 days with no activity. It will be closed in 3 days if no further activity occurs."
-          close-issue-message: "This issue was closed because it has been inactive for 90 days since being marked as stale."
+          stale-issue-message: "This issue is stale because it has been open for 180 days with no activity. It will be closed in 3 days if no further activity occurs."
+          close-issue-message: "This issue was closed because it has been inactive for 3 days since being marked as stale."
           remove-issue-stale-when-updated: true  # 如果 issue 有更新，移除 stale 标签
-          days-before-pr-stale: 87  # 87 天不活跃后标记为 stale（90 天关闭前 3 天）
-          days-before-pr-close: 90  # 90 天不活跃后关闭
+          days-before-pr-stale: 180  
+          days-before-pr-close: 3  
           exempt-pr-labels: "no stale"  # 带有 "no stale" 标签的 PRs 不会被标记
           stale-pr-label: "stale"  # 标记 stale 时添加的标签
-          stale-pr-message: "This PR is stale because it has been open for 87 days with no activity. It will be closed in 3 days if no further activity occurs. If you wish not to mark it as stale, please leave a comment in this PR."
-          close-pr-message: "This PR was closed because it has been inactive for 90 days since being marked as stale."
+          stale-pr-message: "This PR is stale because it has been open for 180 days with no activity. It will be closed in 3 days if no further activity occurs. If you wish not to mark it as stale, please leave a comment in this PR."
+          close-pr-message: "This PR was closed because it has been inactive for 3 days since being marked as stale."
           remove-pr-stale-when-updated: true  # 如果 PR 有更新，移除 stale 标签

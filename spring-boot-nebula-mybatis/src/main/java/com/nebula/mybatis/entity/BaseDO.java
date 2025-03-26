@@ -17,6 +17,9 @@
  
 package com.nebula.mybatis.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Data;
 
@@ -26,14 +29,15 @@ import lombok.Data;
  * @description:
  */
 @Data
-public class BaseDO {
+public class BaseDO implements Serializable {
     
+    @TableId(type = IdType.AUTO)
     private Long id;
     
     /**
      * 创建时间
      */
-    private LocalDateTime addTime;
+    private LocalDateTime createTime;
     /**
      * 更新时间
      */

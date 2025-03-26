@@ -46,8 +46,7 @@ public class MybatisPlusConfig {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         factoryBean.setMapperLocations(resolver.getResources("classpath:/mybatis/**/*.xml"));
         factoryBean.setTypeHandlers(new ArrayTypeHandler());
-        // 实体类别名 别名冲突暂时不使用别名 WarehouseLocationDO
-        factoryBean.setTypeAliasesPackage("com.nebula.mybatis.sample.entity");
+        factoryBean.setTypeAliasesPackage("com.nebula.mybatis.sample.dao.entity");
         MybatisConfiguration configuration = new MybatisConfiguration();
         // 开启下划线转驼峰
         configuration.setMapUnderscoreToCamelCase(true);
