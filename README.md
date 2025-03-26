@@ -127,6 +127,19 @@ public class StudentDTO extends NebulaPageQuery {
 #### 统一异常处理
 `spring-boot-nebula-web`对常见的异常进行了统一封装处理 参考[NebulaRestExceptionHandler.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Ferror%2FNebulaRestExceptionHandler.java)
 
+异常报警，默认支持飞书异常告警,如果需要开启，配置
+```yaml
+nebula:
+  web:
+    monitor-open: true
+    monitor-type: feishu
+    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxx
+```
+
+如果需要实现自己的报警通知，可以实现`NebulaErrorMonitor`接口
+
+
+
 #### 时间戳自动转`LocalDateTime`注解
 @GetTimestamp
 
