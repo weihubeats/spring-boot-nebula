@@ -18,7 +18,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
 </dependency>
 ```
 2. 编写一个启动类
@@ -66,6 +66,7 @@
 6. 提供开箱即用的分布式锁
 7. 提供开箱即用的`mybatis-plus`模块
 8. 提供开箱即用的`ddd`聚合根模块
+9. 自动拦截所有未统一异常进行webhook报警
 
 
 ## demo
@@ -160,13 +161,17 @@ GET http://localhost:8088/actuator/health
 
 # 依赖
 
+- version: 0.0.3
+
+
 - web
+- 
 ```xml
 
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>0.0.2</version>
+    <version>${version}</version>
 </dependency>
 ```
 
@@ -175,7 +180,8 @@ GET http://localhost:8088/actuator/health
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-distribute-lock</artifactId>
-    <version>0.0.2</version>
+    <version>${version}</version>
+
 </dependency>
 ```
 
@@ -184,7 +190,7 @@ GET http://localhost:8088/actuator/health
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-aggregate</artifactId>
-    <version>0.0.2</version>
+    <version>${version}</version>
 </dependency>
 ```
 
@@ -193,7 +199,7 @@ GET http://localhost:8088/actuator/health
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-mybatis-plus</artifactId>
-    <version>0.0.2</version>
+    <version>${version}</version>
 </dependency>
 ```
 
@@ -206,6 +212,7 @@ GET http://localhost:8088/actuator/health
 - [spring-boot-nebula-web-common](spring-boot-nebula-web-common) web模块基础工具类
 - [spring-boot-nebula-distribute-lock](spring-boot-nebula-distribute-lock) 分布式锁
 - [spring-boot-nebula-mybatis](spring-boot-nebula-mybatis) mybatis的一些封装，比如提供基础的`BaseDO`，一些常用的类型处理器，比如数组
+- [spring-boot-nebula-alert](spring-boot-nebula-alert) 报警模块
 
 ## [spring-boot-nebula-web-common](spring-boot-nebula-web-common)
 - 提供[SpringBeanUtils.java](spring-boot-nebula-web-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fcommon%2Futils%2FSpringBeanUtils.java)获取spring bean
