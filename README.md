@@ -1,5 +1,6 @@
 # spring-boot-nebula
 
+
 开箱即用的web模块
 
 不使用`spring-boot-nebula-web`搭建项目
@@ -232,3 +233,6 @@ GET http://localhost:8088/actuator/health
 - 提供[NebulaSysWebUtils.java](spring-boot-nebula-web-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fcommon%2Futils%2FNebulaSysWebUtils.java) 获取spring 环境信息
 - 提供[ExpressionUtil.java](spring-boot-nebula-web-common%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fcommon%2Futils%2FExpressionUtil.java) 解析el表达式
 
+# deepwiki
+
+[deepwiki-spring-boot-nebula](https://deepwiki.com/weihubeats/spring-boot-nebula)
