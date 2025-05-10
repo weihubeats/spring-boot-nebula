@@ -36,12 +36,12 @@ public class JacksonTimeModule extends SimpleModule {
     
     public JacksonTimeModule() {
         super(PackageVersion.VERSION);
-        this.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(TimeUtil.DATETIME_FORMAT));
-        this.addDeserializer(LocalDate.class, new LocalDateDeserializer(TimeUtil.DATE_FORMAT));
-        this.addDeserializer(LocalTime.class, new LocalTimeDeserializer(TimeUtil.TIME_FORMAT));
-        this.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(TimeUtil.DATETIME_FORMAT));
-        this.addSerializer(LocalDate.class, new LocalDateSerializer(TimeUtil.DATE_FORMAT));
-        this.addSerializer(LocalTime.class, new LocalTimeSerializer(TimeUtil.TIME_FORMAT));
+        this.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(TimeUtil.DATETIME_FORMATTER));
+        this.addDeserializer(LocalDate.class, new LocalDateDeserializer(TimeUtil.DATE_FORMATTER));
+        this.addDeserializer(LocalTime.class, new LocalTimeDeserializer(TimeUtil.TIME_FORMATTER));
+        this.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(TimeUtil.DATETIME_FORMATTER));
+        this.addSerializer(LocalDate.class, new LocalDateSerializer(TimeUtil.DATE_FORMATTER));
+        this.addSerializer(LocalTime.class, new LocalTimeSerializer(TimeUtil.TIME_FORMATTER));
     }
     
 }
