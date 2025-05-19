@@ -86,14 +86,29 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
     public Object[] getNullableResult(CallableStatement callableStatement, int i) throws SQLException {
         return getArray(callableStatement.getArray(i));
     }
-    
+
     private Object[] getArray(Array array) {
         if (array == null) {
             return null;
         }
         try {
-            return (Object[]) array.getArray();
+            Object[] objArray = (Object[]) array.getArray();
+
+            // 检查并转换为正确类型的数组
+            if (objArray != null && objArray.length > 0) {
+                // 根据第一个元素的类型决定返回什么类型的数组
+                if (objArray[0] instanceof String) {
+                    String[] strArray = new String[objArray.length];
+                    for (int i = 0; i < objArray.length; i++) {
+                        strArray[i] = (String) objArray[i];
+                    }
+                    return strArray;
+                }
+                // 处理其他类型...类似代码
+            }
+            return objArray;
         } catch (Exception e) {
+            //log.error("Error when converting SQL array to Java array", e);
         }
         return null;
     }

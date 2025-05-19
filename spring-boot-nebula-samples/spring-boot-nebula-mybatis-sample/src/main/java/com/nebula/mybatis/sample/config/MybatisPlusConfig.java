@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.nebula.mybatis.entity.NebulaMetaObjectHandler;
 import com.nebula.mybatis.handler.ArrayTypeHandler;
+import com.nebula.mybatis.handler.ListTypeHandler;
 import javax.sql.DataSource;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
@@ -45,7 +46,7 @@ public class MybatisPlusConfig {
         factoryBean.setDataSource(dataSource);
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         factoryBean.setMapperLocations(resolver.getResources("classpath:/mybatis/**/*.xml"));
-        factoryBean.setTypeHandlers(new ArrayTypeHandler());
+        factoryBean.setTypeHandlers(new ArrayTypeHandler(), new ListTypeHandler());
         factoryBean.setTypeAliasesPackage("com.nebula.mybatis.sample.dao.entity");
         MybatisConfiguration configuration = new MybatisConfiguration();
         // 开启下划线转驼峰
@@ -58,5 +59,7 @@ public class MybatisPlusConfig {
         factoryBean.setConfiguration(configuration);
         return factoryBean;
     }
+
+
     
 }
