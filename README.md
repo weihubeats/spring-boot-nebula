@@ -93,6 +93,20 @@
 
 现在不需要将自己的返回对象包裹起来,只需要添加注解`@NebulaResponseBody`
 
+对于RPC调用的对象，比如Feign使用`[NebulaResponse.java](spring-boot-nebula-web%2Fsrc%2Fmain%2Fjava%2Fcom%2Fnebula%2Fweb%2Fboot%2Fapi%2FNebulaResponse.java)`进行包装
+
+```java
+@FeignClient(name = "${feign.client.service.xiaozou}", url = "${feign.client.xiaozou.url}", configuration = XiaoZouClientConfiguration.class)
+public interface ErpClient {
+
+    @GetMapping("/v1/xiaozou")
+    NebulaResponse<UserLibraryVO> getXiaoZous(@SpringQueryMap XiaoZouDTO dto);
+    
+}
+```
+
+数据获取不要使用`getData()` 使用`data()`方法，会对RPC请求状态码进行判断，如果不为200则会抛出业务异常
+
 
 #### 提供开箱即用的分页对象
 
@@ -236,3 +250,9 @@ GET http://localhost:8088/actuator/health
 # deepwiki
 
 [deepwiki-spring-boot-nebula](https://deepwiki.com/weihubeats/spring-boot-nebula)
+
+## 最佳实践
+
+可以参考 [spring-boot-nebula-samples](spring-boot-nebula-samples)
+
+也可以参考 https://github.com/weihubeats/ddd-example

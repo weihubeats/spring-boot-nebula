@@ -14,21 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.distribute.lock.aop;
 
-import com.nebula.base.utils.DataUtils;
 import com.nebula.distribute.lock.annotation.NebulaDistributedLock;
 import com.nebula.distribute.lock.core.DistributedLock;
 import com.nebula.distribute.lock.core.NebulaDistributedLockTemplate;
+import com.nebula.distribute.lock.exception.DistributedLockException;
 import com.nebula.web.common.utils.ExpressionUtil;
 import java.lang.reflect.Method;
-import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.util.StringUtils;
 
 /**
  * @author : wh
@@ -37,96 +38,123 @@ import org.aopalliance.intercept.MethodInvocation;
  */
 @Slf4j
 public class NebulaDistributedLockAnnotationInterceptor implements MethodInterceptor {
-    
-    private final NebulaDistributedLockTemplate lock;
-    
-    public NebulaDistributedLockAnnotationInterceptor(NebulaDistributedLockTemplate lock) {
-        if (DataUtils.isEmpty(lock)) {
-            throw new RuntimeException("DistributedLockTemplate is null");
+
+    private final NebulaDistributedLockTemplate lockTemplate;
+
+    private final ConcurrentHashMap<Method, String> lockNameCache = new ConcurrentHashMap<>();
+
+    public NebulaDistributedLockAnnotationInterceptor(NebulaDistributedLockTemplate lockTemplate) {
+        if (lockTemplate == null) {
+            throw new IllegalArgumentException("DistributedLockTemplate cannot be null");
         }
-        this.lock = lock;
+        this.lockTemplate = lockTemplate;
     }
-    
+
     @Nullable
     @Override
-    public Object invoke(@Nonnull MethodInvocation methodInvocation) {
+    public Object invoke(@Nonnull MethodInvocation methodInvocation) throws Throwable {
+
         Method method = methodInvocation.getMethod();
         NebulaDistributedLock annotation = method.getAnnotation(NebulaDistributedLock.class);
+        if (annotation == null) {
+            return methodInvocation.proceed();
+        }
+
         Object[] args = methodInvocation.getArguments();
         String lockName = getLockName(annotation, args, method);
         if (log.isDebugEnabled()) {
-            log.debug("lockName: {}", lockName);
+            log.debug("Using distributed lock: {}", lockName);
         }
         boolean fairLock = annotation.fairLock();
-        if (annotation.tryLock()) {
-            return lock.tryLock(new DistributedLock<>() {
-                
-                @Override
-                public Object process() {
-                    return proceed(methodInvocation);
-                }
-                
-                @Override
-                public String lockName() {
-                    return lockName;
-                }
-            }, annotation.tryWaitTime(), annotation.outTime(), annotation.timeUnit(), fairLock);
-        } else {
-            return lock.lock(new DistributedLock<>() {
-                
-                @Override
-                public Object process() {
-                    return proceed(methodInvocation);
-                }
-                
-                @Override
-                public String lockName() {
-                    return lockName;
-                }
-            }, annotation.outTime(), annotation.timeUnit(), fairLock);
-        }
-    }
-    
-    public Object proceed(MethodInvocation methodInvocation) {
         try {
-            return methodInvocation.proceed();
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+            if (annotation.tryLock()) {
+                return lockTemplate.tryLock(
+                    createDistributedLock(methodInvocation, lockName),
+                    annotation.tryWaitTime(),
+                    annotation.outTime(),
+                    annotation.timeUnit(),
+                    fairLock);
+            } else {
+                return lockTemplate.lock(
+                    createDistributedLock(methodInvocation, lockName),
+                    annotation.outTime(),
+                    annotation.timeUnit(),
+                    fairLock);
+            }
+        } catch (DistributedLockException e) {
+            log.error("Failed to acquire distributed lock: {}", lockName, e);
+            throw e;
         }
-        
+
     }
-    
+
     /**
-     * 获取锁名字，优先获取注解中锁名
-     *
-     * @param nebulaDistributedLock
-     * @param args
-     * @param method
-     * @return
+     * 创建分布式锁对象
      */
-    private String getLockName(NebulaDistributedLock nebulaDistributedLock, Object[] args, Method method) {
-        if (DataUtils.isNotEmpty(nebulaDistributedLock.lockName())) {
-            return nebulaDistributedLock.lockName();
+    private DistributedLock<Object> createDistributedLock(MethodInvocation methodInvocation, String lockName) {
+        return new DistributedLock<>() {
+            @Override
+            public Object process() {
+                try {
+                    return methodInvocation.proceed();
+                } catch (Throwable e) {
+                    if (e instanceof RuntimeException) {
+                        throw (RuntimeException) e;
+                    }
+                    throw new RuntimeException("Error executing locked method", e);
+                }
+            }
+
+            @Override
+            public String lockName() {
+                return lockName;
+            }
+        };
+
+    }
+
+    /**
+     * 获取锁名称
+     */
+    private String getLockName(NebulaDistributedLock annotation, Object[] args, Method method) {
+
+        // 如果直接指定了锁名，直接使用
+        if (StringUtils.hasText(annotation.lockName())) {
+            return annotation.lockName();
         }
-        String lockNamePre = nebulaDistributedLock.lockNamePre();
-        String lockNamePost = nebulaDistributedLock.lockNamePost();
-        String separator = nebulaDistributedLock.separator();
-        
-        if (ExpressionUtil.isEl(lockNamePre)) {
-            lockNamePre = (String) ExpressionUtil.parse(lockNamePre, method, args);
-        }
+
+        // 获取或解析锁名前缀
+        String lockNamePre = lockNameCache.computeIfAbsent(method, m -> {
+            String pre = annotation.lockNamePre();
+            if (ExpressionUtil.isEl(pre)) {
+                pre = parseExpression(pre, method, args);
+            }
+            return pre;
+        });
+        // 解析锁名后缀
+        String lockNamePost = annotation.lockNamePost();
         if (ExpressionUtil.isEl(lockNamePost)) {
-            lockNamePost = Objects.requireNonNull(ExpressionUtil.parse(lockNamePost, method, args)).toString();
+            lockNamePost = parseExpression(lockNamePost, method, args);
         }
-        
-        StringBuilder sb = new StringBuilder();
-        if (DataUtils.isNotEmpty(lockNamePre)) {
+
+        // 构建完整锁名
+        StringBuilder sb = new StringBuilder(64);
+        if (StringUtils.hasText(lockNamePre)) {
             sb.append(lockNamePre);
         }
-        sb.append(separator);
-        if (DataUtils.isNotEmpty(lockNamePost)) {
+
+        if (StringUtils.hasText(lockNamePost)) {
+            if (sb.length() > 0) {
+                sb.append(annotation.separator());
+            }
             sb.append(lockNamePost);
         }
         return sb.toString();
+
+    }
+
+    private String parseExpression(String expression, Method method, Object[] args) {
+        Object result = ExpressionUtil.parse(expression, method, args);
+        return result != null ? result.toString() : "";
     }
 }
