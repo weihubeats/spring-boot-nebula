@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.distribute.lock.exception;
 
 /**
@@ -23,8 +23,12 @@ package com.nebula.distribute.lock.exception;
  * @description:
  */
 public class DistributedLockException extends RuntimeException {
-    
+
     public DistributedLockException(String message) {
         super(message);
+    }
+
+    public DistributedLockException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
