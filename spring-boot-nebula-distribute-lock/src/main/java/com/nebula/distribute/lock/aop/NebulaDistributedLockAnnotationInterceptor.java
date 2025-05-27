@@ -124,13 +124,14 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
         }
 
         // 获取或解析锁名前缀
-        String lockNamePre = lockNameCache.computeIfAbsent(method, m -> {
-            String pre = annotation.lockNamePre();
-            if (ExpressionUtil.isEl(pre)) {
-                pre = parseExpression(pre, method, args);
-            }
-            return pre;
-        });
+        String lockNamePre = annotation.lockNamePre();
+
+        if (ExpressionUtil.isEl(lockNamePre)) {
+            lockNamePre = parseExpression(lockNamePre, method, args);
+        } else {
+            // Only cache non-EL expressions
+            lockNamePre = lockNameCache.computeIfAbsent(method, m -> annotation.lockNamePre());
+        }
         // 解析锁名后缀
         String lockNamePost = annotation.lockNamePost();
         if (ExpressionUtil.isEl(lockNamePost)) {
