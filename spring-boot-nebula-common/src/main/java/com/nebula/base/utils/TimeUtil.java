@@ -37,9 +37,9 @@ public class TimeUtil {
     public static final String YYYY_MM_DD = "yyyy-MM-dd";
     
     public static final String HH_MM_SS = "HH:mm:ss";
-
+    
     public static final String YYYYMMDD = "yyyyMMdd";
-
+    
     public static final String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
     
     public static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern(YYYY_MM_DD_HH_MM_SS);
@@ -47,11 +47,11 @@ public class TimeUtil {
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(YYYY_MM_DD);
     
     public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern(HH_MM_SS);
-
+    
     public static final DateTimeFormatter COMPACT_DATE_FORMATTER = DateTimeFormatter.ofPattern(YYYYMMDD);
-
+    
     public static final DateTimeFormatter COMPACT_DATETIME_FORMATTER = DateTimeFormatter.ofPattern(YYYYMMDDHHMMSS);
-
+    
     private TimeUtil() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
@@ -71,7 +71,7 @@ public class TimeUtil {
         Instant instant = Instant.ofEpochMilli(epochMilli);
         return LocalDateTime.ofInstant(instant, zoneOffset);
     }
-
+    
     /**
      * Converts Unix time (milliseconds since epoch) to {@link LocalDateTime} using a specific ZoneId.
      * This is generally preferred over using ZoneOffset as ZoneId handles daylight saving rules.
@@ -88,7 +88,7 @@ public class TimeUtil {
         Instant instant = Instant.ofEpochMilli(epochMilli);
         return LocalDateTime.ofInstant(instant, zoneId);
     }
-
+    
     /**
      * Converts Unix time (milliseconds since epoch) to {@link LocalDateTime} using the system default time zone.
      * Note: Usage of system default time zone can lead to inconsistencies if the application
@@ -101,7 +101,7 @@ public class TimeUtil {
     public static LocalDateTime toLocalDateTime(long epochMilli) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), ZoneId.systemDefault());
     }
-
+    
     /**
      * Converts Unix time (milliseconds since epoch, as a {@link Long} object) to {@link LocalDateTime}
      * using the system default time zone.
@@ -117,7 +117,7 @@ public class TimeUtil {
         }
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), ZoneId.systemDefault());
     }
-
+    
     /**
      * Converts Unix time (milliseconds since epoch, as a {@link Long} object) to {@link LocalDateTime}
      * using a specific ZoneId.
@@ -137,7 +137,7 @@ public class TimeUtil {
         }
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), zoneId);
     }
-
+    
     /**
      * Converts a {@link LocalDateTime} to Unix time (milliseconds since epoch) using the system default time zone.
      * Note: System default time zone can vary. Consider {@link #toEpochMilli(LocalDateTime, ZoneId)}.
@@ -152,7 +152,7 @@ public class TimeUtil {
         }
         return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
-
+    
     /**
      * Converts a {@link LocalDateTime} to Unix time (milliseconds since epoch) using a specific {@link ZoneId}.
      *
@@ -170,7 +170,7 @@ public class TimeUtil {
         }
         return localDateTime.atZone(zoneId).toInstant().toEpochMilli();
     }
-
+    
     /**
      * Converts a {@link LocalDateTime} to Unix time (milliseconds since epoch) using a specific {@link ZoneOffset}.
      *
@@ -188,7 +188,7 @@ public class TimeUtil {
         }
         return localDateTime.toInstant(zoneOffset).toEpochMilli();
     }
-
+    
     /**
      * Gets the current {@link LocalDateTime} in the system default time zone.
      *
@@ -197,7 +197,7 @@ public class TimeUtil {
     public static LocalDateTime getCurrentLocalDateTime() {
         return LocalDateTime.now(ZoneId.systemDefault());
     }
-
+    
     /**
      * Gets the current {@link LocalDateTime} in the specified {@link ZoneId}.
      *
@@ -211,7 +211,7 @@ public class TimeUtil {
         }
         return LocalDateTime.now(zoneId);
     }
-
+    
     /**
      * Gets the current {@link LocalDate} in the system default time zone.
      *
@@ -220,7 +220,7 @@ public class TimeUtil {
     public static LocalDate getCurrentLocalDate() {
         return LocalDate.now(ZoneId.systemDefault());
     }
-
+    
     /**
      * Gets the current {@link LocalDate} in the specified {@link ZoneId}.
      *
@@ -234,7 +234,7 @@ public class TimeUtil {
         }
         return LocalDate.now(zoneId);
     }
-
+    
     /**
      * Gets the current time as epoch milliseconds (milliseconds since 1970-01-01T00:00:00Z).
      *
@@ -243,9 +243,9 @@ public class TimeUtil {
     public static long getCurrentEpochMilli() {
         return Instant.now().toEpochMilli();
     }
-
+    
     // --- Formatting Methods ---
-
+    
     /**
      * Formats a {@link LocalDateTime} to a string using the default {@link #DATETIME_FORMATTER} (yyyy-MM-dd HH:mm:ss).
      *
@@ -255,7 +255,7 @@ public class TimeUtil {
     public static String formatLocalDateTime(LocalDateTime localDateTime) {
         return localDateTime == null ? null : localDateTime.format(DATETIME_FORMATTER);
     }
-
+    
     /**
      * Formats a {@link LocalDateTime} to a string using the specified {@link DateTimeFormatter}.
      *
@@ -273,7 +273,7 @@ public class TimeUtil {
         }
         return localDateTime.format(formatter);
     }
-
+    
     /**
      * Formats a {@link LocalDateTime} to a string using the specified pattern.
      *
@@ -292,7 +292,7 @@ public class TimeUtil {
         }
         return localDateTime.format(DateTimeFormatter.ofPattern(pattern));
     }
-
+    
     /**
      * Formats a {@link LocalDate} to a string using the default {@link #DATE_FORMATTER} (yyyy-MM-dd).
      *
@@ -302,7 +302,7 @@ public class TimeUtil {
     public static String formatLocalDate(LocalDate localDate) {
         return localDate == null ? null : localDate.format(DATE_FORMATTER);
     }
-
+    
     /**
      * Formats the current {@link LocalDateTime} (system default zone) to a string
      * using the default {@link #DATETIME_FORMATTER}.
@@ -312,7 +312,7 @@ public class TimeUtil {
     public static String formatCurrentDateTime() {
         return getCurrentLocalDateTime().format(DATETIME_FORMATTER);
     }
-
+    
     /**
      * Formats the current {@link LocalDateTime} (system default zone) to a string
      * using the specified pattern.
@@ -327,9 +327,9 @@ public class TimeUtil {
         }
         return getCurrentLocalDateTime().format(DateTimeFormatter.ofPattern(pattern));
     }
-
+    
     // --- Start/End of Day Methods ---
-
+    
     /**
      * Gets the start of the day (00:00:00.000) for the given {@link LocalDateTime}.
      *
@@ -343,7 +343,7 @@ public class TimeUtil {
         }
         return dateTime.toLocalDate().atStartOfDay(); // or dateTime.with(LocalTime.MIN);
     }
-
+    
     /**
      * Gets the start of the day (00:00:00.000) for the given {@link LocalDate}.
      *
@@ -357,7 +357,7 @@ public class TimeUtil {
         }
         return date.atStartOfDay();
     }
-
+    
     /**
      * Gets the end of the day (23:59:59.999999999) for the given {@link LocalDateTime}.
      *
@@ -371,7 +371,7 @@ public class TimeUtil {
         }
         return dateTime.with(LocalTime.MAX);
     }
-
+    
     /**
      * Gets the end of the day (23:59:59.999999999) for the given {@link LocalDate}.
      *
@@ -385,7 +385,7 @@ public class TimeUtil {
         }
         return date.atTime(LocalTime.MAX);
     }
-
+    
     /**
      * Gets the start of today (00:00:00.000) in the system default time zone.
      *
@@ -394,7 +394,7 @@ public class TimeUtil {
     public static LocalDateTime getStartOfToday() {
         return getCurrentLocalDate().atStartOfDay();
     }
-
+    
     /**
      * Gets the end of today (23:59:59.999999999) in the system default time zone.
      *
@@ -403,5 +403,5 @@ public class TimeUtil {
     public static LocalDateTime getEndOfToday() {
         return getCurrentLocalDate().atTime(LocalTime.MAX);
     }
-
+    
 }

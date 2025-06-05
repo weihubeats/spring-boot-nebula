@@ -39,14 +39,14 @@ public class FeiShuRoot {
     
     private final NebulaSysWebUtils nebulaSysWebUtils;
     
-    private  final ExecutorService threadPoolTaskExecutor;
-
+    private final ExecutorService threadPoolTaskExecutor;
+    
     public FeiShuRoot(NebulaSysWebUtils nebulaSysWebUtils) {
         this.nebulaSysWebUtils = nebulaSysWebUtils;
-        this.threadPoolTaskExecutor = new ThreadPoolExecutor(3, 5, 60, TimeUnit.SECONDS, 
-            new LinkedBlockingQueue<>(100), new ThreadFactoryImpl("feishu-"));
+        this.threadPoolTaskExecutor = new ThreadPoolExecutor(3, 5, 60, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(100), new ThreadFactoryImpl("feishu-"));
     }
-
+    
     private final static String FEISHU_CAR = "{\n" +
             "    \"msg_type\": \"interactive\",\n" +
             "    \"card\":%s\n" +

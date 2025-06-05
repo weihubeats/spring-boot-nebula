@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package com.nebula.distribute.lock.core;
 
 import com.nebula.distribute.lock.exception.DistributedLockException;
@@ -33,16 +33,16 @@ import org.redisson.api.RedissonClient;
 @Slf4j
 @RequiredArgsConstructor
 public class RedissonDistributedLockTemplate implements NebulaDistributedLockTemplate {
-
+    
     private final RedissonClient redisson;
-
+    
     private final ConcurrentHashMap<String, RLock> lockCache = new ConcurrentHashMap<>();
-
+    
     @Override
     public <T> T lock(DistributedLock<T> distributedLock, boolean fairLock) {
         return lock(distributedLock, DEFAULT_OUT_TIME, DEFAULT_TIME_UNIT, fairLock);
     }
-
+    
     @Override
     public <T> T lock(DistributedLock<T> distributedLock, long outTime, TimeUnit timeUnit, boolean fairLock) {
         String lockName = distributedLock.lockName();
@@ -62,20 +62,20 @@ public class RedissonDistributedLockTemplate implements NebulaDistributedLockTem
             }
         }
     }
-
+    
     @Override
     public <T> T tryLock(DistributedLock<T> distributedLock, boolean fairLock) {
         return tryLock(distributedLock, DEFAULT_TRY_OUT_TIME, DEFAULT_OUT_TIME, DEFAULT_TIME_UNIT, fairLock);
     }
-
+    
     @Override
     public <T> T tryLock(DistributedLock<T> distributedLock, long tryOutTime, long outTime,
-        TimeUnit timeUnit, boolean fairLock) {
+                         TimeUnit timeUnit, boolean fairLock) {
         String lockName = distributedLock.lockName();
         RLock lock = getLock(lockName, fairLock);
         try {
             log.debug("Trying to acquire lock: {} (wait: {}s, timeout: {}s)",
-                lockName, tryOutTime, outTime);
+                    lockName, tryOutTime, outTime);
             if (lock.tryLock(tryOutTime, outTime, timeUnit)) {
                 log.debug("Lock acquired: {}", lockName);
                 try {
@@ -93,7 +93,7 @@ public class RedissonDistributedLockTemplate implements NebulaDistributedLockTem
                 log.warn("Failed to acquire lock: {} after {}s", lockName, tryOutTime);
                 throw new DistributedLockException("Failed to acquire lock: " + lockName);
             }
-
+            
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.warn("Lock acquisition interrupted: {}", lockName, e);
@@ -102,16 +102,14 @@ public class RedissonDistributedLockTemplate implements NebulaDistributedLockTem
             log.error("Error while acquiring lock: {}", lockName, e);
             throw new DistributedLockException("Error while acquiring lock: " + lockName, e);
         }
-
+        
     }
-
+    
     /**
      * 获取锁对象，使用缓存提高性能
      */
     private RLock getLock(String lockName, boolean fairLock) {
         String cacheKey = (fairLock ? "fair:" : "unfair:") + lockName;
-        return lockCache.computeIfAbsent(cacheKey, k ->
-            fairLock ? redisson.getFairLock(lockName) : redisson.getLock(lockName)
-        );
+        return lockCache.computeIfAbsent(cacheKey, k -> fairLock ? redisson.getFairLock(lockName) : redisson.getLock(lockName));
     }
 }

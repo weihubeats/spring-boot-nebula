@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package com.nebula.mybatis.handler;
 
 import java.math.BigDecimal;
@@ -41,26 +41,26 @@ import org.apache.ibatis.type.TypeException;
 @MappedTypes({Integer[].class, String[].class, Boolean[].class, Double[].class, Long[].class, BigDecimal[].class})
 @Slf4j
 public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
-
+    
     private static final String TYPE_NAME_VARCHAR = "varchar";
     private static final String TYPE_NAME_INTEGER = "integer";
     private static final String TYPE_NAME_BOOLEAN = "boolean";
     private static final String TYPE_NAME_NUMERIC = "numeric";
     private static final String TYPE_NAME_BIGINT = "bigint";
-
+    
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Object[] parameter,
-        JdbcType jdbcType) throws SQLException {
+                                    JdbcType jdbcType) throws SQLException {
         if (parameter == null || parameter.length == 0) {
             ps.setNull(i, java.sql.Types.ARRAY);
             return;
         }
-
+        
         String typeName = determineTypeName(parameter);
         if (typeName == null) {
             throw new TypeException("ArrayTypeHandler parameter typeName error, unsupported type: " + parameter.getClass().getName());
         }
-
+        
         try {
             Connection conn = ps.getConnection();
             Array array = conn.createArrayOf(typeName, parameter);
@@ -70,22 +70,22 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
             throw e;
         }
     }
-
+    
     @Override
     public Object[] getNullableResult(ResultSet resultSet, String columnName) throws SQLException {
         return getArray(resultSet.getArray(columnName));
     }
-
+    
     @Override
     public Object[] getNullableResult(ResultSet resultSet, int columnIndex) throws SQLException {
         return getArray(resultSet.getArray(columnIndex));
     }
-
+    
     @Override
     public Object[] getNullableResult(CallableStatement callableStatement, int columnIndex) throws SQLException {
         return getArray(callableStatement.getArray(columnIndex));
     }
-
+    
     /**
      * 确定数组的SQL类型名称
      *
@@ -108,7 +108,7 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         }
         return null;
     }
-
+    
     /**
      * 将SQL Array转换为Java数组
      *
@@ -119,20 +119,20 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         if (array == null) {
             return null;
         }
-
+        
         try {
             Object[] objArray = (Object[]) array.getArray();
             if (objArray == null || objArray.length == 0) {
                 return objArray;
             }
-
+            
             // 根据第一个非null元素的类型确定返回类型
             Class<?> componentType = determineComponentType(objArray);
             if (componentType == null) {
                 // 如果无法确定类型，返回原始数组
                 return objArray;
             }
-
+            
             // 根据元素类型进行转换
             return convertArray(objArray, componentType);
         } catch (SQLException e) {
@@ -146,7 +146,7 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
             }
         }
     }
-
+    
     /**
      * 确定数组元素的类型
      *
@@ -161,7 +161,7 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         }
         return null;
     }
-
+    
     /**
      * 将数组转换为指定类型
      *
@@ -183,11 +183,11 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         } else if (BigDecimal.class.equals(componentType)) {
             return convertToBigDecimalArray(objArray);
         }
-
+        
         // 默认返回原数组
         return objArray;
     }
-
+    
     private String[] convertToStringArray(Object[] objArray) {
         String[] result = new String[objArray.length];
         for (int i = 0; i < objArray.length; i++) {
@@ -195,7 +195,7 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         }
         return result;
     }
-
+    
     private Integer[] convertToIntegerArray(Object[] objArray) {
         Integer[] result = new Integer[objArray.length];
         for (int i = 0; i < objArray.length; i++) {
@@ -218,7 +218,7 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         }
         return result;
     }
-
+    
     private Boolean[] convertToBooleanArray(Object[] objArray) {
         Boolean[] result = new Boolean[objArray.length];
         for (int i = 0; i < objArray.length; i++) {
@@ -234,7 +234,7 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         }
         return result;
     }
-
+    
     private Double[] convertToDoubleArray(Object[] objArray) {
         Double[] result = new Double[objArray.length];
         for (int i = 0; i < objArray.length; i++) {
@@ -257,7 +257,7 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         }
         return result;
     }
-
+    
     private Long[] convertToLongArray(Object[] objArray) {
         Long[] result = new Long[objArray.length];
         for (int i = 0; i < objArray.length; i++) {
@@ -280,7 +280,7 @@ public class ArrayTypeHandler extends BaseTypeHandler<Object[]> {
         }
         return result;
     }
-
+    
     private BigDecimal[] convertToBigDecimalArray(Object[] objArray) {
         BigDecimal[] result = new BigDecimal[objArray.length];
         for (int i = 0; i < objArray.length; i++) {

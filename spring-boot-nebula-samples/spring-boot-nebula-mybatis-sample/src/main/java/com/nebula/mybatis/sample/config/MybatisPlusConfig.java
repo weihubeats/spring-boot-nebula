@@ -59,7 +59,5 @@ public class MybatisPlusConfig {
         factoryBean.setConfiguration(configuration);
         return factoryBean;
     }
-
-
     
 }
