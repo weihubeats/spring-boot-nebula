@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.web.sample.controller;
 
 import com.nebula.web.boot.annotation.NebulaResponseBody;
@@ -30,11 +30,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping()
 public class TestController {
-    
+
     @GetMapping("/test")
     @NebulaResponseBody
     public String test() {
         return "小奏";
     }
-    
+
+    @GetMapping("/error")
+    @NebulaResponseBody
+    public String error() {
+        int i = 1 / 0;
+        return "<UNK>";
+    }
+
 }

@@ -148,8 +148,9 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
         if (body.getBytes(StandardCharsets.UTF_8).length > FEISHU_MESSAGE_HASH_MAX_LENGTH) {
             body = body.substring(0, new String(new byte[FEISHU_MESSAGE_HASH_MAX_LENGTH]).length());
         }
-        
-        body = body.substring(1, body.length() - 2);
+        if (DataUtils.isNotEmpty(body)) {
+            body = body.substring(1, body.length() - 2);
+        }
         String jsonString = JsonUtil.toJSONString(request.getParameterMap());
         if (DataUtils.isNotEmpty(jsonString)) {
             jsonString = jsonString.replace("\"", "\\\"");

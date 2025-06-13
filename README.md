@@ -146,12 +146,20 @@ public class StudentDTO extends NebulaPageQuery {
 ```yaml
 nebula:
   web:
+    response-code: 200
     monitor-open: true
-    monitor-type: feishu
-    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxx
+    monitor:
+      type: feishu
+    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxx
+
 ```
 
 如果需要实现自己的报警通知，可以实现`NebulaErrorMonitor`接口
+
+- 效果
+
+![feishu-error.png](doc/images/feishu-error.png)
+
 
 
 
