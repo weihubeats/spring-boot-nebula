@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CompletableFutureUtils {
 
+    // 这样可以更好地控制线程的生命周期、队列和拒绝策略
     private static final ExecutorService DEFAULT_EXECUTOR;
 
     static {
