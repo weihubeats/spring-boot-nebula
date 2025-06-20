@@ -15,8 +15,9 @@
  * limitations under the License.
  */
  
-package com.nebula.base.utils;
+package com.nebula.base.utils.juc;
 
+import com.nebula.base.utils.SystemUtil;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
