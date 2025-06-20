@@ -19,7 +19,7 @@ package com.nebula.alert.feishu;
 
 import com.nebula.base.utils.HttpUtils;
 import com.nebula.base.utils.StringUtils;
-import com.nebula.base.utils.ThreadFactoryImpl;
+import com.nebula.base.utils.juc.ThreadFactoryImpl;
 import com.nebula.web.common.utils.NebulaSysWebUtils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
