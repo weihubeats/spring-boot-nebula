@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: test
+  application:
+    name: excel-test
+
+server:
+  port: 8088

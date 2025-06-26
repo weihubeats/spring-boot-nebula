@@ -16,6 +16,7 @@
         <module>spring-boot-nebula-web-sample</module>
         <module>spring-boot-nebula-distribute-lock-sample</module>
         <module>spring-boot-nebula-mybatis-sample</module>
+        <module>spring-boot-nebula-excel-sample</module>
     </modules>
 
     <properties>

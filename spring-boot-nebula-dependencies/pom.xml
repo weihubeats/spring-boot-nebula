@@ -30,6 +30,7 @@
         <okhttp.version>4.12.0</okhttp.version>
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <vavr.version>0.10.6</vavr.version>
+        <fastexcel.version>1.2.0</fastexcel.version>
 
     </properties>
 
@@ -43,6 +44,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>cn.idev.excel</groupId>
+                <artifactId>fastexcel</artifactId>
+                <version>${fastexcel.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
@@ -88,6 +96,12 @@
             <dependency>
                 <groupId>io.github.weihubeats</groupId>
                 <artifactId>spring-boot-nebula-alert</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.weihubeats</groupId>
+                <artifactId>spring-boot-nebula-excel</artifactId>
                 <version>${revision}</version>
             </dependency>
 

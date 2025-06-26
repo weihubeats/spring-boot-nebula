@@ -58,7 +58,7 @@
 
 不使用`spring-boot-nebula-dependencies`可能存在的问题:
 - a项目使用了 redission 3.14 b项目 使用3.61,然后导致相同代码可能运行结果不一致
-    - 统一使用`spring-boot-nebula-dependencies`作为p'a'r'a'm
+    - 统一使用`spring-boot-nebula-dependencies`作为`param`
       在`boot-common-parent`管理公司的所有依赖，以后应用项目无需手动指定各种依赖版本只需引用依赖即可，统一在`boot-common-parent`管理即可
 2. 提供开箱即用的`web-spring-boot-start`模块，解决web开发需要手动封装工具类的痛点
 3. 提供统一异常处理
@@ -73,14 +73,14 @@
 ## demo
 使用参考 [spring-boot-nebula-samples](spring-boot-nebula-samples)模块
 
-### [spring-boot-nebula-web](spring-boot-nebula-web) 使用
+## [spring-boot-nebula-web](spring-boot-nebula-web) 使用
 
 1. 引入依赖
 ```xml
  <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
@@ -192,36 +192,42 @@ management:
 ```http request
 GET http://localhost:8088/actuator/health
 ```
+## [spring-boot-nebula-distribute-lock](spring-boot-nebula-distribute-lock)
 
+分布式锁组件
 
-
-# 依赖
-
-- version: 0.0.3
-
-
-- web
-- 
-```xml
-
-<dependency>
-    <groupId>io.github.weihubeats</groupId>
-    <artifactId>spring-boot-nebula-web</artifactId>
-    <version>${version}</version>
-</dependency>
-```
-
-- 分布式锁
+1. 引入依赖
 ```xml
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-distribute-lock</artifactId>
     <version>${version}</version>
-
 </dependency>
 ```
 
-- ddd聚合根组件
+2. 在需要加锁的方法添加注解
+
+```java
+    @NebulaDistributedLock(lockNamePre = "order:updateOrder:", lockNamePost = "#dto.orderId")
+    public void updateOrder(OrderDTO dto) {}
+```
+
+## [spring-boot-nebula-excel](spring-boot-nebula-excel)
+
+对easy excel的简单封装，简化Excel导入导出
+
+1. 引入依赖
+
+```xml
+
+<dependency>
+    <groupId>io.github.weihubeats</groupId>
+    <artifactId>spring-boot-nebula-excel</artifactId>
+    <version>${version}</version>
+</dependency>
+```
+
+## ddd聚合根组件
 ```xml
 <dependency>
     <groupId>io.github.weihubeats</groupId>
@@ -230,7 +236,7 @@ GET http://localhost:8088/actuator/health
 </dependency>
 ```
 
-- mybatis-plus
+## mybatis 组件
 ```xml
 <dependency>
     <groupId>io.github.weihubeats</groupId>
