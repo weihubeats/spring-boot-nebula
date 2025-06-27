@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.servlet.http.HttpServletResponse;
@@ -197,7 +198,8 @@ public class ExcelUtils {
     public static <T> List<T> read(MultipartFile file, Class<T> clazz) {
         if (file == null || file.isEmpty()) {
             log.warn("Uploaded excel file is empty.");
-            return null;
+            return Collections.emptyList();
+
         }
         try (InputStream inputStream = file.getInputStream()) {
             return EasyExcel.read(inputStream).head(clazz).sheet().doReadSync();
