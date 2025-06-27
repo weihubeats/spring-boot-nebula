@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  
-package com.nebula.distribute.lock.sample;
+package com.nebula.excel.sample;
 
 import java.util.TimeZone;
 import org.springframework.boot.SpringApplication;
@@ -23,10 +23,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
 @SpringBootApplication
-public class DistributeLockApplication {
+public class ExcelApplication {
     
     public static void main(String[] args) {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
-        SpringApplication.run(DistributeLockApplication.class, args);
+        SpringApplication.run(ExcelApplication.class, args);
     }
 }
