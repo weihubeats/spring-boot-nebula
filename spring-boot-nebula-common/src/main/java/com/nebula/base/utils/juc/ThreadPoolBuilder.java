@@ -14,10 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.base.utils.juc;
 
-import com.nebula.base.utils.SystemUtil;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -32,166 +31,176 @@ import java.util.concurrent.TimeUnit;
  * @description:
  */
 public class ThreadPoolBuilder {
-    
-    private static final RejectedExecutionHandler defaultRejectHandler = new ThreadPoolExecutor.AbortPolicy();
-    
+
     /**
-     * cpu核数
-     */
-    private static final int CPU = SystemUtil.getCPU();
-    
-    /**
-     * create io ThreadPoolExecutor
+     * 获取 CPU 密集型任务的线程池构建器。
+     * 这种线程池的核心线程数通常设置为 CPU 核心数，以减少上下文切换。
      *
-     * @return ThreadPoolExecutor
+     * @return CPUThreadPoolBuilder 实例
      */
-    public static IOThreadPoolBuilder ioThreadPoolBuilder() {
-        return new IOThreadPoolBuilder();
-    }
-    
-    /**
-     * create cpu ThreadPoolExecutor
-     *
-     * @return ThreadPoolExecutor
-     */
-    public static CPUThreadPoolBuilder cpuThreadPoolBuilder() {
+    public static CPUThreadPoolBuilder cpuBoundBuilder() {
         return new CPUThreadPoolBuilder();
     }
-    
+
     /**
-     * IO 类型线程池
+     * 获取 IO 密集型任务的线程池构建器。
+     * 这种线程池的核心线程数会根据预期的 IO 时间和 CPU 计算时间的比率进行调整，
+     * 以便在线程等待 IO 时，CPU 资源可以被其他线程利用。
+     *
+     * @return IOThreadPoolBuilder 实例
      */
-    public static class IOThreadPoolBuilder {
-        
-        private ThreadFactory threadFactory;
-        
-        private RejectedExecutionHandler rejectHandler;
-        
-        private int queueSize = -1;
-        
-        private int maximumPoolSize = CPU;
-        
-        private int keepAliveTime = 120;
-        
-        private boolean daemon = false;
-        
-        private String threadNamePrefix;
-        
-        public int getCorePooSize(int ioTime, int cpuTime) {
-            return CPU + (1 + (ioTime / cpuTime));
-        }
-        
-        public IOThreadPoolBuilder setThreadNamePrefix(String threadNamePrefix) {
-            this.threadNamePrefix = threadNamePrefix;
-            return this;
-        }
-        
-        public IOThreadPoolBuilder setDaemon(boolean daemon) {
-            this.daemon = daemon;
-            return this;
-        }
-        
-        public IOThreadPoolBuilder setRejectHandler(RejectedExecutionHandler rejectHandler) {
-            this.rejectHandler = rejectHandler;
-            return this;
-        }
-        
-        public IOThreadPoolBuilder setQueueSize(int queueSize) {
-            this.queueSize = queueSize;
-            return this;
-        }
-        
-        public IOThreadPoolBuilder setMaximumPoolSize(int maximumPoolSize) {
-            this.maximumPoolSize = maximumPoolSize;
-            return this;
-        }
-        
-        public IOThreadPoolBuilder setKeepAliveTime(int keepAliveTime) {
-            this.keepAliveTime = keepAliveTime;
-            return this;
-        }
-        
-        public ThreadPoolExecutor builder(int ioTime, int cpuTime) {
-            BlockingQueue<Runnable> queue;
-            
-            if (rejectHandler == null) {
-                rejectHandler = defaultRejectHandler;
-            }
-            threadFactory = new ThreadFactoryImpl(this.threadNamePrefix, this.daemon);
-            
-            queue = queueSize < 1 ? new LinkedBlockingQueue<>() : new ArrayBlockingQueue<>(queueSize);
-            
-            return new ThreadPoolExecutor(getCorePooSize(ioTime, cpuTime), maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS, queue, threadFactory, rejectHandler);
-            
-        }
-        
+    public static IOThreadPoolBuilder ioBoundBuilder() {
+        return new IOThreadPoolBuilder();
     }
-    
+
     /**
-     * CPU 类型线程池
+     * @param <T>
      */
-    public static class CPUThreadPoolBuilder {
-        
-        private ThreadFactory threadFactory;
-        
-        private RejectedExecutionHandler rejectHandler;
-        
-        private int queueSize = -1;
-        
-        private int maximumPoolSize = CPU;
-        
-        private int keepAliveTime = 120;
-        
-        private boolean daemon = false;
-        
-        private String threadNamePrefix;
-        
-        public int getCorePooSize() {
-            return CPU;
+    public abstract static class AbstractThreadPoolBuilder<T extends AbstractThreadPoolBuilder<T>> {
+
+        protected static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
+
+        protected static final RejectedExecutionHandler DEFAULT_REJECT_HANDLER = new ThreadPoolExecutor.AbortPolicy();
+
+        protected String threadNamePrefix = "pool-thread";
+
+        protected boolean daemon = false;
+
+        protected RejectedExecutionHandler rejectHandler = DEFAULT_REJECT_HANDLER;
+
+        protected int queueSize = -1; // -1 表示使用无界队列
+
+        protected int maximumPoolSize = CPU_COUNT * 2;
+
+        protected long keepAliveTime = 60L;
+
+        protected TimeUnit timeUnit = TimeUnit.SECONDS;
+
+        @SuppressWarnings("unchecked")
+        protected T self() {
+            return (T) this;
         }
-        
-        public CPUThreadPoolBuilder setThreadNamePrefix(String threadNamePrefix) {
-            this.threadNamePrefix = threadNamePrefix;
-            return this;
-        }
-        
-        public CPUThreadPoolBuilder setDaemon(boolean daemon) {
-            this.daemon = daemon;
-            return this;
-        }
-        
-        public CPUThreadPoolBuilder setRejectHandler(RejectedExecutionHandler rejectHandler) {
-            this.rejectHandler = rejectHandler;
-            return this;
-        }
-        
-        public CPUThreadPoolBuilder setQueueSize(int queueSize) {
-            this.queueSize = queueSize;
-            return this;
-        }
-        
-        public CPUThreadPoolBuilder setMaximumPoolSize(int maximumPoolSize) {
-            this.maximumPoolSize = maximumPoolSize;
-            return this;
-        }
-        
-        public CPUThreadPoolBuilder setKeepAliveTime(int keepAliveTime) {
-            this.keepAliveTime = keepAliveTime;
-            return this;
-        }
-        
-        public ThreadPoolExecutor builder() {
-            if (rejectHandler == null) {
-                rejectHandler = defaultRejectHandler;
+
+        public T setThreadNamePrefix(String threadNamePrefix) {
+            if (threadNamePrefix != null && !threadNamePrefix.trim().isEmpty()) {
+                this.threadNamePrefix = threadNamePrefix;
             }
-            threadFactory = new ThreadFactoryImpl(this.threadNamePrefix, this.daemon);
-            
-            BlockingQueue<Runnable> queue = queueSize < 1 ? new LinkedBlockingQueue<>() : new ArrayBlockingQueue<>(queueSize);
-            
-            return new ThreadPoolExecutor(getCorePooSize(), maximumPoolSize, keepAliveTime, TimeUnit.MILLISECONDS, queue, threadFactory, rejectHandler);
-            
+            return self();
         }
-        
+
+        public T setDaemon(boolean daemon) {
+            this.daemon = daemon;
+            return self();
+        }
+
+        public T setRejectHandler(RejectedExecutionHandler rejectHandler) {
+            if (rejectHandler != null) {
+                this.rejectHandler = rejectHandler;
+            }
+            return self();
+        }
+
+        public T setQueueSize(int queueSize) {
+            this.queueSize = queueSize;
+            return self();
+        }
+
+        public T setMaximumPoolSize(int maximumPoolSize) {
+            if (maximumPoolSize > 0) {
+                this.maximumPoolSize = maximumPoolSize;
+            }
+            return self();
+        }
+
+        public T setKeepAliveTime(long keepAliveTime, TimeUnit timeUnit) {
+            if (keepAliveTime > 0) {
+                this.keepAliveTime = keepAliveTime;
+                this.timeUnit = timeUnit != null ? timeUnit : TimeUnit.SECONDS;
+            }
+            return self();
+        }
+
+        /**
+         * 创建并返回配置好的 ThreadPoolExecutor 实例。
+         *
+         * @param corePoolSize 核心线程数
+         * @return ThreadPoolExecutor 实例
+         */
+        protected ThreadPoolExecutor build(int corePoolSize) {
+            // 确保最大池大小不小于核心池大小
+            int maxPoolSize = Math.max(corePoolSize, this.maximumPoolSize);
+
+            ThreadFactory threadFactory = new ThreadFactoryImpl(this.threadNamePrefix, this.daemon);
+
+            BlockingQueue<Runnable> queue = (this.queueSize < 1)
+                ? new LinkedBlockingQueue<>()
+                : new ArrayBlockingQueue<>(this.queueSize);
+
+            return new ThreadPoolExecutor(
+                corePoolSize,
+                maxPoolSize,
+                this.keepAliveTime,
+                this.timeUnit,
+                queue,
+                threadFactory,
+                this.rejectHandler
+            );
+        }
     }
-    
+
+    /**
+     * CPU 密集型线程池构建器。
+     */
+    public static class CPUThreadPoolBuilder extends AbstractThreadPoolBuilder<CPUThreadPoolBuilder> {
+
+        /**
+         * 获取为 CPU 密集型任务优化的核心线程数。
+         * 通常等于 CPU 核心数，以获得最佳性能。
+         *
+         * @return 核心线程数
+         */
+        private int getCorePoolSize() {
+            return CPU_COUNT;
+        }
+
+        /**
+         * 构建最终的 ThreadPoolExecutor 实例。
+         *
+         * @return ThreadPoolExecutor 实例
+         */
+        public ThreadPoolExecutor build() {
+            return build(getCorePoolSize());
+        }
+    }
+
+    /**
+     * IO 密集型线程池构建器。
+     */
+    public static class IOThreadPoolBuilder extends AbstractThreadPoolBuilder<IOThreadPoolBuilder> {
+
+        /**
+         * 根据任务的 IO 等待时间与 CPU 计算时间的比率，计算核心线程数。
+         * 公式：Ncpu * (1 + W/C)
+         *
+         * @param waitTime    任务中 IO 等待时间的估计值
+         * @param computeTime 任务中 CPU 计算时间的估计值
+         * @return 动态计算出的核心线程数
+         */
+        private int getCorePoolSize(int waitTime, int computeTime) {
+            if (computeTime <= 0) {
+                throw new IllegalArgumentException("CPU compute time must be greater than 0.");
+            }
+            return (int) (CPU_COUNT * (1 + (double) waitTime / computeTime));
+        }
+
+        /**
+         * @param waitTime    任务中 IO 等待时间的估计值
+         * @param computeTime 任务中 CPU 计算时间的估计值
+         * @return ThreadPoolExecutor
+         */
+        public ThreadPoolExecutor build(int waitTime, int computeTime) {
+            return build(getCorePoolSize(waitTime, computeTime));
+        }
+    }
+
 }
