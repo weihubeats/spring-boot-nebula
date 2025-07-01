@@ -14,9 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.web.boot.error;
 
+import com.nebula.base.utils.SingletonUtils;
+import io.micrometer.core.instrument.util.IOUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,13 +31,28 @@ import javax.servlet.http.HttpServletResponse;
  * @description:
  */
 public interface NebulaErrorMonitor {
-    
+
     /**
      * 监控异常
+     *
      * @param request
      * @param response
      * @param handler
      * @param ex
      */
     void monitorError(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex);
+
+    default String readUtf8String(String path) {
+        return SingletonUtils.get("NebulaErrorMonitor", () -> {
+            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path)) {
+                if (inputStream == null) {
+                    throw new IOException("Resource not found: " + path);
+                }
+                return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read resource: " + path, e);
+            }
+        });
+
+    }
 }

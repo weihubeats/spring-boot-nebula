@@ -155,7 +155,7 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
         if (DataUtils.isNotEmpty(jsonString)) {
             jsonString = jsonString.replace("\"", "\\\"");
         }
-        feiShuRoot.sendRichTextAsync(nebulaWebProperties.getMonitorUrl(), text, jsonString, body, errorStackMsg, uri);
+        feiShuRoot.sendRichTextAsync(nebulaWebProperties.getMonitorUrl(), readUtf8String("config/feishu.json"), jsonString, body, errorStackMsg, uri);
     }
     
     public static String stackTraceToJsonValue(Throwable ex) {
