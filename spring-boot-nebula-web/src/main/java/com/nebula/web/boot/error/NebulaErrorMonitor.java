@@ -43,7 +43,7 @@ public interface NebulaErrorMonitor {
     void monitorError(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex);
 
     default String readUtf8String(String path) {
-        return SingletonUtils.get("NebulaErrorMonitor", () -> {
+        return SingletonUtils.get("resource:" + path, () -> {
             try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path)) {
                 if (inputStream == null) {
                     throw new IOException("Resource not found: " + path);
