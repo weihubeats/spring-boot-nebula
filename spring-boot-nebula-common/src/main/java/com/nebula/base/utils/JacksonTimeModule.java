@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
- * java 8 时间默认序列化
+ * java 8 时间默认序列化 maybe use link{ @com.fasterxml.jackson.datatype.jsr310.JavaTimeModule }
  */
 public class JacksonTimeModule extends SimpleModule {
     
