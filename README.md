@@ -80,7 +80,7 @@
  <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
 </dependency>
 ```
 
