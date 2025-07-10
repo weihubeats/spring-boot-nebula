@@ -11,6 +11,7 @@
 
     <artifactId>spring-boot-nebula-samples</artifactId>
     <packaging>pom</packaging>
+    <name>spring-boot-nebula-samples</name>
 
     <modules>
         <module>spring-boot-nebula-web-sample</module>
@@ -21,6 +22,7 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <!--        <skipPublishing>true</skipPublishing>-->
     </properties>
 
 </project>

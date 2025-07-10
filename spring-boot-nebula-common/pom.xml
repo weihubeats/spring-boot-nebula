@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>spring-boot-nebula-common</artifactId>
+    <name>spring-boot-nebula-common</name>
 
     <dependencies>
 

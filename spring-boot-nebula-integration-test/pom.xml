@@ -10,9 +10,11 @@
     </parent>
 
     <artifactId>spring-boot-nebula-integration-test</artifactId>
+    <name>spring-boot-nebula-integration-test</name>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <!--        <skipPublishing>true</skipPublishing>-->
     </properties>
 
     <dependencies>

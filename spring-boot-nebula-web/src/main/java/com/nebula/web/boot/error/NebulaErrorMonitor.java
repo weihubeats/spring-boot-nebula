@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package com.nebula.web.boot.error;
 
 import com.nebula.base.utils.SingletonUtils;
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  * @description:
  */
 public interface NebulaErrorMonitor {
-
+    
     /**
      * 监控异常
      *
@@ -41,7 +41,7 @@ public interface NebulaErrorMonitor {
      * @param ex
      */
     void monitorError(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex);
-
+    
     default String readUtf8String(String path) {
         return SingletonUtils.get("resource:" + path, () -> {
             try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path)) {
@@ -53,6 +53,6 @@ public interface NebulaErrorMonitor {
                 throw new RuntimeException("Failed to read resource: " + path, e);
             }
         });
-
+        
     }
 }

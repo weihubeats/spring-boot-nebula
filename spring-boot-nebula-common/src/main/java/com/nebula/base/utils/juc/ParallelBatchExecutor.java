@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.base.utils.juc;
 
 import com.google.common.collect.Lists;
@@ -21,17 +38,17 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class ParallelBatchExecutor {
-
+    
     private static final ExecutorService DEFAULT_EXECUTOR;
-
+    
     static {
         DEFAULT_EXECUTOR = ThreadPoolBuilder
-            .ioBoundBuilder()
-            .setThreadNamePrefix("parallel-batch-")
-            .setMaximumPoolSize(20)
-            .setQueueSize(10000)
-            .build(100, 20);
-
+                .ioBoundBuilder()
+                .setThreadNamePrefix("parallel-batch-")
+                .setMaximumPoolSize(20)
+                .setQueueSize(10000)
+                .build(100, 20);
+        
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             DEFAULT_EXECUTOR.shutdownNow();
             try {
@@ -43,25 +60,25 @@ public class ParallelBatchExecutor {
             }
         }));
     }
-
+    
     private ParallelBatchExecutor() {
     }
-
+    
     public static <T, R> List<R> execute(List<T> sourceData, int batchSize,
-        Function<List<T>, List<R>> batchTask) {
+                                         Function<List<T>, List<R>> batchTask) {
         if (DataUtils.isEmpty(sourceData)) {
             return Collections.emptyList();
         }
         return execute(sourceData, batchSize, batchTask, DEFAULT_EXECUTOR);
-
+        
     }
-
+    
     public static <T, R> List<R> execute(
-        List<T> sourceData,
-        int batchSize,
-        Function<List<T>, List<R>> batchTask,
-        ExecutorService executor) {
-
+                                         List<T> sourceData,
+                                         int batchSize,
+                                         Function<List<T>, List<R>> batchTask,
+                                         ExecutorService executor) {
+        
         if (DataUtils.isEmpty(sourceData)) {
             return Collections.emptyList();
         }
@@ -71,16 +88,16 @@ public class ParallelBatchExecutor {
         if (batchTask == null || executor == null) {
             throw new IllegalArgumentException("Batch task and executor cannot be null.");
         }
-
+        
         List<List<T>> partitions = partition(new ArrayList<>(sourceData), batchSize);
-
+        
         List<CompletableFuture<List<R>>> futures = partitions.stream()
-            .map(partition -> CompletableFuture.supplyAsync(() -> batchTask.apply(partition), executor))
-            .collect(Collectors.toList());
-
+                .map(partition -> CompletableFuture.supplyAsync(() -> batchTask.apply(partition), executor))
+                .collect(Collectors.toList());
+        
         // 3. 等待所有任务完成
         CompletableFuture<Void> allFutures = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-
+        
         try {
             allFutures.join();
         } catch (CompletionException e) {
@@ -91,13 +108,13 @@ public class ParallelBatchExecutor {
             throw new RuntimeException("An unexpected error occurred during parallel execution.", e);
         }
         return futures.stream()
-            .map(CompletableFuture::join) // 此处的 join 不会再抛出受检异常，因为上面已经处理过了
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+                .map(CompletableFuture::join) // 此处的 join 不会再抛出受检异常，因为上面已经处理过了
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
-
+    
     private static <T> List<List<T>> partition(List<T> list, int batchSize) {
         return Lists.partition(list, batchSize);
     }
-
+    
 }

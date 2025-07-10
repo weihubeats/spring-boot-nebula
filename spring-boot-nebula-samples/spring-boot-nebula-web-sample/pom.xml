@@ -10,7 +10,6 @@
 
     <artifactId>spring-boot-nebula-web-sample</artifactId>
     <packaging>jar</packaging>
-
     <name>spring-boot-nebula-web-sample</name>
 
     <properties>

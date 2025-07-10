@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -10,19 +9,13 @@
     </parent>
 
     <artifactId>spring-boot-nebula-excel-sample</artifactId>
+    <name>spring-boot-nebula-excel-sample</name>
 
-
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
-    
     <dependencies>
         <dependency>
             <groupId>io.github.weihubeats</groupId>
             <artifactId>spring-boot-nebula-excel</artifactId>
         </dependency>
     </dependencies>
-
 
 </project>

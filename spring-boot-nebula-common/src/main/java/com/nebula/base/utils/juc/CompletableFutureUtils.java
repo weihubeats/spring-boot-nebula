@@ -82,7 +82,7 @@ public class CompletableFutureUtils {
     public static <T> T supplyAndGet(Supplier<T> supplier, Executor executor) {
         return supplyAndGet(supplier, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT, executor);
     }
-
+    
     public static <T> T supplyAndGet(Supplier<T> supplier, long timeout, TimeUnit unit) {
         return supplyAndGet(supplier, timeout, unit, DEFAULT_EXECUTOR);
     }
@@ -163,12 +163,12 @@ public class CompletableFutureUtils {
                                                                           Supplier<R3> supplier3, Supplier<R4> supplier4) throws CompletableException {
         return allSupplyAndGet(supplier1, supplier2, supplier3, supplier4, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT, DEFAULT_EXECUTOR);
     }
-
+    
     public static <R1, R2, R3, R4, R5> Tuple5<R1, R2, R3, R4, R5> allSupplyAndGet(Supplier<R1> supplier1,
-        Supplier<R2> supplier2,
-        Supplier<R3> supplier3,
-        Supplier<R4> supplier4,
-        Supplier<R5> supplier5) throws CompletableException {
+                                                                                  Supplier<R2> supplier2,
+                                                                                  Supplier<R3> supplier3,
+                                                                                  Supplier<R4> supplier4,
+                                                                                  Supplier<R5> supplier5) throws CompletableException {
         return allSupplyAndGet(supplier1, supplier2, supplier3, supplier4, supplier5, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT, DEFAULT_EXECUTOR);
     }
     
@@ -190,26 +190,26 @@ public class CompletableFutureUtils {
                         .thenCombine(future4, (t3, r4) -> Tuple.of(t3._1(), t3._2(), t3._3(), r4)),
                 timeout, unit);
     }
-
+    
     public static <R1, R2, R3, R4, R5> Tuple5<R1, R2, R3, R4, R5> allSupplyAndGet(Supplier<R1> supplier1,
-        Supplier<R2> supplier2,
-        Supplier<R3> supplier3,
-        Supplier<R4> supplier4,
-        Supplier<R5> supplier5,
-        long timeout, TimeUnit unit,
-        Executor executor) throws CompletableException {
+                                                                                  Supplier<R2> supplier2,
+                                                                                  Supplier<R3> supplier3,
+                                                                                  Supplier<R4> supplier4,
+                                                                                  Supplier<R5> supplier5,
+                                                                                  long timeout, TimeUnit unit,
+                                                                                  Executor executor) throws CompletableException {
         CompletableFuture<R1> future1 = CompletableFuture.supplyAsync(supplier1, executor);
         CompletableFuture<R2> future2 = CompletableFuture.supplyAsync(supplier2, executor);
         CompletableFuture<R3> future3 = CompletableFuture.supplyAsync(supplier3, executor);
         CompletableFuture<R4> future4 = CompletableFuture.supplyAsync(supplier4, executor);
         CompletableFuture<R5> future5 = CompletableFuture.supplyAsync(supplier5, executor);
-
+        
         return getFutureResult(
-            future1.thenCombine(future2, Tuple::of)
-                .thenCombine(future3, (t2, r3) -> Tuple.of(t2._1(), t2._2(), r3))
-                .thenCombine(future4, (t3, r4) -> Tuple.of(t3._1(), t3._2(), t3._3(), r4))
-                .thenCombine(future5, (t4, r5) -> Tuple.of(t4._1(), t4._2(), t4._3(), t4._4(), r5)),
-            timeout, unit);
+                future1.thenCombine(future2, Tuple::of)
+                        .thenCombine(future3, (t2, r3) -> Tuple.of(t2._1(), t2._2(), r3))
+                        .thenCombine(future4, (t3, r4) -> Tuple.of(t3._1(), t3._2(), t3._3(), r4))
+                        .thenCombine(future5, (t4, r5) -> Tuple.of(t4._1(), t4._2(), t4._3(), t4._4(), r5)),
+                timeout, unit);
     }
     
     /**
