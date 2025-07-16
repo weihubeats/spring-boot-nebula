@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>spring-boot-nebula-alert</artifactId>
+    <name>spring-boot-nebula-alert</name>
 
     <dependencies>
         <dependency>

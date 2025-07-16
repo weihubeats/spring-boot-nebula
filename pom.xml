@@ -24,9 +24,13 @@
         <module>spring-boot-nebula-all</module>
         <module>spring-boot-nebula-alert</module>
         <module>spring-boot-nebula-integration-test</module>
+        <module>spring-boot-nebula-excel</module>
+        <module>spring-boot-nebula-alert</module>
+        <module>spring-boot-nebula-integration-test</module>
     </modules>
 
     <properties>
+        <revision>0.0.6</revision>
         <revision>3.0.1</revision>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
@@ -85,6 +89,18 @@
                     <!--					<skipTests>false</skipTests>-->
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.8.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                </configuration>
+            </plugin>
+
+            <!-- Source -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -237,16 +253,5 @@
         <system>Github Issue</system>
         <url>https://github.com/weihubeats/spring-boot-nebula/issues</url>
     </issueManagement>
-
-    <distributionManagement>
-        <repository>
-            <id>sonatype</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <snapshotRepository>
-            <id>sonatype</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
 </project>

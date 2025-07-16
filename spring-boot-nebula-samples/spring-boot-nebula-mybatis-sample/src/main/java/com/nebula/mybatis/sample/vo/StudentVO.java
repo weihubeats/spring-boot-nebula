@@ -33,4 +33,6 @@ public class StudentVO {
     
     private Integer age;
     
+    private String[] tags;
+    
 }

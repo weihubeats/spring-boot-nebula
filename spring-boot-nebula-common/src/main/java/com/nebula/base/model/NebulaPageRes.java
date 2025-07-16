@@ -17,8 +17,11 @@
  
 package com.nebula.base.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -29,33 +32,33 @@ import java.util.stream.Collectors;
  */
 public class NebulaPageRes<T> {
     
-    private long totalCount = 0;
+    private static final int DEFAULT_PAGE_SIZE = 1;
     
-    private int pageSize = 1;
+    private static final int MIN_PAGE_SIZE = 1;
     
-    private Collection<T> list;
+    private static final long EMPTY_TOTAL_COUNT = 0L;
+    
+    private Collection<T> list = Collections.emptyList();
+    
+    private long totalCount = EMPTY_TOTAL_COUNT;
+    
+    private int pageSize = DEFAULT_PAGE_SIZE;
     
     public long getTotalCount() {
         return totalCount;
     }
     
     public void setTotalCount(long totalCount) {
-        this.totalCount = totalCount;
+        this.totalCount = Math.max(EMPTY_TOTAL_COUNT, totalCount);
     }
     
     public int getPageSize() {
-        if (pageSize < 1) {
-            return 1;
-        }
         return pageSize;
     }
     
     public void setPageSize(int pageSize) {
-        if (pageSize < 1) {
-            this.pageSize = 1;
-        } else {
-            this.pageSize = pageSize;
-        }
+        this.pageSize = Math.max(MIN_PAGE_SIZE, pageSize);
+        
     }
     
     public Collection<T> getList() {
@@ -63,7 +66,7 @@ public class NebulaPageRes<T> {
     }
     
     public void setList(Collection<T> list) {
-        this.list = list;
+        this.list = (list != null) ? new ArrayList<>(list) : Collections.emptyList();
     }
     
     /**
@@ -83,30 +86,68 @@ public class NebulaPageRes<T> {
         return page;
     }
     
+    public static <T> NebulaPageRes<T> of(Collection<T> list, int pageSize) {
+        return of(list, list != null ? list.size() : 0, pageSize);
+    }
+    
     /**
      * 内存分页
      *
-     * @param list
+     * @param source
      * @param pageQuery
      * @param <T>
      * @return
      */
-    public static <T> NebulaPageRes<T> ofMemory(Collection<T> list, NebulaPageQuery pageQuery) {
-        List<T> pageList = list.stream().skip((long) (pageQuery.getPageIndex() - 1) * pageQuery.getPageSize())
-                .limit(pageQuery.getPageSize()).collect(Collectors.toList());
-        NebulaPageRes<T> page = new NebulaPageRes<>();
-        page.setList(pageList);
-        page.setTotalCount(list.size());
-        page.setPageSize(pageQuery.getPageSize());
-        return page;
+    public static <T> NebulaPageRes<T> ofMemory(Collection<T> source, NebulaPageQuery pageQuery) {
+        if (source == null || source.isEmpty()) {
+            return of(Collections.emptyList(), 0, pageQuery.getPageSize());
+        }
+        
+        int pageSize = pageQuery.getPageSize();
+        int pageIndex = pageQuery.getPageIndex();
+        long skip = (long) (pageIndex - 1) * pageSize;
+        
+        // 处理超出范围的情况
+        if (skip >= source.size()) {
+            return of(Collections.emptyList(), source.size(), pageSize);
+        }
+        
+        List<T> pageList = source.stream()
+                .skip(skip)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+        
+        return of(pageList, source.size(), pageSize);
     }
     
-    public static <T, R> NebulaPageRes<R> copy(NebulaPageRes<T> source, Function<T, R> converterFunction) {
-        NebulaPageRes<R> Page = new NebulaPageRes<>();
-        Page.setList(source.getList().stream().map(converterFunction).collect(Collectors.toList()));
-        Page.setTotalCount(source.getTotalCount());
-        Page.setPageSize(source.getPageSize());
-        return Page;
+    public static <T, R> NebulaPageRes<R> copy(NebulaPageRes<T> source, Function<T, R> converter) {
+        Objects.requireNonNull(source, "Source page cannot be null");
+        Objects.requireNonNull(converter, "Converter function cannot be null");
+        
+        NebulaPageRes<R> result = new NebulaPageRes<>();
+        result.setList(
+                source.getList().stream()
+                        .map(converter)
+                        .collect(Collectors.toList()));
+        result.setTotalCount(source.getTotalCount());
+        result.setPageSize(source.getPageSize());
+        return result;
+    }
+    
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+    
+    public static <T> NebulaPageRes<T> empty() {
+        return empty(DEFAULT_PAGE_SIZE);
+    }
+    
+    public static <T> NebulaPageRes<T> empty(int pageSize) {
+        return of(Collections.emptyList(), 0, pageSize);
+    }
+    
+    public static <T> NebulaPageRes<T> empty(NebulaPageQuery pageQuery) {
+        return empty(pageQuery.getPageSize());
     }
     
 }

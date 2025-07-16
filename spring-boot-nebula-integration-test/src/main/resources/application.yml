@@ -9,4 +9,4 @@ logging:
 nebula:
   web:
     monitor-open: true
-    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxx
+    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxx

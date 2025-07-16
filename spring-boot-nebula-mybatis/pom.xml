@@ -9,6 +9,8 @@
     </parent>
 
     <artifactId>spring-boot-nebula-mybatis</artifactId>
+    <name>spring-boot-nebula-mybatis</name>
+
 
     <dependencies>
 

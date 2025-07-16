@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: test
+    active: prd
   application:
     name: web-test
 
@@ -9,4 +9,9 @@ server:
 
 nebula:
   web:
-    response-code: 100
+    response-code: 200
+    monitor-open: true
+    monitor:
+      type: feishu
+    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxxxx
+    

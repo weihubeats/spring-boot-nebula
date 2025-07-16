@@ -39,6 +39,7 @@ public class StudentConverter {
         studentVO.setId(studentDO.getId());
         studentVO.setName(studentDO.getName());
         studentVO.setAge(studentDO.getAge());
+        studentVO.setTags(studentDO.getTags());
         return studentVO;
     }
     

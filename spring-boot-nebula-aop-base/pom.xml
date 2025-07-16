@@ -9,6 +9,8 @@
     </parent>
 
     <artifactId>spring-boot-nebula-aop-base</artifactId>
+    <name>spring-boot-nebula-aop-base</name>
+
 
     <dependencies>
 

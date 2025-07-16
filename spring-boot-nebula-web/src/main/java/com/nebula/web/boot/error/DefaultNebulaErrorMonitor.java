@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StreamUtils;
 
@@ -43,82 +45,6 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
     private final FeiShuRoot feiShuRoot;
     
     private final NebulaWebProperties nebulaWebProperties;
-    
-    // todo test
-    private final String text = "{\n" +
-            "    \"schema\": \"2.0\",\n" +
-            "    \"config\": {\n" +
-            "        \"update_multi\": true,\n" +
-            "        \"style\": {\n" +
-            "            \"text_size\": {\n" +
-            "                \"normal_v2\": {\n" +
-            "                    \"default\": \"normal\",\n" +
-            "                    \"pc\": \"normal\",\n" +
-            "                    \"mobile\": \"heading\"\n" +
-            "                }\n" +
-            "            }\n" +
-            "        }\n" +
-            "    },\n" +
-            "    \"body\": {\n" +
-            "        \"direction\": \"vertical\",\n" +
-            "        \"padding\": \"12px 12px 12px 12px\",\n" +
-            "        \"elements\": [\n" +
-            "            {\n" +
-            "                \"tag\": \"div\",\n" +
-            "                \"text\": {\n" +
-            "                    \"tag\": \"plain_text\",\n" +
-            "                    \"content\": \"param: %s\",\n" +
-            "                    \"text_size\": \"normal_v2\",\n" +
-            "                    \"text_align\": \"left\",\n" +
-            "                    \"text_color\": \"default\"\n" +
-            "                },\n" +
-            "                \"margin\": \"0px 0px 0px 0px\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"tag\": \"hr\",\n" +
-            "                \"margin\": \"0px 0px 0px 0px\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"tag\": \"div\",\n" +
-            "                \"text\": {\n" +
-            "                    \"tag\": \"plain_text\",\n" +
-            "                    \"content\": \"body: %s\",\n" +
-            "                    \"text_size\": \"normal_v2\",\n" +
-            "                    \"text_align\": \"left\",\n" +
-            "                    \"text_color\": \"default\"\n" +
-            "                },\n" +
-            "                \"margin\": \"0px 0px 0px 0px\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"tag\": \"hr\",\n" +
-            "                \"margin\": \"0px 0px 0px 0px\"\n" +
-            "            },\n" +
-            "            {\n" +
-            "                \"tag\": \"div\",\n" +
-            "                \"text\": {\n" +
-            "                    \"tag\": \"plain_text\",\n" +
-            "                    \"content\": \"异常: %s\",\n" +
-            "                    \"text_size\": \"normal_v2\",\n" +
-            "                    \"text_align\": \"left\",\n" +
-            "                    \"text_color\": \"default\"\n" +
-            "                },\n" +
-            "                \"margin\": \"0px 0px 0px 0px\"\n" +
-            "            }\n" +
-            "        ]\n" +
-            "    },\n" +
-            "    \"header\": {\n" +
-            "        \"title\": {\n" +
-            "            \"tag\": \"plain_text\",\n" +
-            "            \"content\": \"接口 %s\"\n" +
-            "        },\n" +
-            "        \"subtitle\": {\n" +
-            "            \"tag\": \"plain_text\",\n" +
-            "            \"content\": \"\"\n" +
-            "        },\n" +
-            "        \"template\": \"blue\",\n" +
-            "        \"padding\": \"12px 12px 12px 12px\"\n" +
-            "    }\n" +
-            "}";
     
     private static final int FEISHU_MESSAGE_HASH_MAX_LENGTH = 15 * 1024;
     
@@ -148,13 +74,14 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
         if (body.getBytes(StandardCharsets.UTF_8).length > FEISHU_MESSAGE_HASH_MAX_LENGTH) {
             body = body.substring(0, new String(new byte[FEISHU_MESSAGE_HASH_MAX_LENGTH]).length());
         }
-        
-        body = body.substring(1, body.length() - 2);
+        if (DataUtils.isNotEmpty(body)) {
+            body = body.substring(1, body.length() - 2);
+        }
         String jsonString = JsonUtil.toJSONString(request.getParameterMap());
         if (DataUtils.isNotEmpty(jsonString)) {
             jsonString = jsonString.replace("\"", "\\\"");
         }
-        feiShuRoot.sendRichTextAsync(nebulaWebProperties.getMonitorUrl(), text, jsonString, body, errorStackMsg, uri);
+        feiShuRoot.sendRichTextAsync(nebulaWebProperties.getMonitorUrl(), readUtf8String("config/feishu.json"), jsonString, body, errorStackMsg, uri);
     }
     
     public static String stackTraceToJsonValue(Throwable ex) {

@@ -9,6 +9,8 @@
     </parent>
 
     <artifactId>spring-boot-nebula-all</artifactId>
+    <name>spring-boot-nebula-all</name>
+
 
     <dependencies>
 
@@ -25,6 +27,11 @@
         <dependency>
             <groupId>io.github.weihubeats</groupId>
             <artifactId>spring-boot-nebula-distribute-lock</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.weihubeats</groupId>
+            <artifactId>spring-boot-nebula-excel</artifactId>
         </dependency>
 
     </dependencies>

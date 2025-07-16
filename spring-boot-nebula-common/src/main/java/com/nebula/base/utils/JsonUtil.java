@@ -353,7 +353,7 @@ public class JsonUtil {
             // 设置为中国上海时区
             super.setTimeZone(TimeZone.getTimeZone(ZoneId.systemDefault()));
             // 序列化时，日期的统一格式
-            super.setDateFormat(new SimpleDateFormat(TimeUtil.YYYYMMddHHmmss, Locale.CHINA));
+            super.setDateFormat(new SimpleDateFormat(TimeUtil.YYYY_MM_DD_HH_MM_SS, Locale.CHINA));
             // 序列化处理
             super.configure(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature(), true);
             super.configure(JsonReadFeature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER.mappedFeature(), true);
