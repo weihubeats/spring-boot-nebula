@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
     <name>spring-boot-nebula-samples</name>
 
-
     <modules>
         <module>spring-boot-nebula-web-sample</module>
         <module>spring-boot-nebula-distribute-lock-sample</module>

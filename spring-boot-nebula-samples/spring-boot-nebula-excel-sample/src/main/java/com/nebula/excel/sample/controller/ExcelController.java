@@ -19,7 +19,7 @@ package com.nebula.excel.sample.controller;
 
 import com.nebula.excel.ExcelUtils;
 import com.nebula.excel.sample.vo.XiaoZouVO;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

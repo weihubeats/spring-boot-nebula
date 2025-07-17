@@ -19,11 +19,11 @@ package com.nebula.web.boot.error;
 
 import com.nebula.base.utils.SingletonUtils;
 import io.micrometer.core.instrument.util.IOUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author : wh

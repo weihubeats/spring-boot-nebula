@@ -11,7 +11,6 @@
     <artifactId>spring-boot-nebula-all</artifactId>
     <name>spring-boot-nebula-all</name>
 
-
     <dependencies>
 
         <dependency>

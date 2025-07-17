@@ -17,9 +17,6 @@
  
 package com.nebula.web.boot.error;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * @author : wh
  * @date : 2025/3/18 17:39
