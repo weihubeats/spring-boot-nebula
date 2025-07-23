@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  
-package com.nebula.base.utils;
+package com.nebula.base.utils.juc;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;

@@ -1,0 +1,74 @@
+{
+  "schema": "2.0",
+  "config": {
+    "update_multi": true,
+    "style": {
+      "text_size": {
+        "normal_v2": {
+          "default": "normal",
+          "pc": "normal",
+          "mobile": "heading"
+        }
+      }
+    }
+  },
+  "body": {
+    "direction": "vertical",
+    "padding": "12px 12px 12px 12px",
+    "elements": [
+      {
+        "tag": "div",
+        "text": {
+          "tag": "plain_text",
+          "content": "param: %s",
+          "text_size": "normal_v2",
+          "text_align": "left",
+          "text_color": "default"
+        },
+        "margin": "0px 0px 0px 0px"
+      },
+      {
+        "tag": "hr",
+        "margin": "0px 0px 0px 0px"
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "plain_text",
+          "content": "body: %s",
+          "text_size": "normal_v2",
+          "text_align": "left",
+          "text_color": "default"
+        },
+        "margin": "0px 0px 0px 0px"
+      },
+      {
+        "tag": "hr",
+        "margin": "0px 0px 0px 0px"
+      },
+      {
+        "tag": "div",
+        "text": {
+          "tag": "plain_text",
+          "content": "异常: %s",
+          "text_size": "normal_v2",
+          "text_align": "left",
+          "text_color": "default"
+        },
+        "margin": "0px 0px 0px 0px"
+      }
+    ]
+  },
+  "header": {
+    "title": {
+      "tag": "plain_text",
+      "content": "接口 %s"
+    },
+    "subtitle": {
+      "tag": "plain_text",
+      "content": ""
+    },
+    "template": "blue",
+    "padding": "12px 12px 12px 12px"
+  }
+}

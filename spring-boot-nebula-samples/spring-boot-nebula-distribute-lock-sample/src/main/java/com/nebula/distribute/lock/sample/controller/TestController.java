@@ -17,6 +17,7 @@
  
 package com.nebula.distribute.lock.sample.controller;
 
+import com.nebula.distribute.lock.sample.dto.OrderDTO;
 import com.nebula.distribute.lock.sample.service.TestService;
 import com.nebula.web.boot.annotation.NebulaResponseBody;
 import lombok.RequiredArgsConstructor;
@@ -38,8 +39,8 @@ public class TestController {
     
     @GetMapping("/test")
     @NebulaResponseBody
-    public String test() throws Exception {
-        testServcie.test();
+    public String test(OrderDTO dto) {
+        testServcie.updateOrder(dto);
         return "小奏";
     }
     

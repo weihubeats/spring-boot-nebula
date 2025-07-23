@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>spring-boot-nebula-distribute-lock-sample</artifactId>
+    <name>spring-boot-nebula-distribute-lock-sample</name>
 
     <dependencies>
         <dependency>

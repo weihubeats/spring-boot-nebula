@@ -37,4 +37,11 @@ public class TestController {
         return "小奏";
     }
     
+    @GetMapping("/error")
+    @NebulaResponseBody
+    public String error() {
+        int i = 1 / 0;
+        return "<UNK>";
+    }
+    
 }

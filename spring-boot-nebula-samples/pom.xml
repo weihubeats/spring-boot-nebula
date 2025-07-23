@@ -11,15 +11,18 @@
 
     <artifactId>spring-boot-nebula-samples</artifactId>
     <packaging>pom</packaging>
+    <name>spring-boot-nebula-samples</name>
 
     <modules>
         <module>spring-boot-nebula-web-sample</module>
         <module>spring-boot-nebula-distribute-lock-sample</module>
         <module>spring-boot-nebula-mybatis-sample</module>
+        <module>spring-boot-nebula-excel-sample</module>
     </modules>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <!--        <skipPublishing>true</skipPublishing>-->
     </properties>
 
 </project>

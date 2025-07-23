@@ -19,7 +19,7 @@ package com.nebula.alert.feishu;
 
 import com.nebula.base.utils.HttpUtils;
 import com.nebula.base.utils.StringUtils;
-import com.nebula.base.utils.ThreadFactoryImpl;
+import com.nebula.base.utils.juc.ThreadFactoryImpl;
 import com.nebula.web.common.utils.NebulaSysWebUtils;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -39,8 +39,13 @@ public class FeiShuRoot {
     
     private final NebulaSysWebUtils nebulaSysWebUtils;
     
-    private static final ExecutorService threadPoolTaskExecutor = new ThreadPoolExecutor(3, 5, 60, TimeUnit.SECONDS,
-            new LinkedBlockingQueue<>(100), new ThreadFactoryImpl("feishu-"));
+    private final ExecutorService threadPoolTaskExecutor;
+    
+    public FeiShuRoot(NebulaSysWebUtils nebulaSysWebUtils) {
+        this.nebulaSysWebUtils = nebulaSysWebUtils;
+        this.threadPoolTaskExecutor = new ThreadPoolExecutor(3, 5, 60, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(100), new ThreadFactoryImpl("feishu-"));
+    }
     
     private final static String FEISHU_CAR = "{\n" +
             "    \"msg_type\": \"interactive\",\n" +
@@ -67,7 +72,11 @@ public class FeiShuRoot {
     
     public void sendRichTextAsync(String url, String richText, Object... args) {
         threadPoolTaskExecutor.submit(() -> {
-            sendRichText(url, richText, args);
+            try {
+                sendRichText(url, richText, args);
+            } catch (Exception e) {
+                log.error("Failed to send async message to FeiShu: {}", e.getMessage(), e);
+            }
         });
     }
     

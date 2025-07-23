@@ -18,6 +18,7 @@
 package com.nebula.distribute.lock.sample.service;
 
 import com.nebula.distribute.lock.annotation.NebulaDistributedLock;
+import com.nebula.distribute.lock.sample.dto.OrderDTO;
 import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Service;
 
@@ -29,8 +30,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class TestService {
     
-    @NebulaDistributedLock(lockName = "wh-test")
-    public void test() {
+    @NebulaDistributedLock(lockNamePre = "order:updateOrder:", lockNamePost = "#dto.orderId")
+    public void updateOrder(OrderDTO dto) {
         System.out.println("处理器请求中");
         try {
             TimeUnit.SECONDS.sleep(5);

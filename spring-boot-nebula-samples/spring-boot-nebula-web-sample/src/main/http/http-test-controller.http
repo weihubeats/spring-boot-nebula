@@ -1,1 +1,5 @@
 GET localhost:8088/test
+
+
+### 测试异常报警
+GET localhost:8088/error

@@ -17,6 +17,11 @@
  
 package com.nebula.web.boot.error;
 
+import com.nebula.base.utils.SingletonUtils;
+import io.micrometer.core.instrument.util.IOUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,10 +34,25 @@ public interface NebulaErrorMonitor {
     
     /**
      * 监控异常
+     *
      * @param request
      * @param response
      * @param handler
      * @param ex
      */
     void monitorError(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex);
+    
+    default String readUtf8String(String path) {
+        return SingletonUtils.get("resource:" + path, () -> {
+            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path)) {
+                if (inputStream == null) {
+                    throw new IOException("Resource not found: " + path);
+                }
+                return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to read resource: " + path, e);
+            }
+        });
+        
+    }
 }
