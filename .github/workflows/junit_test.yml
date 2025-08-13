@@ -9,6 +9,7 @@ on:
     branches:
       - master
       - develop
+      - spring-boot-3.x
 
 jobs:
   junit:
