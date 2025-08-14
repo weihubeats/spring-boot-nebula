@@ -28,4 +28,8 @@ public class CompletableException extends RuntimeException {
         super(message);
     }
     
+    public CompletableException(String message, Throwable cause) {
+        super(message, cause);
+    }
+    
 }

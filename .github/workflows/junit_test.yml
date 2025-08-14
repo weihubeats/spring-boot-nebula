@@ -9,12 +9,13 @@ on:
     branches:
       - master
       - develop
+      - spring-boot-3.x
 
 jobs:
   junit:
     strategy:
       matrix:
-        java: [11]
+        java: [17]
         os: [ 'windows-latest', 'ubuntu-latest' ]
 
     runs-on: ${{ matrix.os }}
