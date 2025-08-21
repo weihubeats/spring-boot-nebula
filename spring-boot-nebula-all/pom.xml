@@ -33,6 +33,11 @@
             <artifactId>spring-boot-nebula-excel</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.github.weihubeats</groupId>
+            <artifactId>spring-boot-nebula-dynamic-datasource</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

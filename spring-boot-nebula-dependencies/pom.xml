@@ -121,6 +121,14 @@
 
             <dependency>
                 <groupId>io.github.weihubeats</groupId>
+                <artifactId>spring-boot-nebula-dynamic-datasource</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            
+
+            <dependency>
+                <groupId>io.github.weihubeats</groupId>
                 <artifactId>spring-boot-nebula-all</artifactId>
                 <version>${revision}</version>
             </dependency>
