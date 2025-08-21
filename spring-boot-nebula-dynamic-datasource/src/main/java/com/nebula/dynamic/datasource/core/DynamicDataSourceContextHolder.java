@@ -26,7 +26,7 @@ public class DynamicDataSourceContextHolder {
      */
     public static String getDataSource() {
         Deque<String> deque = CONTEXT_HOLDER.get();
-        return deque.isEmpty() ? "default" : deque.peek();
+        return deque.isEmpty() ? null : deque.peek();
     }
 
     /**

@@ -21,6 +21,11 @@
 
         <dependency>
             <groupId>io.github.weihubeats</groupId>
+            <artifactId>spring-boot-nebula-mybatis</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.weihubeats</groupId>
             <artifactId>spring-boot-nebula-web</artifactId>
         </dependency>
 

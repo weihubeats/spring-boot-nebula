@@ -7,15 +7,17 @@ import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.ComposablePointcut;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 
 /**
  * @author : wh
  * @date : 2025/8/21
  * @description:
  */
-@Configuration
+@AutoConfiguration(after = DataSourceAutoConfiguration.class)
 public class DynamicDataSourceAutoConfigure {
 
     @Bean
@@ -23,6 +25,8 @@ public class DynamicDataSourceAutoConfigure {
         AnnotationMatchingPointcut classPointcut = new AnnotationMatchingPointcut(NebulaDS.class, true);
         Pointcut methodPointcut = AnnotationMatchingPointcut.forMethodAnnotation(NebulaDS.class);
         Pointcut union = new ComposablePointcut(classPointcut).union(methodPointcut);
-        return new DefaultPointcutAdvisor(union, new DynamicDataSourceMethodInterceptor());
+        DefaultPointcutAdvisor advisor = new DefaultPointcutAdvisor(union, new DynamicDataSourceMethodInterceptor());
+        advisor.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+        return advisor;
     }
 }

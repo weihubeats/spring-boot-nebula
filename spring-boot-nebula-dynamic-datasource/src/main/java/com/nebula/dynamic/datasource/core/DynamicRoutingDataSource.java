@@ -8,10 +8,10 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
  * @description:
  */
 public class DynamicRoutingDataSource extends AbstractRoutingDataSource {
-    
-    
+
     @Override
     protected Object determineCurrentLookupKey() {
-        return DynamicDataSourceContextHolder.getDataSource();
+        String key = DynamicDataSourceContextHolder.getDataSource();
+        return "default".equals(key) ? null : key;
     }
 }
