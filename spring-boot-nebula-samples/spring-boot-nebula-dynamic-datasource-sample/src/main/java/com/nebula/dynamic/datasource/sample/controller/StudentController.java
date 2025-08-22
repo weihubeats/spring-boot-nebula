@@ -42,5 +42,5 @@ public class StudentController {
     public NebulaPageRes<StudentVO> write(StudentDTO studentDTO) {
         return studentService.list(studentDTO);
     }
-
+    
 }
