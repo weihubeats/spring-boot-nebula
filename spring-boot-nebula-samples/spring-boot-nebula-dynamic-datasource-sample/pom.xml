@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.github.weihubeats</groupId>
-        <artifactId>spring-boot-nebula</artifactId>
+        <artifactId>spring-boot-nebula-samples</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>spring-boot-nebula-all</artifactId>
-    <name>spring-boot-nebula-all</name>
+    <artifactId>spring-boot-nebula-dynamic-datasource-sample</artifactId>
+
 
     <dependencies>
 
         <dependency>
             <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-web</artifactId>
+            <artifactId>spring-boot-nebula-dynamic-datasource</artifactId>
         </dependency>
 
         <dependency>
@@ -25,19 +26,16 @@
 
         <dependency>
             <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-distribute-lock</artifactId>
+            <artifactId>spring-boot-nebula-web</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-excel</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-dynamic-datasource</artifactId>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
     </dependencies>
+
 
 </project>

@@ -1,0 +1,5 @@
+### 写数据库测试
+GET localhost:8088/student/write-list
+
+### 只读数据库测试
+GET localhost:8088/teacher/read-list

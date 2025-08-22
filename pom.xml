@@ -25,6 +25,7 @@
         <module>spring-boot-nebula-alert</module>
         <module>spring-boot-nebula-integration-test</module>
         <module>spring-boot-nebula-excel</module>
+        <module>spring-boot-nebula-dynamic-datasource</module>
     </modules>
 
     <properties>

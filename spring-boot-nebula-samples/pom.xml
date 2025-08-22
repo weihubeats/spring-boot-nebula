@@ -18,6 +18,7 @@
         <module>spring-boot-nebula-distribute-lock-sample</module>
         <module>spring-boot-nebula-mybatis-sample</module>
         <module>spring-boot-nebula-excel-sample</module>
+        <module>spring-boot-nebula-dynamic-datasource-sample</module>
     </modules>
 
     <properties>
