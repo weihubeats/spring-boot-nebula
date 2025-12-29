@@ -31,6 +31,10 @@
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <vavr.version>0.10.6</vavr.version>
         <fastexcel.version>1.2.0</fastexcel.version>
+        <ttl.version>2.14.5</ttl.version>
+        <mybatis-spring-version>2.1.0</mybatis-spring-version>
+        <mybatis-version>3.5.11</mybatis-version>
+        <pagehelper-verson>5.3.2</pagehelper-verson>
 
     </properties>
 
@@ -44,6 +48,32 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>transmittable-thread-local</artifactId>
+                <version>${ttl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper-verson}</version>
+            </dependency>
+
+
 
             <dependency>
                 <groupId>cn.idev.excel</groupId>
