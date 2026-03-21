@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    # H2 内存模式，MySQL 兼容模式
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  sql:
+    init:
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+
+mybatis-plus:
+  configuration:
+    # 打印 SQL 日志，这是验证拦截器是否生效的关键
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

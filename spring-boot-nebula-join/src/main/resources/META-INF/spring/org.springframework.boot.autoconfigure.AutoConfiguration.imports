@@ -1,0 +1,2 @@
+com.nebula.join.config.RegionSQLInterceptorAutoConfiguration
+com.nebula.join.config.RouteAutoConfiguration
