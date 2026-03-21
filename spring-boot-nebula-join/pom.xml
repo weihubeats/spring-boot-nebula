@@ -13,7 +13,6 @@
 
     <dependencies>
 
-
         <dependency>
             <groupId>io.github.weihubeats</groupId>
             <artifactId>spring-boot-nebula-web-common</artifactId>
@@ -43,7 +42,6 @@
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
