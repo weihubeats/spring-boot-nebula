@@ -1,0 +1,44 @@
+---
+description: MyBatis-Plus 持久层开发规范与最佳实践
+globs: **/*.java, **/*.xml
+alwaysApply: false
+---
+# MyBatis-Plus 数据库持久层规范
+
+你是一个精通 MyBatis-Plus 框架的高级 Java 开发工程师。在处理数据库交互、生成 Mapper、DAO、Service 或 Entity 代码时，请严格遵守以下规范：
+
+## 1. 实体类 (Entity) 与 DTO 区分
+- **Entity (POJO)**: 数据库映射对象必须是普通的 Class，并使用 Lombok 注解（`@Data`, `@Builder`, `@NoArgsConstructor`, `@AllArgsConstructor`）。严禁对数据库 Entity 使用 Java 21 的 `record`，因为 MyBatis 反射实例化需要无参构造和可变属性。
+- **映射注解**: 必须明确指定 `@TableName("表名")`。主键必须使用 `@TableId(type = IdType.AUTO/ASSIGN_ID)`。
+- **自动填充与逻辑删除**: 推荐对审计字段（如创建时间、更新时间）使用 `@TableField(fill = FieldFill.INSERT/INSERT_UPDATE)`。如果是软删除字段，必须添加 `@TableLogic`。
+- **DTO/VO**: 从数据库查出 Entity 后，如果需要向前端返回或跨层传输，必须转换为 Java 21 的 `record` 以保证数据不可变性。
+
+## 2. Mapper 层规范
+- **继承体系**: 所有的 Mapper 接口必须继承 `BaseMapper<T>`。
+- **注解要求**: 确保 Mapper 接口上有 `@Mapper` 注解（或者在配置类中统一开启了 `@MapperScan`，默认建议保留 `@Mapper` 增强代码可读性）。
+- **避免写死 SQL**: 尽量使用 MyBatis-Plus 提供的内置方法。如果必须手写复杂 SQL，优先写在与 Mapper 接口同名的 XML 文件中，严禁在注解里写大段的 `@Select` / `@Update` 字符串拼接。
+
+## 3. DAO 层规范 (数据访问层)
+- **强制分层**: 必须在 Mapper 和 Service 之间增加 DAO 层，用于封装基础的数据访问逻辑。
+- **继承体系**: `DAO` 接口必须继承 MyBatis-Plus 的 `IService<T>`，`DAOImpl` 实现类必须继承 `ServiceImpl<M, T>` 并实现自定义的 `DAO` 接口。
+- **依赖注入**: 在 `DAOImpl` 中，必须使用**构造器注入**（使用 `@RequiredArgsConstructor` + `private final`）来注入对应的 Mapper，**严禁使用 `@Autowired`**。
+
+## 4. Service 层规范 (业务逻辑层)
+- **严禁继承 MyBatis-Plus**: Service 接口和实现类**绝对禁止**直接继承 `IService` 或 `ServiceImpl`，业务逻辑层必须与持久层框架解耦。
+- **依赖注入**: Service 层如需进行数据库交互，必须通过**构造器注入**（`@RequiredArgsConstructor` + `private final`）引入对应的 `DAO` 接口。
+- **事务管理**: 涉及到增删改的复杂业务逻辑方法，必须加上 `@Transactional(rollbackFor = Exception.class)`。
+
+## 5. 查询条件 (Wrapper) 最佳实践（核心重点）
+- **强制使用 Lambda 语法**: 绝对禁止使用普通的 `QueryWrapper` 和硬编码的数据库字段名（如 `eq("user_name", name)`）。
+- **实例化规范**: 必须使用静态工厂方法 `Wrappers.<T>lambdaQuery()` 或 `Wrappers.lambdaQuery(T.class)` 创建查询条件，严禁使用 `new LambdaQueryWrapper<>()`。更新同理，使用 `Wrappers.<T>lambdaUpdate()`。
+- **条件判空优雅化**: 必须使用 Wrapper 原生支持的带 `boolean condition` 入参的重载方法进行判空组装，**严禁在外部写 `if (val != null)` 判断代码来拼接条件**。示例：`.eq(ObjectUtil.isNotEmpty(account.getUid()), InternalAccountAutoCreateConfig::getUid, account.getUid())`。
+- **按需查询列**: 严禁无脑 `SELECT *`。在查询列表或单条数据时，如果不需要全部字段，必须使用 `.select()` 指定所需的列（例如 `.select(User::getId, User::getName)`）以优化性能。
+- **链式调用优先**: 推荐直接使用 DAO 层提供的链式 API 简化代码，例如在 DAO 或 Service 中调用 `dao.lambdaQuery().eq(...).list()`，更新用 `dao.lambdaUpdate().set(...).eq(...).update()`。
+
+## 6. 更新与批量操作性能优化
+- **局部更新**: 如果仅更新个别字段，必须使用 `LambdaUpdateWrapper` 配合 `.set()` 方法进行局部更新。严禁将整个 Entity 查询出来修改后再完整 `updateById()`（除非业务强依赖乐观锁或字段极多）。
+- **批量操作**: 严禁在 `for` 循环中调用 `dao.save()` 或 `dao.updateById()`。必须使用 DAO 层提供的 `saveBatch()`, `updateBatchById()`, 或 `saveOrUpdateBatch()` 方法。
+
+## 7. 分页查询规范
+- **分页对象**: 使用 MyBatis-Plus 原生的 `Page<T>` 对象进行分页。
+- **响应封装**: 确保分页参数传递正确，且返回给前端时，必须转换为统一的分页响应结构（如包含 `total`, `records`, `current`, `size` 的包装类或 DTO）。
