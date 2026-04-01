@@ -24,13 +24,18 @@
         <guava.version>31.1-jre</guava.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <javers-core.version>6.6.5</javers-core.version>
-        <mybatis-plus-spring-boot3-starter-version>3.5.9</mybatis-plus-spring-boot3-starter-version>
         <pagehelper-spring-boot-starter.version>1.4.2</pagehelper-spring-boot-starter.version>
         <redission.version>3.17.3</redission.version>
         <okhttp.version>4.12.0</okhttp.version>
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <vavr.version>0.10.6</vavr.version>
         <fastexcel.version>1.2.0</fastexcel.version>
+        <ttl.version>2.14.5</ttl.version>
+
+        <mybatis-plus-spring-boot3-starter-version>3.5.16</mybatis-plus-spring-boot3-starter-version>
+        <mybatis-spring-version>3.0.5</mybatis-spring-version>
+        <mybatis-version>3.5.19</mybatis-version>
+        <pagehelper-verson>5.3.2</pagehelper-verson>
 
     </properties>
 
@@ -43,6 +48,42 @@
                 <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>transmittable-thread-local</artifactId>
+                <version>${ttl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>3.0.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper-verson}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mybatis</groupId>
+                        <artifactId>mybatis</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -78,6 +119,12 @@
             <dependency>
                 <groupId>io.github.weihubeats</groupId>
                 <artifactId>spring-boot-nebula-mybatis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.weihubeats</groupId>
+                <artifactId>spring-boot-nebula-join</artifactId>
                 <version>${revision}</version>
             </dependency>
 
