@@ -17,7 +17,7 @@
  
 package com.nebula.web.boot.enums;
 
-import com.nebula.web.boot.api.IResultCode;
+import com.nebula.web.boot.api.IErrorCode;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +29,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ResultCode implements IResultCode {
+public enum ResultCode implements IErrorCode {
     
     /**
      * 操作成功

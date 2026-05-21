@@ -17,8 +17,9 @@
  
 package com.nebula.web.boot.exception;
 
-import com.nebula.web.boot.api.IResultCode;
+import com.nebula.web.boot.api.IErrorCode;
 import com.nebula.web.boot.enums.ResultCode;
+import java.io.Serial;
 import lombok.Getter;
 
 /**
@@ -29,28 +30,24 @@ import lombok.Getter;
 @Getter
 public abstract class BaseException extends RuntimeException {
     
-    private static final long serialVersionUID = 1L;
+    @Serial private static final long serialVersionUID = 1L;
     
-    private final IResultCode code;
-    
-    public BaseException(String errMessage) {
-        super(errMessage);
-        this.code = ResultCode.INTERNAL_SERVER_ERROR;
+    private final String code;
+
+    private final Object[] args;
+
+    public BaseException(IErrorCode errorCode, Object... args) {
+        super(errorCode.getMessage());
+        this.code = errorCode.getCode();
+        this.args = args;
     }
-    
-    public BaseException(IResultCode code, String errMessage) {
-        super(errMessage);
+
+    public BaseException(String code, Object... args) {
         this.code = code;
+        this.args = args;
     }
-    
-    public BaseException(String errMessage, Throwable e) {
-        super(errMessage, e);
-        this.code = ResultCode.FAILURE;
-    }
-    
-    public BaseException(IResultCode code, String errMessage, Throwable e) {
-        super(errMessage, e);
-        this.code = code;
-    }
+
+
+
     
 }

@@ -1,0 +1,47 @@
+---
+description: Java / JDK 17 开发规范与现代语法最佳实践
+globs: **/*.java
+alwaysApply: false
+---
+# Java 17 开发规范与最佳实践
+
+你是一个精通现代 Java 体系结构和 JDK 17 特性的高级 Java 开发工程师。在编写或重构 Java 代码时，请严格遵守以下基于 JDK 17 的语言规范和最佳实践：
+
+## 1. 密封类 (Sealed Classes) 与领域模型
+- **限制继承层级**: 当设计明确的、有限的类层级结构（如状态机、特定的业务事件类型、自定义异常体系）时，**必须**优先考虑使用 `sealed` class 或 `sealed` interface。
+- **显式许可**: 使用 `permits` 关键字明确指定允许继承的子类。
+- **子类修饰符**: 密封类的子类必须显式声明为 `final`（不可继续继承）、`sealed`（继续密封）或 `non-sealed`（开放继承）。
+
+## 2. 数据载体与 Record 规范
+- **强制优先使用 Record**: 对于不可变的数据载体（如 DTO、VO、API 响应等），**必须**使用 Java `record`。
+- **避免滥用**: 如果类需要保持可变状态（Mutable State），或者作为 JPA/MyBatis 的数据库映射实体（Entity），**严禁**使用 `record`，应使用普通的 `class`。
+- **Record 内部校验**: 对 `record` 的入参校验，推荐使用紧凑型构造函数（Compact Constructor），省略参数列表以保持代码简洁。
+
+## 3. 模式匹配 (Pattern Matching)
+- **`instanceof` 模式匹配**: **严禁**在使用 `instanceof` 判断类型后再次进行显式向下转型（Casting）。必须使用模式匹配变量。
+  - 正确示例: `if (obj instanceof String s) { System.out.println(s.toLowerCase()); }`
+  - 错误示例: `if (obj instanceof String) { String s = (String) obj; ... }`
+
+## 4. Switch 表达式
+- **强制使用箭头语法**: 必须使用带有 `->` 的 Switch 表达式，**严禁**使用传统的冒号 (`:`) 和容易导致 Fall-through（穿透）漏洞的 `break` 语法。
+- **返回值处理**: 当 Switch 用于返回值时，必须将其直接赋值给变量或 `return`。如果某个分支代码块有多行，必须使用 `yield` 关键字返回值。
+  - 示例: `var result = switch (day) { case MONDAY -> "Work"; case FRIDAY -> { log.info("Friday!"); yield "Weekend"; } default -> "Unknown"; };`
+
+## 5. 文本与字符串处理 (Text Blocks)
+- **文本块**: 当声明包含多行内容（如 JSON、SQL、HTML 模板）的字符串时，**强制**使用三个双引号 `"""` 声明文本块，**严禁**使用 `+` 号进行多行字符串拼接和手动添加 `\n` 转义。
+- **字符串方法**: 检查字符串是否为空白，必须使用 `.isBlank()`，禁止使用原生的 `.trim().isEmpty()`。字符串格式化推荐使用 `.formatted()` 实例方法。
+
+## 6. 局部变量类型推断 (`var`)
+- **使用原则**: 只有在右侧表达式能够**明确看出类型**时（例如 `var list = new ArrayList<String>();` 或 `var stream = list.stream();`），才允许使用 `var`。
+- **严禁滥用**: 如果右侧返回的是复杂的泛型类型，或者方法名无法体现返回值类型导致代码可读性严重下降，**禁止**使用 `var`，必须显式声明确切类型。
+
+## 7. Stream 与 Optional 改进
+- **Stream 收集器**: 当需要将 Stream 转换为只读 List 时，直接调用 JDK 16 引入的 `.toList()`（返回不可变 List），除非明确需要后续修改该 List 才使用 `.collect(Collectors.toList())`。
+- **Optional 最佳实践**:
+  - 严禁调用 `Optional.get()` 之前不做 `.isPresent()` 或 `.isEmpty()` 检查。
+  - 推荐优先使用链式 API：`.orElseThrow()`, `.orElseGet()`, `.ifPresentOrElse()` 来处理空值逻辑。
+
+## 8. 基础语法与防御性编程 (核心强制)
+- **对象判空**: 强制使用 `Objects.isNull(obj)` 或 `Objects.nonNull(obj)` 进行对象判空判断。**严禁**直接使用 `obj == null` 或 `obj != null` 语法。
+- **相等性判断**: 判断两个对象的值是否相等时，**强制**使用 `Objects.equals(a, b)`。**严禁**使用 `a.equals(b)`（当调用方 `a` 为空时会抛出 NullPointerException 异常）。除基础数据类型（如 `int`, `boolean`）外，**严禁**使用 `==` 来比较两个对象的值。
+- **集合/数组判空**: 严禁直接写 `if (list != null && !list.isEmpty())`，必须使用工具类（如 Spring 的 `CollectionUtils.isEmpty(list)` 或 Hutool 的 `CollUtil.isEmpty(list)`）进行安全判断。

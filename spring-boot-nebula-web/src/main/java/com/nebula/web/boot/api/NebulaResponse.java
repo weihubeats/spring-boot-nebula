@@ -54,19 +54,19 @@ public class NebulaResponse<T> implements Serializable {
      */
     private String msg;
     
-    private NebulaResponse(IResultCode resultCode) {
+    private NebulaResponse(IErrorCode resultCode) {
         this(resultCode, null, resultCode.getMessage());
     }
     
-    private NebulaResponse(IResultCode resultCode, String msg) {
+    private NebulaResponse(IErrorCode resultCode, String msg) {
         this(resultCode, null, msg);
     }
     
-    private NebulaResponse(IResultCode resultCode, T data) {
+    private NebulaResponse(IErrorCode resultCode, T data) {
         this(resultCode, data, resultCode.getMessage());
     }
     
-    private NebulaResponse(IResultCode resultCode, T data, String msg) {
+    private NebulaResponse(IErrorCode resultCode, T data, String msg) {
         this(resultCode.getCode(), data, msg);
     }
     
@@ -142,11 +142,11 @@ public class NebulaResponse<T> implements Serializable {
         return new NebulaResponse<>(code, data, data == null ? "no data" : msg);
     }
     
-    public static <T> NebulaResponse<T> fail(IResultCode resultCode, String msg) {
+    public static <T> NebulaResponse<T> fail(IErrorCode resultCode, String msg) {
         return new NebulaResponse<>(resultCode, msg);
     }
     
-    public static <T> NebulaResponse<T> fail(IResultCode resultCode) {
+    public static <T> NebulaResponse<T> fail(IErrorCode resultCode) {
         return new NebulaResponse<>(resultCode, resultCode.getMessage());
     }
     
