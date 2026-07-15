@@ -1,3 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
 package com.nebula.web.boot.annotation;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,37 +40,37 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @RequiredArgsConstructor
 @Slf4j
 public class NebulaResponseBodyAdvice implements ResponseBodyAdvice<Object> {
-
+    
     private final NebulaWebProperties nebulaWebProperties;
-
+    
     private final ObjectMapper defaultObjectMapper;
-
+    
     private static final Map<Class<? extends ObjectMapper>, ObjectMapper> MAPPER_CACHE = new ConcurrentHashMap<>();
-
+    
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         boolean hasAnnotation = returnType.hasMethodAnnotation(NebulaResponseBody.class) ||
-            returnType.getContainingClass().isAnnotationPresent(NebulaResponseBody.class);
+                returnType.getContainingClass().isAnnotationPresent(NebulaResponseBody.class);
         boolean isNotWrapped = returnType.getParameterType() != NebulaResponse.class;
         return hasAnnotation && isNotWrapped;
     }
-
+    
     @Nullable
     @Override
     public Object beforeBodyWrite(@Nullable Object body, MethodParameter returnType, MediaType selectedContentType,
-        Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
-        ServerHttpResponse response) {
-
+                                  Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
+                                  ServerHttpResponse response) {
+        
         NebulaResponse<Object> baseResponse = new NebulaResponse<>();
-        baseResponse.setCode(nebulaWebProperties.getResponseCode());
+        baseResponse.setCode(nebulaWebProperties.toWireCode(ResultCode.SUCCESS.getCode()));
         baseResponse.setMsg(ResultCode.SUCCESS.getMessage());
         baseResponse.setData(body);
-
+        
         NebulaResponseBody annotation = returnType.getMethodAnnotation(NebulaResponseBody.class);
         if (annotation == null) {
             annotation = returnType.getContainingClass().getAnnotation(NebulaResponseBody.class);
         }
-
+        
         if (body instanceof String) {
             ObjectMapper mapper = getTargetObjectMapper(annotation);
             try {
@@ -65,7 +82,7 @@ public class NebulaResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                 throw new RuntimeException("JSON 序列化异常", e);
             }
         }
-
+        
         if (annotation != null && annotation.objectMapper() != JsonUtil.JacksonObjectMapper.class) {
             try {
                 ObjectMapper mapper = getTargetObjectMapper(annotation);
@@ -76,11 +93,11 @@ public class NebulaResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                 throw new RuntimeException("JSON 序列化异常", e);
             }
         }
-
+        
         return baseResponse;
-
+        
     }
-
+    
     private ObjectMapper getTargetObjectMapper(NebulaResponseBody annotation) {
         if (annotation == null || annotation.objectMapper() == JsonUtil.JacksonObjectMapper.class) {
             return defaultObjectMapper;

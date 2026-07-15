@@ -151,7 +151,7 @@ public class NebulaRestExceptionHandler {
     public NebulaResponse<?> defaultErrorHandle(HttpServletRequest request, HttpServletResponse response,
                                                 Object handler, Exception ex) {
         NebulaResponse<?> baseResponse = new NebulaResponse<>();
-        baseResponse.setCode(ResultCode.INTERNAL_SERVER_ERROR.getCode());
+        baseResponse.setCode(nebulaWebProperties.toWireCode(ResultCode.INTERNAL_SERVER_ERROR.getCode()));
         if (nebulaSysWebUtils.isPrd() && nebulaWebProperties.isMonitorOpen() && !Objects.isNull(nebulaErrorMonitor)) {
             nebulaErrorMonitor.monitorError(request, response, handler, ex);
             baseResponse.setMsg("Server busy");

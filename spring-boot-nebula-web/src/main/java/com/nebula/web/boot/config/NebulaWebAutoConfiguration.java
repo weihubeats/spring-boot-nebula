@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package com.nebula.web.boot.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,19 +38,19 @@ import org.springframework.core.Ordered;
 @EnableConfigurationProperties(NebulaWebProperties.class)
 @Configuration
 public class NebulaWebAutoConfiguration {
-
+    
     @Bean
     public BaseWebMvcConfig baseWebMvcConfig() {
         return new BaseWebMvcConfig();
-
+        
     }
-
+    
     @Bean
     public NebulaResponseBodyAdvice nebulaResponseBodyAdvice(NebulaWebProperties nebulaWebProperties,
-        ObjectMapper objectMapper) {
+                                                             ObjectMapper objectMapper) {
         return new NebulaResponseBodyAdvice(nebulaWebProperties, objectMapper);
     }
-
+    
     @Bean
     public FilterRegistrationBean<RepeatableReadFilter> repeatableReadFilterRegistration() {
         FilterRegistrationBean<RepeatableReadFilter> registration = new FilterRegistrationBean<>();
@@ -63,12 +63,12 @@ public class NebulaWebAutoConfiguration {
         registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return registration;
     }
-
+    
     @ConditionalOnProperty(name = "nebula.web.monitor.type", havingValue = "feishu")
     @Bean
     public NebulaErrorMonitor defaultNebulaErrorMonitor(FeiShuRoot feiShuRoot,
-        NebulaWebProperties nebulaWebProperties) {
+                                                        NebulaWebProperties nebulaWebProperties) {
         return new DefaultNebulaErrorMonitor(feiShuRoot, nebulaWebProperties);
-
+        
     }
 }

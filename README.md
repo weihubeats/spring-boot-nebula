@@ -51,7 +51,20 @@
 }
 ```
 
-> 如果code状态码需要自定义可以通过设置`nebula.web.responseCode`进行设置
+> 如果 code 状态码需要自定义，可通过 `nebula.web.response-code` / `nebula.web.code-mapping` 配置（内部错误码仍为 int，仅影响对外 JSON）：
+
+```yaml
+# 成功码写成字符串（旧项目）
+nebula.web.response-code: Success
+
+# 成功/失败统一映射（推荐旧项目完整兼容）
+nebula.web.code-mapping:
+  200: Success
+  400: Failure
+  500: Error
+```
+
+未配置时默认仍返回数字，例如 `"code": 200`。
 
 ##  功能
 1. 统一公司所有`spring boot`项目的依赖管理

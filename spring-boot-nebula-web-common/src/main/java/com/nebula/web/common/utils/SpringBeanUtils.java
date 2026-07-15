@@ -51,8 +51,12 @@ public class SpringBeanUtils implements ApplicationContextAware {
         return getApplicationContext().getBean(name, clazz);
     }
     
-    public static boolean containsBean(Class clazz) {
-        return getApplicationContext().getBeanNamesForType(clazz).length > 0;
+    public static boolean containsBean(Class<?> clazz) {
+        ApplicationContext context = getApplicationContext();
+        if (context == null) {
+            return false;
+        }
+        return context.getBeanNamesForType(clazz).length > 0;
     }
     
 }

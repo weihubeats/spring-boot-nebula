@@ -17,6 +17,8 @@
  
 package com.nebula.web.boot.exception;
 
+import com.nebula.web.boot.enums.ResultCode;
+
 /**
  * @author : wh
  * @date : 2023/4/13 10:11
@@ -25,6 +27,6 @@ package com.nebula.web.boot.exception;
 public class RpcException extends BaseException {
     
     public RpcException(String errMessage) {
-        super(errMessage);
+        super(ResultCode.INTERNAL_SERVER_ERROR, errMessage);
     }
 }

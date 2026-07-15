@@ -53,7 +53,7 @@ public enum ResultCode implements IErrorCode {
     BIZ_EXCEPTION(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "业务异常");
     
     /**
-     * code编码
+     * 内部错误码（int）
      */
     final int code;
     /**

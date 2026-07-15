@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+ 
 package com.nebula.web.boot.exception;
 
 import com.nebula.web.boot.api.IErrorCode;
 import com.nebula.web.boot.enums.ResultCode;
-import java.io.Serial;
 import lombok.Getter;
 
 /**
@@ -29,20 +28,40 @@ import lombok.Getter;
  */
 @Getter
 public abstract class BaseException extends RuntimeException implements IErrorCode {
-
-    private final String code;
-
+    
+    private final int code;
+    
     private final Object[] args;
-
+    
     public BaseException(IErrorCode errorCode, Object... args) {
         super(errorCode.getMessage());
         this.code = errorCode.getCode();
         this.args = args;
     }
-
-    public BaseException(String code, Object... args) {
-        this.code = code;
+    
+    public BaseException(IErrorCode errorCode, String message, Object... args) {
+        super(message);
+        this.code = errorCode.getCode();
         this.args = args;
     }
-
+    
+    public BaseException(IErrorCode errorCode, String message, Throwable cause) {
+        super(message, cause);
+        this.code = errorCode.getCode();
+        this.args = null;
+    }
+    
+    public BaseException(String message) {
+        this(ResultCode.FAILURE, message);
+    }
+    
+    public BaseException(String message, Throwable cause) {
+        this(ResultCode.FAILURE, message, cause);
+    }
+    
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
+    
 }

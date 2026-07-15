@@ -33,7 +33,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration(proxyBeanMethods = false)
 @AllArgsConstructor
 public class BaseWebMvcConfig implements WebMvcConfigurer {
-
+    
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(new TimestampArgumentResolver());

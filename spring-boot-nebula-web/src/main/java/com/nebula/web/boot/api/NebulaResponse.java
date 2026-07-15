@@ -17,9 +17,11 @@
  
 package com.nebula.web.boot.api;
 
+import com.nebula.web.boot.config.NebulaWebProperties;
 import com.nebula.web.boot.enums.ResultCode;
 import com.nebula.web.boot.exception.BizException;
 import com.nebula.web.boot.exception.RpcException;
+import com.nebula.web.common.utils.SpringBeanUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.util.Objects;
@@ -32,7 +34,7 @@ import org.springframework.lang.Nullable;
 /**
  * @author : wh
  * @date : 2023/4/13 10:11
- * @description:
+ * @description: 统一响应；code 对外可为 Integer 或 String（由协议层配置决定）
  */
 @NoArgsConstructor
 @Getter
@@ -40,9 +42,9 @@ import org.springframework.lang.Nullable;
 public class NebulaResponse<T> implements Serializable {
     
     /**
-     * 状态码
+     * 状态码（协议层：Integer 或 String）
      */
-    private int code;
+    private Object code;
     
     /**
      * 返回数据
@@ -67,10 +69,10 @@ public class NebulaResponse<T> implements Serializable {
     }
     
     private NebulaResponse(IErrorCode resultCode, T data, String msg) {
-        this(resultCode.getCode(), data, msg);
+        this(toWireCode(resultCode.getCode()), data, msg);
     }
     
-    private NebulaResponse(int code, T data, String msg) {
+    private NebulaResponse(Object code, T data, String msg) {
         this.code = code;
         this.data = data;
         this.msg = msg;
@@ -78,21 +80,17 @@ public class NebulaResponse<T> implements Serializable {
     
     /**
      * 请求是否成功
-     * @param result
-     * @return
      */
     public static boolean isSuccess(@Nullable NebulaResponse<?> result) {
         return Optional.ofNullable(result)
-                .map(x -> Objects.equals(ResultCode.SUCCESS.getCode(), x.code))
+                .map(x -> matchesCode(ResultCode.SUCCESS.getCode(), x.code))
                 .orElse(Boolean.FALSE);
     }
     
     /**
      * 获取 data
-     * @return
      */
     public T data() {
-        // 如果是业务异常
         if (isBizException(this)) {
             throw new BizException(this.msg);
         }
@@ -102,16 +100,14 @@ public class NebulaResponse<T> implements Serializable {
         return this.data;
     }
     
-    private boolean isBizException(NebulaResponse<T> NebulaResponse) {
-        return Optional.ofNullable(NebulaResponse)
-                .map(x -> Objects.equals(ResultCode.BIZ_EXCEPTION.getCode(), x.code))
+    private boolean isBizException(NebulaResponse<T> nebulaResponse) {
+        return Optional.ofNullable(nebulaResponse)
+                .map(x -> matchesCode(ResultCode.BIZ_EXCEPTION.getCode(), x.code))
                 .orElse(Boolean.FALSE);
     }
     
     /**
      * 请求是否失败
-     * @param result
-     * @return
      */
     public static boolean isNotSuccess(@Nullable NebulaResponse<?> result) {
         return !NebulaResponse.isSuccess(result);
@@ -132,14 +128,14 @@ public class NebulaResponse<T> implements Serializable {
     /**
      * 返回R
      *
-     * @param code 状态码
+     * @param code 状态码（内部 int，写出前会转协议层 code）
      * @param data 数据
      * @param msg  消息
      * @param <T>  T 泛型标记
      * @return R
      */
     public static <T extends Serializable> NebulaResponse<T> data(int code, T data, String msg) {
-        return new NebulaResponse<>(code, data, data == null ? "no data" : msg);
+        return new NebulaResponse<>(toWireCode(code), data, data == null ? "no data" : msg);
     }
     
     public static <T> NebulaResponse<T> fail(IErrorCode resultCode, String msg) {
@@ -159,6 +155,30 @@ public class NebulaResponse<T> implements Serializable {
      */
     public static <T> NebulaResponse<T> fail(String msg) {
         return new NebulaResponse<>(ResultCode.FAILURE, msg);
+    }
+    
+    /**
+     * 内部 int → 对外协议 code
+     */
+    static Object toWireCode(int code) {
+        try {
+            if (SpringBeanUtils.containsBean(NebulaWebProperties.class)) {
+                return SpringBeanUtils.getBean(NebulaWebProperties.class).toWireCode(code);
+            }
+        } catch (Exception ignored) {
+            // 无 Spring 环境时保持 int
+        }
+        return code;
+    }
+    
+    /**
+     * 判断响应 code 是否与内部错误码匹配（兼容协议层映射后的 String/Integer）
+     */
+    static boolean matchesCode(int internalCode, Object wireCode) {
+        if (Objects.equals(internalCode, wireCode)) {
+            return true;
+        }
+        return Objects.equals(toWireCode(internalCode), wireCode);
     }
     
 }
