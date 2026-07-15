@@ -3,3 +3,13 @@ GET localhost:8088/test
 
 ### 测试异常报警
 GET localhost:8088/error?name=xiaozou
+
+
+### 测试 body 重复读取
+POST http://localhost:8088/test/body
+Content-Type: application/json
+
+{
+  "name": "小奏",
+  "role": "SDK Developer"
+}

@@ -17,7 +17,7 @@
  
 package com.nebula.web.boot.exception;
 
-import com.nebula.web.boot.api.IResultCode;
+import com.nebula.web.boot.api.IErrorCode;
 import com.nebula.web.boot.enums.ResultCode;
 import lombok.Getter;
 
@@ -27,30 +27,41 @@ import lombok.Getter;
  * @description:
  */
 @Getter
-public abstract class BaseException extends RuntimeException {
+public abstract class BaseException extends RuntimeException implements IErrorCode {
     
-    private static final long serialVersionUID = 1L;
+    private final int code;
     
-    private final IResultCode code;
+    private final Object[] args;
     
-    public BaseException(String errMessage) {
-        super(errMessage);
-        this.code = ResultCode.INTERNAL_SERVER_ERROR;
+    public BaseException(IErrorCode errorCode, Object... args) {
+        super(errorCode.getMessage());
+        this.code = errorCode.getCode();
+        this.args = args;
     }
     
-    public BaseException(IResultCode code, String errMessage) {
-        super(errMessage);
-        this.code = code;
+    public BaseException(IErrorCode errorCode, String message, Object... args) {
+        super(message);
+        this.code = errorCode.getCode();
+        this.args = args;
     }
     
-    public BaseException(String errMessage, Throwable e) {
-        super(errMessage, e);
-        this.code = ResultCode.FAILURE;
+    public BaseException(IErrorCode errorCode, String message, Throwable cause) {
+        super(message, cause);
+        this.code = errorCode.getCode();
+        this.args = null;
     }
     
-    public BaseException(IResultCode code, String errMessage, Throwable e) {
-        super(errMessage, e);
-        this.code = code;
+    public BaseException(String message) {
+        this(ResultCode.FAILURE, message);
+    }
+    
+    public BaseException(String message, Throwable cause) {
+        this(ResultCode.FAILURE, message, cause);
+    }
+    
+    @Override
+    public String getMessage() {
+        return super.getMessage();
     }
     
 }

@@ -18,6 +18,9 @@
 package com.nebula.web.boot.config;
 
 import com.nebula.web.boot.enums.ResultCode;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -31,9 +34,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class NebulaWebProperties {
     
     /**
-     * 返回状态码
+     * 成功响应对外 code。支持数字（200）或字符串（Success）。
+     * <p>YAML 示例：{@code nebula.web.response-code: 200} 或 {@code Success}
      */
-    private Integer responseCode = ResultCode.SUCCESS.getCode();
+    private String responseCode = String.valueOf(ResultCode.SUCCESS.getCode());
+    
+    /**
+     * 内部 int 错误码 → 对外协议 code 映射（成功/失败均可用）。
+     * <p>未命中时：成功码走 {@link #responseCode}，其余直接返回 int。
+     * <pre>
+     * nebula.web.code-mapping:
+     *   200: Success
+     *   400: Failure
+     *   500: Error
+     * </pre>
+     */
+    private Map<Integer, String> codeMapping = new LinkedHashMap<>();
     
     /**
      * 报警 webhook
@@ -49,5 +65,32 @@ public class NebulaWebProperties {
      * 报警类型
      */
     private String monitorType;
+    
+    /**
+     * 将内部 int 错误码转换为对外写出的协议 code（Integer 或 String）
+     */
+    public Object toWireCode(int code) {
+        if (Objects.nonNull(codeMapping) && codeMapping.containsKey(code)) {
+            return parseWireValue(codeMapping.get(code));
+        }
+        if (code == ResultCode.SUCCESS.getCode()) {
+            return parseWireValue(responseCode);
+        }
+        return code;
+    }
+    
+    /**
+     * 纯数字字符串解析为 Integer（JSON number），否则保留 String（JSON string）
+     */
+    public static Object parseWireValue(String raw) {
+        if (Objects.isNull(raw) || raw.isBlank()) {
+            return ResultCode.SUCCESS.getCode();
+        }
+        String trimmed = raw.trim();
+        if (trimmed.matches("-?\\d+")) {
+            return Integer.valueOf(trimmed);
+        }
+        return trimmed;
+    }
     
 }

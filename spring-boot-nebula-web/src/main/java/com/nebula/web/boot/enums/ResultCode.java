@@ -17,7 +17,7 @@
  
 package com.nebula.web.boot.enums;
 
-import com.nebula.web.boot.api.IResultCode;
+import com.nebula.web.boot.api.IErrorCode;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +29,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum ResultCode implements IResultCode {
+public enum ResultCode implements IErrorCode {
     
     /**
      * 操作成功
@@ -53,7 +53,7 @@ public enum ResultCode implements IResultCode {
     BIZ_EXCEPTION(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "业务异常");
     
     /**
-     * code编码
+     * 内部错误码（int）
      */
     final int code;
     /**

@@ -17,54 +17,86 @@
  
 package com.nebula.web.common.utils;
 
-import java.util.Objects;
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.Getter;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 
-/**
- * @author : wh
- * @date : 2024/3/21 10:21
- * @description:
- */
-@ConfigurationProperties(prefix = "nebula")
-@Data
 public class NebulaSysWebUtils {
     
-    private static final String DEV = "dev";
+    public static final String ENV_DEV = "dev";
     
-    private static final String TEST = "test";
+    public static final String ENV_TEST = "test";
     
-    private static final String STAGE = "stage";
+    public static final String ENV_STAGE = "stage";
     
-    private static final String PRD = "prd";
+    public static final String ENV_PRD = "prd";
     
-    /**
-     * 开发环境
-     */
-    @Value("${spring.profiles.active:dev}")
-    private String active;
+    private final Environment environment;
     
-    /**
-     * 服务名
-     */
-    @Value("${spring.application.name:unknown}")
-    private String applicationName;
+    @Getter
+    private final String applicationName;
+    
+    public NebulaSysWebUtils(Environment environment) {
+        this.environment = environment;
+        this.applicationName = environment.getProperty("spring.application.name", "unknown");
+    }
+    
+    // ================= 环境判断 API =================
     
     public boolean isDev() {
-        return Objects.equals(active, DEV);
+        return isEnv(ENV_DEV);
     }
     
     public boolean isTest() {
-        return Objects.equals(active, TEST);
-    }
-    
-    public boolean isPrd() {
-        return Objects.equals(active, PRD);
+        return isEnv(ENV_TEST);
     }
     
     public boolean isStage() {
-        return Objects.equals(active, STAGE);
+        return isEnv(ENV_STAGE);
     }
     
+    public boolean isPrd() {
+        return isEnv(ENV_PRD);
+    }
+    
+    /**
+     * 2. 自定义环境判断：检查当前是否激活了指定的 Profile
+     *
+     * @param profile 自定义环境名称
+     * @return true 如果激活了该环境
+     */
+    public boolean isEnv(String profile) {
+        if (profile == null || profile.isBlank()) {
+            return false;
+        }
+        return environment.acceptsProfiles(Profiles.of(profile));
+    }
+    
+    /**
+     * 3. 额外增强：支持判断多个自定义环境（只要满足其中一个就返回 true）
+     * * @param profiles 多个环境名称
+     * @return true 如果激活了其中任意一个环境
+     */
+    public boolean isAnyEnv(String... profiles) {
+        if (profiles == null || profiles.length == 0) {
+            return false;
+        }
+        return environment.acceptsProfiles(Profiles.of(profiles));
+    }
+    
+    public String[] getActiveProfiles() {
+        String[] activeProfiles = environment.getActiveProfiles();
+        if (activeProfiles.length > 0) {
+            return activeProfiles;
+        }
+        return environment.getDefaultProfiles();
+    }
+    
+    public String getActive() {
+        String[] activeProfiles = environment.getActiveProfiles();
+        if (activeProfiles.length > 0) {
+            return activeProfiles[0];
+        }
+        return environment.getDefaultProfiles()[0];
+    }
 }

@@ -22,21 +22,12 @@ import java.io.Serializable;
 /**
  * @author : wh
  * @date : 2023/4/13 10:11
- * @description:
+ * @description: 内部错误码契约，code 统一为 int；对外 JSON 形态由协议层配置决定
  */
-public interface IResultCode extends Serializable {
+public interface IErrorCode extends Serializable {
     
-    /**
-     * 消息
-     *
-     * @return String
-     */
+    int getCode();
+    
     String getMessage();
     
-    /**
-     * 状态码
-     *
-     * @return int
-     */
-    int getCode();
 }

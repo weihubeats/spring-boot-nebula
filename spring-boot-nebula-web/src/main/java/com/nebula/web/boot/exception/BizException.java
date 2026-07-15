@@ -17,7 +17,7 @@
  
 package com.nebula.web.boot.exception;
 
-import com.nebula.web.boot.api.IResultCode;
+import com.nebula.web.boot.api.IErrorCode;
 import com.nebula.web.boot.enums.ResultCode;
 
 /**
@@ -41,7 +41,7 @@ public class BizException extends BaseException {
         super(errMessage, e);
     }
     
-    public BizException(IResultCode errorCode, String errMessage, Throwable e) {
+    public BizException(IErrorCode errorCode, String errMessage, Throwable e) {
         super(errorCode, errMessage, e);
     }
     

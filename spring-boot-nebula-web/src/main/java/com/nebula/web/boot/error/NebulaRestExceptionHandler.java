@@ -99,7 +99,7 @@ public class NebulaRestExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public NebulaResponse<?> handleError(HttpServletRequest request, UnauthorizedException e) {
         log.warn("Unauthorised requests: {}", e.getMessage());
-        return NebulaResponse.fail(e.getCode(), e.getMessage());
+        return NebulaResponse.fail(e);
     }
     
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -120,14 +120,14 @@ public class NebulaRestExceptionHandler {
     @ResponseStatus(HttpStatus.OK)
     public NebulaResponse<?> handleError(HttpServletRequest request, BizException e) {
         log.error("业务异常", e);
-        return NebulaResponse.fail(e.getCode(), e.getMessage());
+        return NebulaResponse.fail(e);
     }
     
     @ExceptionHandler(RpcException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public NebulaResponse<?> handleError(HttpServletRequest request, RpcException e) {
         log.error("RPC Exception", e);
-        return NebulaResponse.fail(e.getCode(), e.getMessage());
+        return NebulaResponse.fail(e);
     }
     
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -151,7 +151,7 @@ public class NebulaRestExceptionHandler {
     public NebulaResponse<?> defaultErrorHandle(HttpServletRequest request, HttpServletResponse response,
                                                 Object handler, Exception ex) {
         NebulaResponse<?> baseResponse = new NebulaResponse<>();
-        baseResponse.setCode(ResultCode.INTERNAL_SERVER_ERROR.getCode());
+        baseResponse.setCode(nebulaWebProperties.toWireCode(ResultCode.INTERNAL_SERVER_ERROR.getCode()));
         if (nebulaSysWebUtils.isPrd() && nebulaWebProperties.isMonitorOpen() && !Objects.isNull(nebulaErrorMonitor)) {
             nebulaErrorMonitor.monitorError(request, response, handler, ex);
             baseResponse.setMsg("Server busy");

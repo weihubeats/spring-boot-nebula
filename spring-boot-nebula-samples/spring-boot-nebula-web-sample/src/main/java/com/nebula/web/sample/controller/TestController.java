@@ -18,7 +18,10 @@
 package com.nebula.web.sample.controller;
 
 import com.nebula.web.boot.annotation.NebulaResponseBody;
+import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,6 +45,13 @@ public class TestController {
     public String error() {
         int i = 1 / 0;
         return "<UNK>";
+    }
+
+    @PostMapping("/test/real-scene")
+    @NebulaResponseBody
+    public String handleRequest(@RequestBody Map<String, Object> payload) {
+        System.out.println("==== 【Controller】成功解析到对象: " + payload + " ====");
+        return "Controller 执行完毕";
     }
     
 }
