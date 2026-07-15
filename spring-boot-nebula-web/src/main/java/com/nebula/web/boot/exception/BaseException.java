@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.web.boot.exception;
 
 import com.nebula.web.boot.api.IErrorCode;
@@ -28,10 +28,8 @@ import lombok.Getter;
  * @description:
  */
 @Getter
-public abstract class BaseException extends RuntimeException {
-    
-    @Serial private static final long serialVersionUID = 1L;
-    
+public abstract class BaseException extends RuntimeException implements IErrorCode {
+
     private final String code;
 
     private final Object[] args;
@@ -47,7 +45,4 @@ public abstract class BaseException extends RuntimeException {
         this.args = args;
     }
 
-
-
-    
 }

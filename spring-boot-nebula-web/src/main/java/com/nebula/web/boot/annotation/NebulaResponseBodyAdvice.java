@@ -58,7 +58,7 @@ public class NebulaResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             ObjectMapper mapper = getTargetObjectMapper(annotation);
             try {
                 // 设置响应头，防止中文乱码，保持与原设计的兼容
-                response.getHeaders().setContentType(MediaType.APPLICATION_JSON_UTF8);
+                response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
                 return mapper.writeValueAsString(baseResponse);
             } catch (JsonProcessingException e) {
                 log.error("Nebula SDK: 序列化 String 返回值失败", e);
@@ -69,7 +69,7 @@ public class NebulaResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         if (annotation != null && annotation.objectMapper() != JsonUtil.JacksonObjectMapper.class) {
             try {
                 ObjectMapper mapper = getTargetObjectMapper(annotation);
-                response.getHeaders().setContentType(MediaType.APPLICATION_JSON_UTF8);
+                response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
                 return mapper.writeValueAsString(baseResponse);
             } catch (JsonProcessingException e) {
                 log.error("Nebula SDK: 自定义 ObjectMapper 序列化失败", e);

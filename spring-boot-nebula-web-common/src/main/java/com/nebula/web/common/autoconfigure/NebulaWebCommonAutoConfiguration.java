@@ -21,6 +21,7 @@ import com.nebula.web.common.utils.NebulaSysWebUtils;
 import com.nebula.web.common.utils.SpringBeanUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 /**
  * @author : wh
@@ -36,8 +37,8 @@ public class NebulaWebCommonAutoConfiguration {
     }
     
     @Bean
-    public NebulaSysWebUtils nebulaSysWebUtils() {
-        return new NebulaSysWebUtils();
+    public NebulaSysWebUtils nebulaSysWebUtils(Environment environment) {
+        return new NebulaSysWebUtils(environment);
     }
     
 }
