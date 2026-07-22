@@ -50,8 +50,9 @@ Thumbs.db
 
 
 # Build output directies
-/target
-*/target
+target/
+**/target/
+
 /build
 */build
 

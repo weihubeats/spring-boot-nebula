@@ -1,0 +1,18 @@
+server:
+  port: 8090
+
+feign:
+  client:
+    user:
+      url: http://127.0.0.1:8090
+
+nebula:
+  feign:
+    log:
+      enabled: true
+      level: INFO
+      slow:
+        enabled: true
+        # 示例阈值调低，便于验证慢调用告警
+        threshold-millis: 1000
+        level: ERROR

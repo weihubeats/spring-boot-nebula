@@ -53,7 +53,7 @@ public class TestController {
         mockMvc.perform(MockMvcRequestBuilders.post("/error")
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("uid", "99")
-                .content(Objects.requireNonNull(JsonUtil.toJSONString(jsonBody))))
+                .content(Objects.requireNonNull(JsonUtil.toJson(jsonBody))))
                 .andExpect(status().is5xxServerError()).andDo(print());
         
     }
@@ -73,7 +73,7 @@ public class TestController {
             mockMvc.perform(MockMvcRequestBuilders.post("/error")
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("uid", "99")
-                    .content(Objects.requireNonNull(JsonUtil.toJSONString(jsonBody))))
+                    .content(Objects.requireNonNull(JsonUtil.toJson(jsonBody))))
                     .andExpect(status().is5xxServerError()).andDo(print());
             
             TimeUnit.SECONDS.sleep(2);

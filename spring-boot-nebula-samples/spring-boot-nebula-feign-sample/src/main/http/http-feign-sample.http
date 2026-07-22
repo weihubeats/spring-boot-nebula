@@ -1,0 +1,47 @@
+### 自动解包 NebulaResponse
+GET http://localhost:8090/consumer/users/1
+
+### 透传 NebulaResponse
+GET http://localhost:8090/consumer/users/1/raw
+
+### 下游业务异常（BizException，HTTP 200 + Decoder）
+GET http://localhost:8090/consumer/users/-1
+
+### 下游 RPC 异常（RpcException，HTTP 500 + ErrorDecoder）
+GET http://localhost:8090/consumer/users/1/rpc-error
+
+### POST 创建用户
+POST http://localhost:8090/consumer/users
+Content-Type: application/json
+
+{
+  "name": "小奏",
+  "age": 18
+}
+
+### POST 更新用户
+POST http://localhost:8090/consumer/users/1
+Content-Type: application/json
+
+{
+  "name": "小奏-updated",
+  "age": 19
+}
+
+### POST 搜索用户
+POST http://localhost:8090/consumer/users/search
+Content-Type: application/json
+
+{
+  "name": "小奏",
+  "age": 18
+}
+
+### POST 慢调用（触发慢调用告警）
+POST http://localhost:8090/consumer/users/slow
+Content-Type: application/json
+
+{
+  "name": "slow-user",
+  "age": 20
+}
