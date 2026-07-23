@@ -75,7 +75,7 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
         if (DataUtils.isNotEmpty(body)) {
             body = body.substring(1, body.length() - 2);
         }
-        String jsonString = JsonUtil.toJSONString(request.getParameterMap());
+        String jsonString = JsonUtil.toJson(request.getParameterMap());
         if (DataUtils.isNotEmpty(jsonString)) {
             jsonString = jsonString.replace("\"", "\\\"");
         }

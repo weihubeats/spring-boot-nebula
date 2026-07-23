@@ -44,7 +44,7 @@ public class CreateOldObjAspect {
     }
     
     public Object copy(Object oldObject) {
-        return JsonUtil.json2JavaBean(JsonUtil.toJSONString(oldObject), oldObject.getClass());
+        return JsonUtil.fromJson(JsonUtil.toJson(oldObject), oldObject.getClass());
     }
     
 }
