@@ -85,3 +85,7 @@ atlassian-ide-plugin.xml
 
 # Maven ignore
 .flattened-pom.xml
+
+.vscode
+# Added by code-review-graph
+.code-review-graph/

@@ -24,8 +24,11 @@ import com.nebula.distribute.lock.core.NebulaDistributedLockTemplate;
 import com.nebula.distribute.lock.core.RedissonDistributedLockTemplate;
 import org.redisson.api.RedissonClient;
 import org.springframework.aop.Advisor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
 /**
@@ -36,17 +39,21 @@ import org.springframework.core.annotation.Order;
 @Configuration(proxyBeanMethods = false)
 public class NebulaDistributedLockAutoConfiguration {
     
+    @Value("${nebula.distributed-lock.order:Ordered.HIGHEST_PRECEDENCE}")
+    private int advisorOrder;
+    
     @Bean
+    @ConditionalOnBean(RedissonClient.class)
     public RedissonDistributedLockTemplate redissonDistributedLockTemplate(RedissonClient redissonClient) {
-        RedissonDistributedLockTemplate template = new RedissonDistributedLockTemplate(redissonClient);
-        return template;
+        return new RedissonDistributedLockTemplate(redissonClient);
     }
     
     @Bean
-    @Order(1)
+    @ConditionalOnBean(RedissonClient.class)
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     public Advisor distributedLockAnnotationAdvisor(NebulaDistributedLockTemplate nebulaDistributedLockTemplate) {
-        NebulaDistributedLockAnnotationInterceptor advisor = new NebulaDistributedLockAnnotationInterceptor(nebulaDistributedLockTemplate);
-        return new NebulaBaseAnnotationAdvisor(advisor, NebulaDistributedLock.class);
+        NebulaDistributedLockAnnotationInterceptor interceptor = new NebulaDistributedLockAnnotationInterceptor(nebulaDistributedLockTemplate);
+        return new NebulaBaseAnnotationAdvisor(interceptor, NebulaDistributedLock.class);
     }
     
 }

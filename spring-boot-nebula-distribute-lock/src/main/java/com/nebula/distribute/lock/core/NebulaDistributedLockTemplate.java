@@ -40,44 +40,40 @@ public interface NebulaDistributedLockTemplate {
     TimeUnit DEFAULT_TIME_UNIT = TimeUnit.SECONDS;
     
     /**
-     * 加锁
-     * @param distributedLock
-     * @param fairLock 是否使用公平锁
-     * @param <T>
-     * @return
+     * 加锁（使用默认超时时间）
      */
-    <T> T lock(DistributedLock<T> distributedLock, boolean fairLock);
+    <T> T lock(DistributedLock<T> distributedLock, boolean fairLock, boolean watchDogEnabled) throws Throwable;
     
     /**
-     *
+     * 加锁
      * @param distributedLock
-     * @param outTime 锁超时时间。超时后自动释放锁
+     * @param outTime 锁超时时间（仅当 watchDogEnabled=false 时生效）
      * @param timeUnit 时间单位
      * @param fairLock 是否使用公平锁
+     * @param watchDogEnabled 是否启用看门狗自动续期
      * @param <T>
      * @return
+     * @throws Throwable 锁获取或执行业务逻辑过程中抛出的异常
      */
-    <T> T lock(DistributedLock<T> distributedLock, long outTime, TimeUnit timeUnit, boolean fairLock);
+    <T> T lock(DistributedLock<T> distributedLock, long outTime, TimeUnit timeUnit, boolean fairLock, boolean watchDogEnabled) throws Throwable;
+    
+    /**
+     * 尝试加锁（使用默认超时时间）
+     */
+    <T> T tryLock(DistributedLock<T> distributedLock, boolean fairLock, boolean watchDogEnabled) throws Throwable;
     
     /**
      * 尝试加锁
      * @param distributedLock
-     * @param fairLock 是否使用公平锁
-     * @param <T>
-     * @return
-     */
-    <T> T tryLock(DistributedLock<T> distributedLock, boolean fairLock);
-    
-    /**
-     *
-     * @param distributedLock
      * @param tryOutTime 尝试获取锁时间
-     * @param outTime 锁超时时间
+     * @param outTime 锁超时时间（仅当 watchDogEnabled=false 时生效）
      * @param timeUnit 时间单位
      * @param fairLock 是否使用公平锁
+     * @param watchDogEnabled 是否启用看门狗自动续期
      * @param <T>
      * @return
+     * @throws Throwable 锁获取或执行业务逻辑过程中抛出的异常
      */
-    <T> T tryLock(DistributedLock<T> distributedLock, long tryOutTime, long outTime, TimeUnit timeUnit, boolean fairLock);
+    <T> T tryLock(DistributedLock<T> distributedLock, long tryOutTime, long outTime, TimeUnit timeUnit, boolean fairLock, boolean watchDogEnabled) throws Throwable;
     
 }

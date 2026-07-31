@@ -25,7 +25,7 @@
         <commons-collections4.version>4.4</commons-collections4.version>
         <javers-core.version>6.6.5</javers-core.version>
         <pagehelper-spring-boot-starter.version>1.4.2</pagehelper-spring-boot-starter.version>
-        <redission.version>3.17.3</redission.version>
+        <redisson.version>3.45.1</redisson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
         <vavr.version>0.10.6</vavr.version>
@@ -264,7 +264,7 @@
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson</artifactId>
-                <version>${redission.version}</version>
+                <version>${redisson.version}</version>
             </dependency>
 
         </dependencies>
