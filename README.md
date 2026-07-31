@@ -173,8 +173,57 @@ nebula:
 
 ![feishu-error.png](doc/images/feishu-error.png)
 
+#### Logback 日志脱敏与 ERROR 飞书报警
 
+与上面的 Web 全局异常飞书监控互补：`NebulaErrorMonitor` 覆盖未捕获异常；`spring-boot-nebula-logback` 覆盖业务里的 `log.error(...)`。
 
+1. 引入依赖
+
+```xml
+<dependency>
+    <groupId>io.github.weihubeats</groupId>
+    <artifactId>spring-boot-nebula-logback</artifactId>
+    <version>${nebula.version}</version>
+</dependency>
+```
+
+2. 日志脱敏（logback 仅注册 Converter；规则在 `application.yaml`）
+
+```xml
+<conversionRule conversionWord="msg"
+    converterClass="com.nebula.log.logback.desensitize.DesensitizeMessageConverter"/>
+
+<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+```
+
+```yaml
+nebula:
+  log:
+    desensitize:
+      enabled: true
+      disable-rules:
+        - bankCard
+        - email
+```
+
+内置规则：`mobile` / `idCard` / `bankCard` / `email` / `secretKey`。
+
+3. ERROR 日志飞书报警（在 `application.yaml` 配置，不在 logback.xml）
+
+```yaml
+nebula:
+  log:
+    feishu:
+      enabled: true
+      webhook-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxx
+      title: my-app
+      max-per-minute: 10
+```
+
+启用后由 `NebulaLogAutoConfiguration` 自动挂载 `FeishuErrorAppender`。webhook 与 `nebula.web.monitor-url` 相互独立，可填同一地址。
+
+可运行示例模块：`spring-boot-nebula-samples/spring-boot-nebula-logback-sample`
+（`GET /log/desensitize`、`GET /log/error`；飞书地址配在 `application.yaml` 的 `nebula.log.feishu.webhook-url`）。
 
 #### 时间戳自动转`LocalDateTime`注解
 @GetTimestamp
