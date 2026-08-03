@@ -63,8 +63,6 @@ public class FeishuErrorAppenderLifecycle implements SmartLifecycle {
         feishuAppender.setTitle(feishu.getTitle());
         feishuAppender.setMaxPerMinute(feishu.getMaxPerMinute());
         feishuAppender.setQueueSize(feishu.getQueueSize());
-        feishuAppender.setConnectTimeoutMs(feishu.getConnectTimeoutMs());
-        feishuAppender.setReadTimeoutMs(feishu.getReadTimeoutMs());
         feishuAppender.start();
         if (!feishuAppender.isStarted()) {
             return;

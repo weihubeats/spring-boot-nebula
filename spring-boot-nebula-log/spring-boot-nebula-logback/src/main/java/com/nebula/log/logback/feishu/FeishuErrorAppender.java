@@ -52,10 +52,6 @@ public class FeishuErrorAppender extends AppenderBase<ILoggingEvent> {
     private int maxPerMinute = DEFAULT_MAX_PER_MINUTE;
     @Setter
     private int queueSize = DEFAULT_QUEUE_SIZE;
-    @Setter
-    private long connectTimeoutMs = 3_000L;
-    @Setter
-    private long readTimeoutMs = 5_000L;
     
     private FeishuWebhookClient client;
     /**

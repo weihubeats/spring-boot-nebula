@@ -22,6 +22,7 @@ import com.nebula.log.logback.desensitize.DesensitizeRule;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -35,12 +36,14 @@ import org.springframework.context.annotation.Bean;
 public class NebulaLogAutoConfiguration {
     
     @Bean
+    @ConditionalOnMissingBean
     public DesensitizePropertiesBinder desensitizePropertiesBinder(
                                                                    NebulaLogProperties properties, ObjectProvider<DesensitizeRule> customRules) {
         return new DesensitizePropertiesBinder(properties, customRules);
     }
     
     @Bean
+    @ConditionalOnMissingBean
     @ConditionalOnProperty(prefix = "nebula.log.feishu", name = "enabled", havingValue = "true")
     public FeishuErrorAppenderLifecycle feishuErrorAppenderLifecycle(NebulaLogProperties properties) {
         return new FeishuErrorAppenderLifecycle(properties);

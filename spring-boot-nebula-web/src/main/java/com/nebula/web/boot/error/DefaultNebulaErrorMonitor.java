@@ -17,7 +17,6 @@
  
 package com.nebula.web.boot.error;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nebula.alert.feishu.FeiShuRoot;
 import com.nebula.base.utils.DataUtils;
 import com.nebula.base.utils.JsonUtil;
@@ -30,6 +29,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
@@ -72,10 +72,10 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
                 return;
             }
             sendFeiShuErrorMsg(request, response, handler, ex);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            // 告警失败绝不影响业务响应
+            log.error("飞书告警发送失败, key={}", ex.getClass().getSimpleName(), e);
         }
-        
     }
     
     private String buildAlertKey(HttpServletRequest request, Exception ex) {
@@ -89,17 +89,13 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
     public void sendFeiShuErrorMsg(HttpServletRequest request, HttpServletResponse response, Object handler,
                                    Exception ex) throws IOException {
         String uri = request.getRequestURI();
-        String body = new String(StreamUtils.copyToByteArray(request.getInputStream()), request.getCharacterEncoding());
+        String body = readRequestBody(request);
         
         // 删掉多余的转义字符
         String errorStackMsg = stackTraceToJsonValue(ex);
-        if (errorStackMsg.getBytes(StandardCharsets.UTF_8).length > FEISHU_MESSAGE_HASH_MAX_LENGTH) {
-            errorStackMsg = errorStackMsg.substring(0, new String(new byte[FEISHU_MESSAGE_HASH_MAX_LENGTH]).length());
-        }
-        if (body.getBytes(StandardCharsets.UTF_8).length > FEISHU_MESSAGE_HASH_MAX_LENGTH) {
-            body = body.substring(0, new String(new byte[FEISHU_MESSAGE_HASH_MAX_LENGTH]).length());
-        }
-        if (DataUtils.isNotEmpty(body)) {
+        errorStackMsg = truncateByUtf8Bytes(errorStackMsg, FEISHU_MESSAGE_HASH_MAX_LENGTH);
+        body = truncateByUtf8Bytes(body, FEISHU_MESSAGE_HASH_MAX_LENGTH);
+        if (body.length() > 2) {
             body = body.substring(1, body.length() - 2);
         }
         String jsonString = JsonUtil.toJson(request.getParameterMap());
@@ -107,6 +103,26 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
             jsonString = jsonString.replace("\"", "\\\"");
         }
         feiShuRoot.sendRichTextAsync(nebulaWebProperties.getMonitorUrl(), readUtf8String("config/feishu.json"), jsonString, body, errorStackMsg, uri);
+    }
+    
+    private static String readRequestBody(HttpServletRequest request) {
+        try {
+            return new String(StreamUtils.copyToByteArray(request.getInputStream()),
+                    Objects.requireNonNullElse(request.getCharacterEncoding(), StandardCharsets.UTF_8.name()));
+        } catch (IOException | RuntimeException e) {
+            return "";
+        }
+    }
+    
+    private static String truncateByUtf8Bytes(String value, int maxBytes) {
+        if (Objects.isNull(value)) {
+            return "";
+        }
+        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+        if (bytes.length <= maxBytes) {
+            return value;
+        }
+        return new String(bytes, 0, maxBytes, StandardCharsets.UTF_8);
     }
     
     public static String stackTraceToJsonValue(Throwable ex) {
@@ -117,8 +133,7 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
             String stackTrace = sw.toString();
             
             // 使用 Jackson 处理转义
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(stackTrace).replace("\"", "");
+            return JsonUtil.getInstance().writeValueAsString(stackTrace).replace("\"", "");
         } catch (Exception e) {
             return "Error formatting stack trace: " + e.getMessage();
         }

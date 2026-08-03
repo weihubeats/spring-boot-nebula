@@ -88,9 +88,5 @@ public class NebulaLogProperties {
          * Async send queue capacity.
          */
         private int queueSize = 256;
-        
-        private long connectTimeoutMs = 3_000L;
-        
-        private long readTimeoutMs = 5_000L;
     }
 }
