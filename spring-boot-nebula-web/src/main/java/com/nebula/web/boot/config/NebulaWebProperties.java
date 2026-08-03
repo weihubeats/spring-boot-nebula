@@ -67,6 +67,31 @@ public class NebulaWebProperties {
     private String monitorType;
     
     /**
+     * 是否开启飞书告警频率限制
+     */
+    private boolean monitorLimitEnabled = true;
+    
+    /**
+     * 限流窗口（秒）
+     */
+    private int monitorLimitWindowSeconds = 60;
+    
+    /**
+     * 限流窗口内同 key 最大告警次数
+     */
+    private int monitorLimitMaxCount = 3;
+    
+    /**
+     * Redis 限流 key 前缀（仅 Redis 限流时使用）
+     */
+    private String monitorLimitKeyPrefix = "nebula:alert:rate:";
+    
+    /**
+     * Redis 限流 key TTL（秒，需 ≥ 窗口时间）
+     */
+    private int monitorLimitExpireSeconds = 120;
+    
+    /**
      * 将内部 int 错误码转换为对外写出的协议 code（Integer 或 String）
      */
     public Object toWireCode(int code) {

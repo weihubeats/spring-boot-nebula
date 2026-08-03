@@ -17,13 +17,9 @@
  
 package com.nebula.web.boot.config;
 
-import com.nebula.web.boot.resolver.TimestampArgumentResolver;
-import java.util.List;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -31,12 +27,5 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Configuration(proxyBeanMethods = false)
-@AllArgsConstructor
 public class BaseWebMvcConfig implements WebMvcConfigurer {
-    
-    @Override
-    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new TimestampArgumentResolver());
-    }
-    
 }

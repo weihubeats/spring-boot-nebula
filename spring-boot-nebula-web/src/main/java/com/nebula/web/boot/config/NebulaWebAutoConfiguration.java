@@ -20,14 +20,21 @@ package com.nebula.web.boot.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nebula.alert.feishu.FeiShuRoot;
 import com.nebula.web.boot.error.DefaultNebulaErrorMonitor;
+import com.nebula.web.boot.error.FeishuAlertLimiter;
+import com.nebula.web.boot.error.NebulaAlertLimiter;
 import com.nebula.web.boot.error.NebulaErrorMonitor;
+import com.nebula.web.boot.error.RedisNebulaAlertLimiter;
 import com.nebula.web.boot.annotation.NebulaResponseBodyAdvice;
 import com.nebula.web.boot.filter.RepeatableReadFilter;
+import java.time.Duration;
+import org.redisson.api.RedissonClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 
 /**
@@ -66,9 +73,29 @@ public class NebulaWebAutoConfiguration {
     
     @ConditionalOnProperty(name = "nebula.web.monitor.type", havingValue = "feishu")
     @Bean
+    public NebulaAlertLimiter feishuAlertLimiter(NebulaWebProperties nebulaWebProperties) {
+        return new FeishuAlertLimiter(nebulaWebProperties.getMonitorLimitWindowSeconds(),
+                nebulaWebProperties.getMonitorLimitMaxCount());
+    }
+    
+    @ConditionalOnProperty(name = "nebula.web.monitor.type", havingValue = "feishu")
+    @ConditionalOnBean(RedissonClient.class)
+    @Primary
+    @Bean
+    public NebulaAlertLimiter redisAlertLimiter(RedissonClient redissonClient,
+                                                NebulaWebProperties nebulaWebProperties) {
+        return new RedisNebulaAlertLimiter(redissonClient,
+                Duration.ofSeconds(nebulaWebProperties.getMonitorLimitWindowSeconds()),
+                Duration.ofSeconds(nebulaWebProperties.getMonitorLimitExpireSeconds()),
+                nebulaWebProperties.getMonitorLimitMaxCount(),
+                nebulaWebProperties.getMonitorLimitKeyPrefix());
+    }
+    
+    @ConditionalOnProperty(name = "nebula.web.monitor.type", havingValue = "feishu")
+    @Bean
     public NebulaErrorMonitor defaultNebulaErrorMonitor(FeiShuRoot feiShuRoot,
-                                                        NebulaWebProperties nebulaWebProperties) {
-        return new DefaultNebulaErrorMonitor(feiShuRoot, nebulaWebProperties);
-        
+                                                        NebulaWebProperties nebulaWebProperties,
+                                                        NebulaAlertLimiter alertLimiter) {
+        return new DefaultNebulaErrorMonitor(feiShuRoot, nebulaWebProperties, alertLimiter);
     }
 }

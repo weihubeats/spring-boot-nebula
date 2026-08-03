@@ -225,15 +225,22 @@ nebula:
 可运行示例模块：`spring-boot-nebula-samples/spring-boot-nebula-logback-sample`
 （`GET /log/desensitize`、`GET /log/error`；飞书地址配在 `application.yaml` 的 `nebula.log.feishu.webhook-url`）。
 
-#### 时间戳自动转`LocalDateTime`注解
-@GetTimestamp
+#### LocalDateTime 处理
+
+SDK 通过全局 `JacksonTimeModule` 统一格式化 `LocalDateTime`，JSON body 字段入参/出参均为 `yyyy-MM-dd HH:mm:ss`，无需额外注解：
 
 ```java
-    @GetMapping("/test")
-    @NebulaResponseBody
-    public String test(@GetTimestamp LocalDateTime time) {
-        return time.toString();
-    }
+@Data
+public class UserDTO {
+    private LocalDateTime createdAt;  // 入参 / 出参 均为 "yyyy-MM-dd HH:mm:ss"
+}
+```
+
+如需时间戳格式，使用 Jackson 原生注解即可：
+
+```java
+@JsonFormat(shape = Shape.NUMBER)
+private LocalDateTime shipTime;  // JSON 中为毫秒时间戳
 ```
 
 #### 无需手动引入探针依赖

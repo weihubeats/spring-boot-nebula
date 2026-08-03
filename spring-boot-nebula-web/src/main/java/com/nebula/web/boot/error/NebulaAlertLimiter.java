@@ -15,24 +15,19 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.annotation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.nebula.web.boot.error;
 
 /**
- * @author : wh
- * @date : 2023/5/12 10:14
- * @description:
+ * 告警频率限制抽象。
+ * <p>实现类由 Spring 管理生命周期，所有告警实现（飞书、钉钉等）共享同一个限流器实例。
  */
-@Target({ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface GetTimestamp {
+public interface NebulaAlertLimiter {
     
-    String name() default "";
-    
+    /**
+     * 尝试获取告警配额。
+     *
+     * @param key 告警维度，通常为 异常类名:归一化URI
+     * @return true=配额内可发送告警；false=已达窗口上限应丢弃
+     */
+    boolean tryAcquire(String key);
 }

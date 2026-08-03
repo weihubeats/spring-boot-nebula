@@ -17,42 +17,23 @@
  
 package com.nebula.web.boot.error;
 
-import com.nebula.base.utils.SingletonUtils;
-import io.micrometer.core.instrument.util.IOUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 
 /**
- * @author : wh
- * @date : 2025/3/25
- * @description:
+ * 错误监控告警接口。
+ * <p>实现类负责将异常信息推送至告警目标（飞书、钉钉等）。
+ * 告警频率限制由外部共享的限流器统一管控，实现类不持有限流器。
  */
 public interface NebulaErrorMonitor {
     
     /**
-     * 监控异常
+     * 监控并告警异常。
      *
-     * @param request
-     * @param response
-     * @param handler
-     * @param ex
+     * @param request  请求对象
+     * @param response 响应对象
+     * @param handler  Spring MVC handler，通常为 HandlerMethod，代表触发异常的控制器方法
+     * @param ex       捕获的异常
      */
     void monitorError(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex);
-    
-    default String readUtf8String(String path) {
-        return SingletonUtils.get("resource:" + path, () -> {
-            try (InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(path)) {
-                if (inputStream == null) {
-                    throw new IOException("Resource not found: " + path);
-                }
-                return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to read resource: " + path, e);
-            }
-        });
-        
-    }
 }

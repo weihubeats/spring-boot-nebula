@@ -22,13 +22,16 @@ import com.nebula.alert.feishu.FeiShuRoot;
 import com.nebula.base.utils.DataUtils;
 import com.nebula.base.utils.JsonUtil;
 import com.nebula.web.boot.config.NebulaWebProperties;
+import io.micrometer.core.instrument.util.IOUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import lombok.RequiredArgsConstructor;
+import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StreamUtils;
 
 /**
@@ -36,7 +39,7 @@ import org.springframework.util.StreamUtils;
  * @date : 2025/3/25
  * @description:
  */
-@RequiredArgsConstructor
+@Slf4j
 public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
     
     // todo 先写死
@@ -46,14 +49,38 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
     
     private static final int FEISHU_MESSAGE_HASH_MAX_LENGTH = 15 * 1024;
     
+    /**
+     * 路径中的纯数字段视为动态段（如 /user/{id}），归一化保证同质异常不因参数值分裂 key
+     */
+    private static final Pattern DYNAMIC_SEGMENT_PATTERN = Pattern.compile("/\\d+(?=/|$)");
+    
+    private final NebulaAlertLimiter alertLimiter;
+    
+    public DefaultNebulaErrorMonitor(FeiShuRoot feiShuRoot, NebulaWebProperties nebulaWebProperties,
+                                     NebulaAlertLimiter alertLimiter) {
+        this.feiShuRoot = feiShuRoot;
+        this.nebulaWebProperties = nebulaWebProperties;
+        this.alertLimiter = alertLimiter;
+    }
+    
     @Override
     public void monitorError(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         try {
+            String key = buildAlertKey(request, ex);
+            if (nebulaWebProperties.isMonitorLimitEnabled() && !alertLimiter.tryAcquire(key)) {
+                log.warn("飞书告警限流: key={}, 已达到限制, 跳过本次告警", key);
+                return;
+            }
             sendFeiShuErrorMsg(request, response, handler, ex);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         
+    }
+    
+    private String buildAlertKey(HttpServletRequest request, Exception ex) {
+        String normalizedUri = DYNAMIC_SEGMENT_PATTERN.matcher(request.getRequestURI()).replaceAll("/{id}");
+        return ex.getClass().getSimpleName() + ":" + normalizedUri;
     }
     
     /**
@@ -94,6 +121,15 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
             return mapper.writeValueAsString(stackTrace).replace("\"", "");
         } catch (Exception e) {
             return "Error formatting stack trace: " + e.getMessage();
+        }
+    }
+    
+    private static String readUtf8String(String path) throws IOException {
+        try (InputStream inputStream = DefaultNebulaErrorMonitor.class.getClassLoader().getResourceAsStream(path)) {
+            if (inputStream == null) {
+                throw new IOException("Resource not found: " + path);
+            }
+            return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
         }
     }
     
