@@ -21,6 +21,7 @@
         <module>spring-boot-nebula-dynamic-datasource-sample</module>
         <module>spring-boot-nebula-join-sample</module>
         <module>spring-boot-nebula-logback-sample</module>
+        <module>spring-boot-nebula-feign-sample</module>
     </modules>
 
     <properties>

@@ -50,8 +50,9 @@ Thumbs.db
 
 
 # Build output directies
-/target
-*/target
+target/
+**/target/
+
 /build
 */build
 
@@ -84,3 +85,7 @@ atlassian-ide-plugin.xml
 
 # Maven ignore
 .flattened-pom.xml
+
+.vscode
+# Added by code-review-graph
+.code-review-graph/

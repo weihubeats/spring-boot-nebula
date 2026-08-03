@@ -79,4 +79,11 @@ public @interface NebulaDistributedLock {
      */
     TimeUnit timeUnit() default TimeUnit.SECONDS;
     
+    /**
+     * 是否启用看门狗自动续期。
+     * 开启后不使用硬超时，Redisson 的 watch-dog 线程会自动续期，
+     * 适用于执行时间不确定的方法。
+     */
+    boolean watchDogEnabled() default true;
+    
 }

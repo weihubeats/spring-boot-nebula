@@ -22,8 +22,9 @@ import com.nebula.distribute.lock.core.DistributedLock;
 import com.nebula.distribute.lock.core.NebulaDistributedLockTemplate;
 import com.nebula.distribute.lock.exception.DistributedLockException;
 import com.nebula.web.common.utils.ExpressionUtil;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import java.lang.reflect.Method;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,13 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
     
     private final NebulaDistributedLockTemplate lockTemplate;
     
-    private final ConcurrentHashMap<Method, String> lockNameCache = new ConcurrentHashMap<>();
+    private final Cache<String, String> lockNameCache = Caffeine.newBuilder()
+            .maximumSize(1000)
+            .build();
+    
+    private final Cache<String, String> elExpressionCache = Caffeine.newBuilder()
+            .maximumSize(500)
+            .build();
     
     public NebulaDistributedLockAnnotationInterceptor(NebulaDistributedLockTemplate lockTemplate) {
         if (lockTemplate == null) {
@@ -62,10 +69,14 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
         
         Object[] args = methodInvocation.getArguments();
         String lockName = getLockName(annotation, args, method);
+        if (!StringUtils.hasText(lockName)) {
+            throw new DistributedLockException("Lock name cannot be empty");
+        }
         if (log.isDebugEnabled()) {
             log.debug("Using distributed lock: {}", lockName);
         }
         boolean fairLock = annotation.fairLock();
+        boolean watchDogEnabled = annotation.watchDogEnabled();
         try {
             if (annotation.tryLock()) {
                 return lockTemplate.tryLock(
@@ -73,13 +84,15 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
                         annotation.tryWaitTime(),
                         annotation.outTime(),
                         annotation.timeUnit(),
-                        fairLock);
+                        fairLock,
+                        watchDogEnabled);
             } else {
                 return lockTemplate.lock(
                         createDistributedLock(methodInvocation, lockName),
                         annotation.outTime(),
                         annotation.timeUnit(),
-                        fairLock);
+                        fairLock,
+                        watchDogEnabled);
             }
         } catch (DistributedLockException e) {
             log.error("Failed to acquire distributed lock: {}", lockName, e);
@@ -89,7 +102,7 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
     }
     
     /**
-     * 创建分布式锁对象
+     * 创建分布式锁对象，保留原始异常类型
      */
     private DistributedLock<Object> createDistributedLock(MethodInvocation methodInvocation, String lockName) {
         return new DistributedLock<>() {
@@ -98,11 +111,15 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
             public Object process() {
                 try {
                     return methodInvocation.proceed();
+                } catch (DistributedLockException e) {
+                    throw e;
+                } catch (RuntimeException | Error e) {
+                    throw e;
                 } catch (Throwable e) {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
+                    if (e instanceof InterruptedException) {
+                        Thread.currentThread().interrupt();
                     }
-                    throw new RuntimeException("Error executing locked method", e);
+                    throw new DistributedLockException("Error executing locked method: " + lockName, e);
                 }
             }
             
@@ -119,32 +136,21 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
      */
     private String getLockName(NebulaDistributedLock annotation, Object[] args, Method method) {
         
-        // 如果直接指定了锁名，直接使用
         if (StringUtils.hasText(annotation.lockName())) {
             return annotation.lockName();
         }
         
-        // 获取或解析锁名前缀
-        String lockNamePre = annotation.lockNamePre();
+        String lockNamePre = resolveLockPart(annotation.lockNamePre(), method, args);
+        String lockNamePost = resolveLockPart(annotation.lockNamePost(), method, args);
         
-        if (ExpressionUtil.isEl(lockNamePre)) {
-            lockNamePre = parseExpression(lockNamePre, method, args);
-        } else {
-            // Only cache non-EL expressions
-            lockNamePre = lockNameCache.computeIfAbsent(method, m -> annotation.lockNamePre());
-        }
-        // 解析锁名后缀
-        String lockNamePost = annotation.lockNamePost();
-        if (ExpressionUtil.isEl(lockNamePost)) {
-            lockNamePost = parseExpression(lockNamePost, method, args);
+        if (!StringUtils.hasText(lockNamePre) && !StringUtils.hasText(lockNamePost)) {
+            return null;
         }
         
-        // 构建完整锁名
         StringBuilder sb = new StringBuilder(64);
         if (StringUtils.hasText(lockNamePre)) {
             sb.append(lockNamePre);
         }
-        
         if (StringUtils.hasText(lockNamePost)) {
             if (sb.length() > 0) {
                 sb.append(annotation.separator());
@@ -153,6 +159,28 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
         }
         return sb.toString();
         
+    }
+    
+    /**
+     * 解析锁名的一部分（前缀或后缀）
+     * - 非 EL 表达式：按 Method 缓存
+     * - EL 表达式：缓存解析后的结果
+     */
+    private String resolveLockPart(String part, Method method, Object[] args) {
+        if (!StringUtils.hasText(part)) {
+            return null;
+        }
+        if (ExpressionUtil.isEl(part)) {
+            String cached = elExpressionCache.getIfPresent(part);
+            if (cached != null) {
+                return cached;
+            }
+            String resolved = parseExpression(part, method, args);
+            elExpressionCache.put(part, resolved);
+            return resolved;
+        }
+        String cacheKey = method.toString() + "::" + part;
+        return lockNameCache.get(cacheKey, k -> part);
     }
     
     private String parseExpression(String expression, Method method, Object[] args) {
