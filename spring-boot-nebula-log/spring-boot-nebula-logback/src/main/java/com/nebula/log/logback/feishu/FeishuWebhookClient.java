@@ -45,8 +45,8 @@ public class FeishuWebhookClient {
     public void sendRichText(String webhookUrl, String cardJson) {
         ObjectNode envelope = JsonUtil.getInstance().createObjectNode();
         envelope.put("msg_type", "interactive");
-        envelope.set("card", JsonUtil.json2JsonNode(cardJson));
-        HttpUtils.postJson(webhookUrl, JsonUtil.jsonNodeToString(envelope));
+        envelope.set("card", JsonUtil.fromJsonNode(cardJson));
+        HttpUtils.postJson(webhookUrl, JsonUtil.toJson(envelope));
     }
     
     /**
@@ -59,7 +59,7 @@ public class FeishuWebhookClient {
         putElementContent(card, 4, "异常: " + nullToEmpty(stack));
         ObjectNode titleNode = (ObjectNode) card.path("header").path("title");
         titleNode.put("content", nullToEmpty(header));
-        return JsonUtil.jsonNodeToString(card);
+        return JsonUtil.toJson(card);
     }
     
     private static void putElementContent(ObjectNode card, int elementIndex, String content) {
@@ -77,7 +77,7 @@ public class FeishuWebhookClient {
             if (Objects.isNull(in)) {
                 throw new IllegalStateException("Missing classpath resource: " + path);
             }
-            JsonNode node = JsonUtil.json2JsonNode(in);
+            JsonNode node = JsonUtil.fromJsonNode(in);
             if (Objects.isNull(node) || node.isMissingNode()) {
                 throw new IllegalStateException("Invalid card template: " + path);
             }

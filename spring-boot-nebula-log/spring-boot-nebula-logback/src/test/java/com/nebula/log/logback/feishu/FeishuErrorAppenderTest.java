@@ -75,7 +75,7 @@ class FeishuErrorAppenderTest {
         assertTrue(card.contains("message: boom"));
         assertTrue(card.contains("ut ERROR"));
         assertTrue(card.contains("red"));
-        assertNotNull(JsonUtil.json2JsonNode(card));
+        assertNotNull(JsonUtil.fromJsonNode(card));
     }
     
     @Test
@@ -134,7 +134,7 @@ class FeishuErrorAppenderTest {
     void buildCardEscapesSpecialCharsViaJsonUtil() {
         FeishuWebhookClient client = new FeishuWebhookClient();
         String card = client.buildCard("logger", "a\"b\nc", "stack", "title");
-        assertNotNull(JsonUtil.json2JsonNode(card));
+        assertNotNull(JsonUtil.fromJsonNode(card));
         assertTrue(card.contains("a\\\"b\\nc"));
     }
     

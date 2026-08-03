@@ -134,6 +134,7 @@ public String test() {
 | [spring-boot-nebula-distribute-lock](spring-boot-nebula-distribute-lock) | `spring-boot-nebula-distribute-lock` | 分布式锁 |
 | [spring-boot-nebula-excel](spring-boot-nebula-excel) | `spring-boot-nebula-excel` | Excel 导入导出 |
 | [spring-boot-nebula-join](spring-boot-nebula-join) | `spring-boot-nebula-join` | 区域路由 SQL 自动 JOIN |
+| [spring-boot-nebula-log](spring-boot-nebula-log) | `spring-boot-nebula-logback` | 日志脱敏、ERROR 飞书报警 |
 | [spring-boot-nebula-feign](spring-boot-nebula-feign) | `spring-boot-nebula-feign` | OpenFeign 自动解包 NebulaResponse |
 | [spring-boot-nebula-aggregate](spring-boot-nebula-aggregate) | `spring-boot-nebula-aggregate` | DDD 聚合根 |
 | [spring-boot-nebula-aop-base](spring-boot-nebula-aop-base) | `spring-boot-nebula-aop-base` | AOP 基础能力 |
@@ -667,6 +668,7 @@ Web 层基础工具，被 `spring-boot-nebula-web` 间接依赖，也可单独�
 | [spring-boot-nebula-excel-sample](spring-boot-nebula-samples/spring-boot-nebula-excel-sample) | Excel 导出 | `ExcelController` |
 | [spring-boot-nebula-join-sample](spring-boot-nebula-samples/spring-boot-nebula-join-sample) | 区域路由 JOIN | `RegionInterceptorTest` |
 | [spring-boot-nebula-feign-sample](spring-boot-nebula-samples/spring-boot-nebula-feign-sample) | Feign 自动解包 | `ConsumerController` |
+| [spring-boot-nebula-logback-sample](spring-boot-nebula-samples/spring-boot-nebula-logback-sample) | 日志脱敏、ERROR 飞书报警 | `LogDemoController` |
 
 本地运行示例：
 
