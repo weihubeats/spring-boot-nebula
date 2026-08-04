@@ -83,8 +83,6 @@ public class FeishuErrorAppenderLifecycle implements SmartLifecycle {
             root.detachAppender(appender);
             appender.stop();
             appender = null;
-        } else {
-            root.detachAppender(APPENDER_NAME);
         }
         running = false;
     }

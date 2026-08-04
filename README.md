@@ -250,7 +250,8 @@ nebula:
 ![feishu-error.png](doc/images/feishu-error.png)
 
 ### 时间戳参数 `@GetTimestamp`
-#### Logback 日志脱敏与 ERROR 飞书报警
+
+### Logback 日志脱敏与 ERROR 飞书报警
 
 与上面的 Web 全局异常飞书监控互补：`NebulaErrorMonitor` 覆盖未捕获异常；`spring-boot-nebula-logback` 覆盖业务里的 `log.error(...)`。
 
@@ -269,8 +270,6 @@ nebula:
 ```xml
 <conversionRule conversionWord="msg"
     converterClass="com.nebula.log.logback.desensitize.DesensitizeMessageConverter"/>
-
-将请求中的时间戳自动解析为 `LocalDateTime`：
 <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
 ```
 
@@ -303,16 +302,11 @@ nebula:
 可运行示例模块：`spring-boot-nebula-samples/spring-boot-nebula-logback-sample`
 （`GET /log/desensitize`、`GET /log/error`；飞书地址配在 `application.yaml` 的 `nebula.log.feishu.webhook-url`）。
 
-#### LocalDateTime 处理
+### LocalDateTime 处理
 
 SDK 通过全局 `JacksonTimeModule` 统一格式化 `LocalDateTime`，JSON body 字段入参/出参均为 `yyyy-MM-dd HH:mm:ss`，无需额外注解：
 
 ```java
-@GetMapping("/test")
-@NebulaResponseBody
-public String test(@GetTimestamp LocalDateTime time) {
-    return time.toString();
-}
 @Data
 public class UserDTO {
     private LocalDateTime createdAt;  // 入参 / 出参 均为 "yyyy-MM-dd HH:mm:ss"

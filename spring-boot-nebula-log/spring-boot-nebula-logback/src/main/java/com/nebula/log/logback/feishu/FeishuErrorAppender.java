@@ -21,6 +21,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 import ch.qos.logback.core.AppenderBase;
+import com.nebula.log.logback.desensitize.DesensitizeRuntime;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -105,8 +106,17 @@ public class FeishuErrorAppender extends AppenderBase<ILoggingEvent> {
         running = false;
         if (Objects.nonNull(worker)) {
             worker.interrupt();
+            long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(2);
+            while (Objects.nonNull(queue) && queue.isEmpty() && System.currentTimeMillis() < deadline) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(50);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
             try {
-                worker.join(TimeUnit.SECONDS.toMillis(2));
+                worker.join(Math.max(1, deadline - System.currentTimeMillis()));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -165,6 +175,8 @@ public class FeishuErrorAppender extends AppenderBase<ILoggingEvent> {
         if (Objects.nonNull(event.getThrowableProxy())) {
             stack = truncate(ThrowableProxyUtil.asString(event.getThrowableProxy()));
         }
+        message = DesensitizeRuntime.apply(message);
+        stack = DesensitizeRuntime.apply(stack);
         String header = truncate(title + " " + event.getLevel());
         return client.buildCard(loggerName, message, stack, header);
     }

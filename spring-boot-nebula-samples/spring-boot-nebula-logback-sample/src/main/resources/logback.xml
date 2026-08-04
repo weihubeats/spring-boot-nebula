@@ -25,7 +25,6 @@
 	<appender name="ASYNC_STDOUT" class="ch.qos.logback.classic.AsyncAppender">
 		<discardingThreshold>${ASYNC_DISCARDING_THRESHOLD}</discardingThreshold>
 		<queueSize>${ASYNC_LOG_QUEUE_SIZE}</queueSize>
-		<includeCallerData>true</includeCallerData>
 		<appender-ref ref="STDOUT"/>
 	</appender>
 
@@ -46,7 +45,6 @@
 	<appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
 		<discardingThreshold>${ASYNC_DISCARDING_THRESHOLD}</discardingThreshold>
 		<queueSize>${ASYNC_LOG_QUEUE_SIZE}</queueSize>
-		<includeCallerData>true</includeCallerData>
 		<appender-ref ref="FILE"/>
 	</appender>
 

@@ -12,8 +12,7 @@ nebula:
       # disable-rules:
       #   - bankCard
     feishu:
-      enabled: true
-      # Replace with a real Feishu bot webhook before testing ERROR alerts
-      webhook-url: https://open.feishu.cn/open-apis/bot/v2/hook/21b3c180-b5c2-4b01-b265-0e54b6555e15
+      enabled: false
+      webhook-url: ${NEBULA_LOG_FEISHU_WEBHOOK_URL:}
       title: logback-sample
       max-per-minute: 10

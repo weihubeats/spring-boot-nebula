@@ -32,7 +32,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StreamUtils;
 
 /**
  * @author : wh
@@ -80,7 +79,7 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
     
     private String buildAlertKey(HttpServletRequest request, Exception ex) {
         String normalizedUri = DYNAMIC_SEGMENT_PATTERN.matcher(request.getRequestURI()).replaceAll("/{id}");
-        return ex.getClass().getSimpleName() + ":" + normalizedUri;
+        return ex.getClass().getName() + ":" + normalizedUri;
     }
     
     /**
@@ -106,10 +105,23 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
     }
     
     private static String readRequestBody(HttpServletRequest request) {
-        try {
-            return new String(StreamUtils.copyToByteArray(request.getInputStream()),
-                    Objects.requireNonNullElse(request.getCharacterEncoding(), StandardCharsets.UTF_8.name()));
-        } catch (IOException | RuntimeException e) {
+        try (InputStream is = request.getInputStream()) {
+            byte[] buf = new byte[FEISHU_MESSAGE_HASH_MAX_LENGTH];
+            int n = 0;
+            try {
+                n = is.readNBytes(buf, 0, buf.length);
+            } catch (IOException e) {
+                return "";
+            }
+            if (n <= 0) {
+                return "";
+            }
+            int end = n;
+            if (n == buf.length) {
+                end = findUtf8Boundary(buf, 0, buf.length);
+            }
+            return new String(buf, 0, end, StandardCharsets.UTF_8);
+        } catch (IOException e) {
             return "";
         }
     }
@@ -122,7 +134,25 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
         if (bytes.length <= maxBytes) {
             return value;
         }
-        return new String(bytes, 0, maxBytes, StandardCharsets.UTF_8);
+        int end = findUtf8Boundary(bytes, 0, maxBytes);
+        return new String(bytes, 0, end, StandardCharsets.UTF_8);
+    }
+    
+    private static int findUtf8Boundary(byte[] buf, int off, int len) {
+        int end = off;
+        for (int i = len - 1; i >= off; i--) {
+            int b = buf[i] & 0xFF;
+            if (b < 0x80) {
+                end = i + 1;
+                break;
+            }
+            if ((b & 0xC0) == 0x80) {
+                end = i + 1;
+            } else {
+                break;
+            }
+        }
+        return end;
     }
     
     public static String stackTraceToJsonValue(Throwable ex) {

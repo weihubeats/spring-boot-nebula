@@ -27,8 +27,9 @@ import com.nebula.web.boot.error.RedisNebulaAlertLimiter;
 import com.nebula.web.boot.annotation.NebulaResponseBodyAdvice;
 import com.nebula.web.boot.filter.RepeatableReadFilter;
 import java.time.Duration;
-import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -72,7 +73,7 @@ public class NebulaWebAutoConfiguration {
     }
     
     @ConditionalOnProperty(name = "nebula.web.monitor.type", havingValue = "feishu")
-    @ConditionalOnMissingBean(value = {NebulaAlertLimiter.class, RedissonClient.class})
+    @ConditionalOnMissingBean(NebulaAlertLimiter.class)
     @Bean
     public NebulaAlertLimiter feishuAlertLimiter(NebulaWebProperties nebulaWebProperties) {
         return new FeishuAlertLimiter(nebulaWebProperties.getMonitorLimitWindowSeconds(),
@@ -80,16 +81,20 @@ public class NebulaWebAutoConfiguration {
     }
     
     @ConditionalOnProperty(name = "nebula.web.monitor.type", havingValue = "feishu")
-    @ConditionalOnMissingBean(NebulaAlertLimiter.class)
-    @ConditionalOnBean(RedissonClient.class)
-    @Bean
-    public NebulaAlertLimiter redisAlertLimiter(RedissonClient redissonClient,
-                                                NebulaWebProperties nebulaWebProperties) {
-        return new RedisNebulaAlertLimiter(redissonClient,
-                Duration.ofSeconds(nebulaWebProperties.getMonitorLimitWindowSeconds()),
-                Duration.ofSeconds(nebulaWebProperties.getMonitorLimitExpireSeconds()),
-                nebulaWebProperties.getMonitorLimitMaxCount(),
-                nebulaWebProperties.getMonitorLimitKeyPrefix());
+    @ConditionalOnClass(name = "org.redisson.api.RedissonClient")
+    @Configuration
+    static class RedisAutoConfiguration {
+        
+        @ConditionalOnMissingBean(NebulaAlertLimiter.class)
+        @Bean
+        public NebulaAlertLimiter redisAlertLimiter(ObjectProvider<org.redisson.api.RedissonClient> redissonProvider,
+                                                    NebulaWebProperties nebulaWebProperties) {
+            return new RedisNebulaAlertLimiter(redissonProvider.getIfAvailable(),
+                    Duration.ofSeconds(nebulaWebProperties.getMonitorLimitWindowSeconds()),
+                    Duration.ofSeconds(nebulaWebProperties.getMonitorLimitExpireSeconds()),
+                    nebulaWebProperties.getMonitorLimitMaxCount(),
+                    nebulaWebProperties.getMonitorLimitKeyPrefix());
+        }
     }
     
     @ConditionalOnProperty(name = "nebula.web.monitor.type", havingValue = "feishu")

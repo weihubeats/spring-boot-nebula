@@ -18,8 +18,11 @@
 package com.nebula.web.boot.error;
 
 import java.time.Duration;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RScoredSortedSet;
+import org.redisson.api.RScript;
+import org.redisson.api.RScript.Mode;
+import org.redisson.api.RScript.ReturnType;
 import org.redisson.api.RedissonClient;
 
 /**
@@ -36,16 +39,46 @@ public class RedisNebulaAlertLimiter implements NebulaAlertLimiter {
     private final int maxCount;
     private final String keyPrefix;
     
+    private static final String LUA_SCRIPT =
+            "local k = KEYS[1]\n" +
+                    "local now = tonumber(ARGV[1])\n" +
+                    "local window = tonumber(ARGV[2])\n" +
+                    "local expire = tonumber(ARGV[3])\n" +
+                    "local maxCount = tonumber(ARGV[4])\n" +
+                    "local member = ARGV[5]\n" +
+                    "redis.call('ZREMRANGEBYSCORE', k, 0, now - window)\n" +
+                    "local count = redis.call('ZCARD', k)\n" +
+                    "if count >= maxCount then\n" +
+                    "  return 0\n" +
+                    "end\n" +
+                    "redis.call('ZADD', k, now, member)\n" +
+                    "redis.call('PEXPIRE', k, expire * 1000)\n" +
+                    "return 1";
+    
+    private final RScript lua;
+    private final String scriptId;
+    
     public RedisNebulaAlertLimiter(RedissonClient redissonClient, Duration window, Duration expire,
                                    int maxCount, String keyPrefix) {
         if (maxCount <= 0) {
             throw new IllegalArgumentException("nebula.web.monitor-limit-max-count must be positive");
+        }
+        if (window == null || window.isZero() || window.isNegative()) {
+            throw new IllegalArgumentException("nebula.web.monitor-limit-window-seconds must be positive");
+        }
+        if (expire == null || expire.isZero() || expire.isNegative()) {
+            throw new IllegalArgumentException("nebula.web.monitor-limit-expire-seconds must be positive");
+        }
+        if (expire.compareTo(window) < 0) {
+            throw new IllegalArgumentException("nebula.web.monitor-limit-expire-seconds must be at least the window");
         }
         this.redissonClient = redissonClient;
         this.window = window;
         this.expire = expire;
         this.maxCount = maxCount;
         this.keyPrefix = keyPrefix;
+        this.lua = redissonClient.getScript();
+        this.scriptId = this.lua.scriptLoad(LUA_SCRIPT);
     }
     
     @Override
@@ -55,19 +88,15 @@ public class RedisNebulaAlertLimiter implements NebulaAlertLimiter {
         String member = now + ":" + System.nanoTime();
         
         try {
-            RScoredSortedSet<String> set = redissonClient.getScoredSortedSet(fullKey);
-            long windowMs = window.toMillis();
-            set.removeRangeByScore(0.0, true, (double) (now - windowMs), false);
-            long count = set.size();
-            if (count >= maxCount) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Redis 限流: key={}, count={}, limit={}", fullKey, count, maxCount);
-                }
-                return false;
+            @SuppressWarnings("unchecked")
+            Long result = (Long) lua.evalSha(Mode.READ_WRITE, scriptId, ReturnType.INTEGER,
+                    List.of(fullKey), now, (long) window.toMillis(),
+                    (long) expire.toMillis(), (long) maxCount, member);
+            boolean allowed = result == 1L;
+            if (!allowed && log.isDebugEnabled()) {
+                log.debug("Redis 限流: key={}, limit={}", fullKey, maxCount);
             }
-            set.add(now, member);
-            set.expire(expire);
-            return true;
+            return allowed;
         } catch (Exception e) {
             log.warn("Redis 限流失败, 降级放行, key={}, error={}", fullKey, e.getMessage());
             return true;

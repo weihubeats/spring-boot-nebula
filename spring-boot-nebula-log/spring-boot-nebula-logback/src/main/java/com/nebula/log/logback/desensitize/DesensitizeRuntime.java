@@ -31,8 +31,18 @@ import java.util.Objects;
  */
 public final class DesensitizeRuntime {
     
-    private static volatile boolean enabled = true;
-    private static volatile Desensitizer desensitizer = Desensitizer.defaults();
+    private static final class State {
+        
+        private final boolean enabled;
+        private final Desensitizer desensitizer;
+        
+        State(boolean enabled, Desensitizer desensitizer) {
+            this.enabled = enabled;
+            this.desensitizer = desensitizer;
+        }
+    }
+    
+    private static volatile State state = new State(true, Desensitizer.defaults());
     
     private DesensitizeRuntime() {
     }
@@ -46,43 +56,44 @@ public final class DesensitizeRuntime {
      */
     public static void configure(
                                  boolean enabled, Collection<String> disableRules, Collection<? extends DesensitizeRule> extraRules) {
-        DesensitizeRuntime.enabled = enabled;
+        List<DesensitizeRule> merged;
         if (!enabled) {
-            DesensitizeRuntime.desensitizer = new Desensitizer(Collections.emptyList());
-            return;
-        }
-        List<DesensitizeRule> merged = new ArrayList<>(DefaultDesensitizeRules.all());
-        if (Objects.nonNull(extraRules)) {
-            for (DesensitizeRule rule : extraRules) {
-                if (Objects.nonNull(rule)) {
-                    merged.add(rule);
+            merged = Collections.emptyList();
+        } else {
+            merged = new ArrayList<>(DefaultDesensitizeRules.all());
+            if (Objects.nonNull(extraRules)) {
+                for (DesensitizeRule rule : extraRules) {
+                    if (Objects.nonNull(rule)) {
+                        merged.add(rule);
+                    }
                 }
             }
         }
-        DesensitizeRuntime.desensitizer = Desensitizer.of(
+        Desensitizer newDesensitizer = Desensitizer.of(
                 merged, Objects.requireNonNullElse(disableRules, Collections.emptyList()));
+        state = new State(enabled, newDesensitizer);
     }
     
     public static String apply(String message) {
-        if (!enabled) {
+        State s = state;
+        if (!s.enabled) {
             return message;
         }
-        return desensitizer.apply(message);
+        return s.desensitizer.apply(message);
     }
     
     public static boolean enabled() {
-        return enabled;
+        return state.enabled;
     }
     
     public static Desensitizer desensitizer() {
-        return desensitizer;
+        return state.desensitizer;
     }
     
     /**
      * Restores defaults; for tests only.
      */
     public static void reset() {
-        enabled = true;
-        desensitizer = Desensitizer.defaults();
+        state = new State(true, Desensitizer.defaults());
     }
 }
