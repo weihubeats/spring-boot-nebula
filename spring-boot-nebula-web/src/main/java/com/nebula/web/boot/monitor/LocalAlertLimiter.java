@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.error;
+package com.nebula.web.boot.monitor;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -28,10 +28,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
- * 飞书告警滑动窗口限流器。
+ * 本地内存滑动窗口限流器。
  * <p>key 级别原子操作，非 key 间不互相阻塞；空闲 key 由后台线程定时回收，避免长期运行内存泄漏。
+ * <p>仅适用于单实例部署，多实例部署时各实例计数相互独立。
  */
-public class FeishuAlertLimiter implements NebulaAlertLimiter, DisposableBean {
+public class LocalAlertLimiter implements NebulaAlertLimiter, DisposableBean {
     
     private final int windowSeconds;
     private final int maxCount;
@@ -46,30 +47,25 @@ public class FeishuAlertLimiter implements NebulaAlertLimiter, DisposableBean {
         private volatile long lastAccess;
     }
     
-    public FeishuAlertLimiter(int windowSeconds, int maxCount) {
+    public LocalAlertLimiter(int windowSeconds, int maxCount) {
         if (windowSeconds <= 0) {
-            throw new IllegalArgumentException("nebula.web.monitor-limit-window-seconds must be positive");
+            throw new IllegalArgumentException("nebula.web.monitor.limit.window-seconds must be positive");
         }
         if (maxCount <= 0) {
-            throw new IllegalArgumentException("nebula.web.monitor-limit-max-count must be positive");
+            throw new IllegalArgumentException("nebula.web.monitor.limit.max-count must be positive");
         }
         this.windowSeconds = windowSeconds;
         this.maxCount = maxCount;
         long idleMs = Math.max(windowSeconds * 2L, 60L) * 1000L;
         this.cleanupScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread thread = new Thread(r, "feishu-alert-limiter-cleaner");
+            Thread thread = new Thread(r, "nebula-alert-limiter-cleaner");
             thread.setDaemon(true);
             return thread;
         });
         this.cleanupScheduler.scheduleWithFixedDelay(() -> cleanup(idleMs), idleMs, idleMs / 2, TimeUnit.MILLISECONDS);
     }
     
-    /**
-     * 尝试获取一个窗口内的告警配额。
-     *
-     * @param key 告警维度，如 异常类:归一化URI
-     * @return true=配额内可发送；false=已达窗口上限应丢弃
-     */
+    @Override
     public boolean tryAcquire(String key) {
         long now = System.currentTimeMillis();
         long windowMs = windowSeconds * 1000L;
@@ -98,12 +94,8 @@ public class FeishuAlertLimiter implements NebulaAlertLimiter, DisposableBean {
         windows.entrySet().removeIf(entry -> now - entry.getValue().lastAccess > idleMs);
     }
     
-    public void close() {
-        cleanupScheduler.shutdownNow();
-    }
-    
     @Override
     public void destroy() {
-        close();
+        cleanupScheduler.shutdownNow();
     }
 }

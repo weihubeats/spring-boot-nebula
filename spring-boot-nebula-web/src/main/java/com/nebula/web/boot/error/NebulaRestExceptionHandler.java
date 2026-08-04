@@ -24,9 +24,9 @@ import com.nebula.web.boot.exception.BizException;
 import com.nebula.web.boot.exception.RpcException;
 import com.nebula.web.boot.exception.UnauthorizedException;
 import com.nebula.web.common.utils.NebulaSysWebUtils;
+import com.nebula.web.boot.monitor.NebulaErrorMonitor;
 import jakarta.servlet.Servlet;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,12 +148,11 @@ public class NebulaRestExceptionHandler {
     
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public NebulaResponse<?> defaultErrorHandle(HttpServletRequest request, HttpServletResponse response,
-                                                Object handler, Exception ex) {
+    public NebulaResponse<?> defaultErrorHandle(HttpServletRequest request, Exception ex) {
         NebulaResponse<?> baseResponse = new NebulaResponse<>();
         baseResponse.setCode(nebulaWebProperties.toWireCode(ResultCode.INTERNAL_SERVER_ERROR.getCode()));
-        if (nebulaSysWebUtils.isPrd() && nebulaWebProperties.isMonitorOpen() && !Objects.isNull(nebulaErrorMonitor)) {
-            nebulaErrorMonitor.monitorError(request, response, handler, ex);
+        if (nebulaSysWebUtils.isPrd() && nebulaWebProperties.getMonitor().isOpen() && !Objects.isNull(nebulaErrorMonitor)) {
+            nebulaErrorMonitor.monitorError(request, ex);
             baseResponse.setMsg("Server busy");
         } else {
             baseResponse.setMsg("错误消息:" + ex.getMessage());

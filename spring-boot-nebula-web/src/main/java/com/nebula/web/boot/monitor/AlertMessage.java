@@ -15,13 +15,17 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.error;
+package com.nebula.web.boot.monitor;
 
 /**
- * @author : wh
- * @date : 2025/3/18 17:39
- * @description:
+ * 告警消息载体，由监控编排器组装，由渠道实现渲染。
+ * <p>堆栈以原始 {@link Throwable} 持有，格式化与长度限制由渠道内部处理。
+ *
+ * @param uri        请求路径
+ * @param parameters 请求参数（JSON 字符串）
+ * @param body       请求体（可能为空字符串）
+ * @param cause      触发告警的异常
  */
-public interface NebulaDefaultErrorHandler {
+public record AlertMessage(String uri, String parameters, String body, Throwable cause) {
     
 }

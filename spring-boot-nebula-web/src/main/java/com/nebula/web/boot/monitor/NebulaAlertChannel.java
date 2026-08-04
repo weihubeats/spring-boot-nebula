@@ -15,25 +15,19 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.error;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+package com.nebula.web.boot.monitor;
 
 /**
- * 错误监控告警接口。
- * <p>实现类负责将异常信息推送至告警目标（飞书、钉钉等）。
- * 告警频率限制由外部共享的限流器统一管控，实现类不持有限流器。
+ * 告警渠道抽象。
+ * <p>实现类负责将 {@link AlertMessage} 渲染并推送至具体渠道（飞书、钉钉等），
+ * 渠道自身的长度限制、模板渲染由实现类内部处理。
  */
-public interface NebulaErrorMonitor {
+public interface NebulaAlertChannel {
     
     /**
-     * 监控并告警异常。
+     * 发送告警消息。
      *
-     * @param request  请求对象
-     * @param response 响应对象
-     * @param handler  Spring MVC handler，通常为 HandlerMethod，代表触发异常的控制器方法
-     * @param ex       捕获的异常
+     * @param message 由监控编排器组装的消息
      */
-    void monitorError(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex);
+    void send(AlertMessage message);
 }

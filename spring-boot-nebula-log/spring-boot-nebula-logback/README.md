@@ -87,7 +87,7 @@ nebula:
 
 告警为异步发送；队列满或超限流时丢弃，失败只写 Logback Status，避免递归打 error。
 
-与 `spring-boot-nebula-web` 的全局异常飞书监控（`nebula.web.monitor-*`）相互独立，可共用同一 webhook。
+与 `spring-boot-nebula-web` 的全局异常飞书监控（`nebula.web.monitor.*`）相互独立，可共用同一 webhook。
 
 ## 完整配置示例
 

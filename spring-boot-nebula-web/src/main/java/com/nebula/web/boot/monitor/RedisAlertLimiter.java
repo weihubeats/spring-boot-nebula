@@ -15,7 +15,7 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.error;
+package com.nebula.web.boot.monitor;
 
 import java.time.Duration;
 import java.util.List;
@@ -29,9 +29,10 @@ import org.redisson.api.RedissonClient;
  * Redis 滑动窗口限流器（基于 Redisson Sorted Set）。
  * <p>使用 ZREMRANGEBYSCORE + ZCARD + ZADD 实现滑动窗口计数。
  * <p>Redis 不可用时降级放行（fail-open），避免告警系统因 Redis 故障而阻塞。
+ * <p>适用于多实例部署，各实例共享同一窗口计数。
  */
 @Slf4j
-public class RedisNebulaAlertLimiter implements NebulaAlertLimiter {
+public class RedisAlertLimiter implements NebulaAlertLimiter {
     
     private final RedissonClient redissonClient;
     private final Duration window;
@@ -56,21 +57,21 @@ public class RedisNebulaAlertLimiter implements NebulaAlertLimiter {
                     "return 1";
     
     private final RScript lua;
-    private final String scriptId;
+    private String scriptId;
     
-    public RedisNebulaAlertLimiter(RedissonClient redissonClient, Duration window, Duration expire,
-                                   int maxCount, String keyPrefix) {
+    public RedisAlertLimiter(RedissonClient redissonClient, Duration window, Duration expire,
+                             int maxCount, String keyPrefix) {
         if (maxCount <= 0) {
-            throw new IllegalArgumentException("nebula.web.monitor-limit-max-count must be positive");
+            throw new IllegalArgumentException("nebula.web.monitor.limit.max-count must be positive");
         }
         if (window == null || window.isZero() || window.isNegative()) {
-            throw new IllegalArgumentException("nebula.web.monitor-limit-window-seconds must be positive");
+            throw new IllegalArgumentException("nebula.web.monitor.limit.window-seconds must be positive");
         }
         if (expire == null || expire.isZero() || expire.isNegative()) {
-            throw new IllegalArgumentException("nebula.web.monitor-limit-expire-seconds must be positive");
+            throw new IllegalArgumentException("nebula.web.monitor.limit.expire-seconds must be positive");
         }
         if (expire.compareTo(window) < 0) {
-            throw new IllegalArgumentException("nebula.web.monitor-limit-expire-seconds must be at least the window");
+            throw new IllegalArgumentException("nebula.web.monitor.limit.expire-seconds must be at least the window");
         }
         this.redissonClient = redissonClient;
         this.window = window;
@@ -78,7 +79,17 @@ public class RedisNebulaAlertLimiter implements NebulaAlertLimiter {
         this.maxCount = maxCount;
         this.keyPrefix = keyPrefix;
         this.lua = redissonClient.getScript();
-        this.scriptId = this.lua.scriptLoad(LUA_SCRIPT);
+        this.scriptId = loadScript();
+    }
+    
+    private String loadScript() {
+        try {
+            return this.lua.scriptLoad(LUA_SCRIPT);
+        } catch (Exception e) {
+            // Redis 不可用时降级放行，限流不阻塞应用启动
+            log.warn("Redis 脚本加载失败, 限流将降级放行: {}", e.getMessage());
+            return null;
+        }
     }
     
     @Override
@@ -88,7 +99,9 @@ public class RedisNebulaAlertLimiter implements NebulaAlertLimiter {
         String member = now + ":" + System.nanoTime();
         
         try {
-            @SuppressWarnings("unchecked")
+            if (scriptId == null) {
+                return true;
+            }
             Long result = (Long) lua.evalSha(Mode.READ_WRITE, scriptId, ReturnType.INTEGER,
                     List.of(fullKey), now, (long) window.toMillis(),
                     (long) expire.toMillis(), (long) maxCount, member);
@@ -98,8 +111,17 @@ public class RedisNebulaAlertLimiter implements NebulaAlertLimiter {
             }
             return allowed;
         } catch (Exception e) {
-            log.warn("Redis 限流失败, 降级放行, key={}, error={}", fullKey, e.getMessage());
-            return true;
+            // Redis 故障或脚本被清空：重载脚本后重试一次，仍失败则降级放行
+            try {
+                scriptId = this.lua.scriptLoad(LUA_SCRIPT);
+                Long result = (Long) lua.evalSha(Mode.READ_WRITE, scriptId, ReturnType.INTEGER,
+                        List.of(fullKey), now, (long) window.toMillis(),
+                        (long) expire.toMillis(), (long) maxCount, member);
+                return result == 1L;
+            } catch (Exception retryException) {
+                log.warn("Redis 限流失败, 降级放行, key={}, error={}", fullKey, retryException.getMessage());
+                return true;
+            }
         }
     }
 }

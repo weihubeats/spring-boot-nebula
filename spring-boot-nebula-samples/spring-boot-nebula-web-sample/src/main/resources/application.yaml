@@ -10,8 +10,8 @@ server:
 nebula:
   web:
     response-code: 200
-    monitor-open: true
     monitor:
+      open: true
       type: feishu
-    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxxxx
+      url: https://open.feishu.cn/open-apis/bot/v2/hook/xxxxx
     

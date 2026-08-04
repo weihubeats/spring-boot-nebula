@@ -239,13 +239,20 @@ public NebulaPageRes<StudentVO> list(StudentDTO studentDTO) {
 ```yaml
 nebula:
   web:
-    monitor-open: true
     monitor:
+      open: true
       type: feishu
-    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxx
+      url: https://open.feishu.cn/open-apis/bot/v2/hook/xxx
+      limit:
+        enabled: true        # 是否开启告警频率限制
+        window-seconds: 60   # 限流窗口（秒）
+        max-count: 3         # 窗口内同 key 最大告警次数
+        storage: local       # local=单实例内存限流；redis=多实例共享限流（需配置 RedissonClient）
+        key-prefix: nebula:alert:rate:   # storage=redis 时使用
+        expire-seconds: 120  # storage=redis 时使用，需 ≥ window-seconds
 ```
 
-自定义告警实现 `NebulaErrorMonitor` 接口即可替换默认行为。
+自定义告警实现 `NebulaErrorMonitor` 接口即可替换默认行为；新增渠道实现 `NebulaAlertChannel` 接口并在 `monitor.type` 下装配。
 
 ![feishu-error.png](doc/images/feishu-error.png)
 
@@ -297,7 +304,7 @@ nebula:
       max-per-minute: 10
 ```
 
-启用后由 `NebulaLogAutoConfiguration` 自动挂载 `FeishuErrorAppender`。webhook 与 `nebula.web.monitor-url` 相互独立，可填同一地址。
+启用后由 `NebulaLogAutoConfiguration` 自动挂载 `FeishuErrorAppender`。webhook 与 `nebula.web.monitor.url` 相互独立，可填同一地址。
 
 可运行示例模块：`spring-boot-nebula-samples/spring-boot-nebula-logback-sample`
 （`GET /log/desensitize`、`GET /log/error`；飞书地址配在 `application.yaml` 的 `nebula.log.feishu.webhook-url`）。

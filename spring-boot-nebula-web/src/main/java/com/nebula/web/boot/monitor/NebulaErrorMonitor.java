@@ -15,19 +15,21 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.error;
+package com.nebula.web.boot.monitor;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * 告警频率限制抽象。
- * <p>实现类由 Spring 管理生命周期，所有告警实现（飞书、钉钉等）共享同一个限流器实例。
+ * 错误监控告警门面接口。
+ * <p>实现类负责编排：归一化告警 key → 频率限制 → 组装告警消息 → 推送至告警渠道。
  */
-public interface NebulaAlertLimiter {
+public interface NebulaErrorMonitor {
     
     /**
-     * 尝试获取告警配额。
+     * 监控并告警异常。
      *
-     * @param key 告警维度，通常为 异常类名:归一化URI
-     * @return true=配额内可发送告警；false=已达窗口上限应丢弃
+     * @param request 请求对象
+     * @param ex      捕获的异常
      */
-    boolean tryAcquire(String key);
+    void monitorError(HttpServletRequest request, Exception ex);
 }
