@@ -57,6 +57,11 @@ public class NebulaWebProperties {
     private Monitor monitor = new Monitor();
     
     /**
+     * 全局异常处理配置
+     */
+    private ExceptionHandler exceptionHandler = new ExceptionHandler();
+    
+    /**
      * 将内部 int 错误码转换为对外写出的协议 code（Integer 或 String）
      */
     public Object toWireCode(int code) {
@@ -67,6 +72,19 @@ public class NebulaWebProperties {
             return parseWireValue(responseCode);
         }
         return code;
+    }
+    
+    /**
+     * 全局异常处理（{@code NebulaRestExceptionHandler}）配置。
+     */
+    @Data
+    public static class ExceptionHandler {
+        
+        /**
+         * 是否注册全局 {@code NebulaRestExceptionHandler}。
+         * <p>项目已有自己的 {@code @RestControllerAdvice} 时建议关闭，避免异常响应格式被劫持。
+         */
+        private boolean enabled = true;
     }
     
     /**

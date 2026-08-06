@@ -24,6 +24,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * @author : wh
@@ -65,11 +66,8 @@ public class TimeUtil {
      * @throws NullPointerException if zoneOffset is null.
      */
     public static LocalDateTime toLocalDateTime(long epochMilli, ZoneOffset zoneOffset) {
-        if (zoneOffset == null) {
-            throw new NullPointerException("ZoneOffset cannot be null.");
-        }
-        Instant instant = Instant.ofEpochMilli(epochMilli);
-        return LocalDateTime.ofInstant(instant, zoneOffset);
+        Objects.requireNonNull(zoneOffset, "ZoneOffset cannot be null.");
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), zoneOffset);
     }
     
     /**
@@ -82,11 +80,8 @@ public class TimeUtil {
      * @throws NullPointerException if zoneId is null.
      */
     public static LocalDateTime toLocalDateTime(long epochMilli, ZoneId zoneId) {
-        if (zoneId == null) {
-            throw new NullPointerException("ZoneId cannot be null.");
-        }
-        Instant instant = Instant.ofEpochMilli(epochMilli);
-        return LocalDateTime.ofInstant(instant, zoneId);
+        Objects.requireNonNull(zoneId, "ZoneId cannot be null.");
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), zoneId);
     }
     
     /**
@@ -112,7 +107,7 @@ public class TimeUtil {
      * @return The corresponding {@link LocalDateTime} in the system default time zone, or null if input is null.
      */
     public static LocalDateTime toLocalDateTime(Long epochMilli) {
-        if (epochMilli == null /* || DataUtils.isEmpty(epochMilli) */) { // Assuming DataUtils.isEmpty handles null
+        if (epochMilli == null) {
             return null;
         }
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), ZoneId.systemDefault());
@@ -132,9 +127,7 @@ public class TimeUtil {
         if (epochMilli == null) {
             return null;
         }
-        if (zoneId == null) {
-            throw new NullPointerException("ZoneId cannot be null when epochMilli is provided.");
-        }
+        Objects.requireNonNull(zoneId, "ZoneId cannot be null when epochMilli is provided.");
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), zoneId);
     }
     
@@ -147,10 +140,8 @@ public class TimeUtil {
      * @throws NullPointerException if localDateTime is null.
      */
     public static long toEpochMilli(LocalDateTime localDateTime) {
-        if (localDateTime == null) {
-            throw new NullPointerException("LocalDateTime cannot be null.");
-        }
-        return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        return localDateTime.atZone(ZoneId.systemDefault())
+                .toInstant().toEpochMilli();
     }
     
     /**
@@ -162,12 +153,8 @@ public class TimeUtil {
      * @throws NullPointerException if localDateTime or zoneId is null.
      */
     public static long toEpochMilli(LocalDateTime localDateTime, ZoneId zoneId) {
-        if (localDateTime == null) {
-            throw new NullPointerException("LocalDateTime cannot be null.");
-        }
-        if (zoneId == null) {
-            throw new NullPointerException("ZoneId cannot be null.");
-        }
+        Objects.requireNonNull(localDateTime, "localDateTime");
+        Objects.requireNonNull(zoneId, "zoneId");
         return localDateTime.atZone(zoneId).toInstant().toEpochMilli();
     }
     
@@ -180,12 +167,8 @@ public class TimeUtil {
      * @throws NullPointerException if localDateTime or zoneOffset is null.
      */
     public static long toEpochMilli(LocalDateTime localDateTime, ZoneOffset zoneOffset) {
-        if (localDateTime == null) {
-            throw new NullPointerException("LocalDateTime cannot be null.");
-        }
-        if (zoneOffset == null) {
-            throw new NullPointerException("ZoneOffset cannot be null.");
-        }
+        Objects.requireNonNull(localDateTime, "localDateTime");
+        Objects.requireNonNull(zoneOffset, "zoneOffset");
         return localDateTime.toInstant(zoneOffset).toEpochMilli();
     }
     
@@ -206,10 +189,7 @@ public class TimeUtil {
      * @throws NullPointerException if zoneId is null.
      */
     public static LocalDateTime getCurrentLocalDateTime(ZoneId zoneId) {
-        if (zoneId == null) {
-            throw new NullPointerException("ZoneId cannot be null.");
-        }
-        return LocalDateTime.now(zoneId);
+        return LocalDateTime.now(Objects.requireNonNull(zoneId, "zoneId"));
     }
     
     /**
@@ -229,10 +209,7 @@ public class TimeUtil {
      * @throws NullPointerException if zoneId is null.
      */
     public static LocalDate getCurrentLocalDate(ZoneId zoneId) {
-        if (zoneId == null) {
-            throw new NullPointerException("ZoneId cannot be null.");
-        }
-        return LocalDate.now(zoneId);
+        return LocalDate.now(Objects.requireNonNull(zoneId, "zoneId"));
     }
     
     /**
@@ -268,10 +245,7 @@ public class TimeUtil {
         if (localDateTime == null) {
             return null;
         }
-        if (formatter == null) {
-            throw new NullPointerException("DateTimeFormatter cannot be null when localDateTime is provided.");
-        }
-        return localDateTime.format(formatter);
+        return localDateTime.format(Objects.requireNonNull(formatter, "formatter"));
     }
     
     /**
@@ -304,6 +278,40 @@ public class TimeUtil {
     }
     
     /**
+     * Formats a {@link LocalDate} to a string using the specified {@link DateTimeFormatter}.
+     *
+     * @param localDate The {@link LocalDate} to format. Can be null.
+     * @param formatter The {@link DateTimeFormatter} to use. Cannot be null if localDate is not null.
+     * @return The formatted date string, or null if localDate is null.
+     * @throws NullPointerException if localDate is not null and formatter is null.
+     */
+    public static String formatLocalDate(LocalDate localDate, DateTimeFormatter formatter) {
+        if (localDate == null) {
+            return null;
+        }
+        return localDate.format(Objects.requireNonNull(formatter, "formatter"));
+    }
+    
+    /**
+     * Formats a {@link LocalDate} to a string using the specified pattern.
+     *
+     * @param localDate The {@link LocalDate} to format. Can be null.
+     * @param pattern The date pattern string. Cannot be null or empty if localDate is not null.
+     * @return The formatted date string, or null if localDate is null.
+     * @throws NullPointerException if localDate is not null and pattern is null.
+     * @throws IllegalArgumentException if the pattern is invalid.
+     */
+    public static String formatLocalDate(LocalDate localDate, String pattern) {
+        if (localDate == null) {
+            return null;
+        }
+        if (pattern == null || pattern.isEmpty()) {
+            throw new IllegalArgumentException("Pattern cannot be null or empty when localDate is provided.");
+        }
+        return localDate.format(DateTimeFormatter.ofPattern(pattern));
+    }
+    
+    /**
      * Formats the current {@link LocalDateTime} (system default zone) to a string
      * using the default {@link #DATETIME_FORMATTER}.
      *
@@ -328,6 +336,100 @@ public class TimeUtil {
         return getCurrentLocalDateTime().format(DateTimeFormatter.ofPattern(pattern));
     }
     
+    // --- Parsing Methods ---
+    
+    /**
+     * Parses a string into a {@link LocalDateTime} using the default {@link #DATETIME_FORMATTER} (yyyy-MM-dd HH:mm:ss).
+     *
+     * @param text The date-time string. Can be null or empty.
+     * @return The parsed {@link LocalDateTime}, or null if text is null or empty.
+     * @throws java.time.format.DateTimeParseException if the text cannot be parsed.
+     */
+    public static LocalDateTime parseLocalDateTime(String text) {
+        return DataUtils.isEmpty(text) ? null : LocalDateTime.parse(text, DATETIME_FORMATTER);
+    }
+    
+    /**
+     * Parses a string into a {@link LocalDateTime} using the specified {@link DateTimeFormatter}.
+     *
+     * @param text The date-time string. Can be null or empty.
+     * @param formatter The {@link DateTimeFormatter} to use. Cannot be null if text is not empty.
+     * @return The parsed {@link LocalDateTime}, or null if text is null or empty.
+     * @throws NullPointerException if text is not empty and formatter is null.
+     * @throws java.time.format.DateTimeParseException if the text cannot be parsed.
+     */
+    public static LocalDateTime parseLocalDateTime(String text, DateTimeFormatter formatter) {
+        if (DataUtils.isEmpty(text)) {
+            return null;
+        }
+        return LocalDateTime.parse(text, Objects.requireNonNull(formatter, "formatter"));
+    }
+    
+    /**
+     * Parses a string into a {@link LocalDateTime} using the specified pattern.
+     *
+     * @param text The date-time string. Can be null or empty.
+     * @param pattern The date-time pattern string. Cannot be null or empty if text is not empty.
+     * @return The parsed {@link LocalDateTime}, or null if text is null or empty.
+     * @throws IllegalArgumentException if the pattern is null, empty or invalid.
+     * @throws java.time.format.DateTimeParseException if the text cannot be parsed.
+     */
+    public static LocalDateTime parseLocalDateTime(String text, String pattern) {
+        if (DataUtils.isEmpty(text)) {
+            return null;
+        }
+        if (pattern == null || pattern.isEmpty()) {
+            throw new IllegalArgumentException("Pattern cannot be null or empty when text is provided.");
+        }
+        return LocalDateTime.parse(text, DateTimeFormatter.ofPattern(pattern));
+    }
+    
+    /**
+     * Parses a string into a {@link LocalDate} using the default {@link #DATE_FORMATTER} (yyyy-MM-dd).
+     *
+     * @param text The date string. Can be null or empty.
+     * @return The parsed {@link LocalDate}, or null if text is null or empty.
+     * @throws java.time.format.DateTimeParseException if the text cannot be parsed.
+     */
+    public static LocalDate parseLocalDate(String text) {
+        return DataUtils.isEmpty(text) ? null : LocalDate.parse(text, DATE_FORMATTER);
+    }
+    
+    /**
+     * Parses a string into a {@link LocalDate} using the specified {@link DateTimeFormatter}.
+     *
+     * @param text The date string. Can be null or empty.
+     * @param formatter The {@link DateTimeFormatter} to use. Cannot be null if text is not empty.
+     * @return The parsed {@link LocalDate}, or null if text is null or empty.
+     * @throws NullPointerException if text is not empty and formatter is null.
+     * @throws java.time.format.DateTimeParseException if the text cannot be parsed.
+     */
+    public static LocalDate parseLocalDate(String text, DateTimeFormatter formatter) {
+        if (DataUtils.isEmpty(text)) {
+            return null;
+        }
+        return LocalDate.parse(text, Objects.requireNonNull(formatter, "formatter"));
+    }
+    
+    /**
+     * Parses a string into a {@link LocalDate} using the specified pattern.
+     *
+     * @param text The date string. Can be null or empty.
+     * @param pattern The date pattern string. Cannot be null or empty if text is not empty.
+     * @return The parsed {@link LocalDate}, or null if text is null or empty.
+     * @throws IllegalArgumentException if the pattern is null, empty or invalid.
+     * @throws java.time.format.DateTimeParseException if the text cannot be parsed.
+     */
+    public static LocalDate parseLocalDate(String text, String pattern) {
+        if (DataUtils.isEmpty(text)) {
+            return null;
+        }
+        if (pattern == null || pattern.isEmpty()) {
+            throw new IllegalArgumentException("Pattern cannot be null or empty when text is provided.");
+        }
+        return LocalDate.parse(text, DateTimeFormatter.ofPattern(pattern));
+    }
+    
     // --- Start/End of Day Methods ---
     
     /**
@@ -338,10 +440,7 @@ public class TimeUtil {
      * @throws NullPointerException if dateTime is null.
      */
     public static LocalDateTime getStartOfDay(LocalDateTime dateTime) {
-        if (dateTime == null) {
-            throw new NullPointerException("Input LocalDateTime cannot be null.");
-        }
-        return dateTime.toLocalDate().atStartOfDay(); // or dateTime.with(LocalTime.MIN);
+        return Objects.requireNonNull(dateTime, "dateTime").toLocalDate().atStartOfDay();
     }
     
     /**
@@ -352,10 +451,7 @@ public class TimeUtil {
      * @throws NullPointerException if date is null.
      */
     public static LocalDateTime getStartOfDay(LocalDate date) {
-        if (date == null) {
-            throw new NullPointerException("Input LocalDate cannot be null.");
-        }
-        return date.atStartOfDay();
+        return Objects.requireNonNull(date, "date").atStartOfDay();
     }
     
     /**
@@ -366,10 +462,7 @@ public class TimeUtil {
      * @throws NullPointerException if dateTime is null.
      */
     public static LocalDateTime getEndOfDay(LocalDateTime dateTime) {
-        if (dateTime == null) {
-            throw new NullPointerException("Input LocalDateTime cannot be null.");
-        }
-        return dateTime.with(LocalTime.MAX);
+        return Objects.requireNonNull(dateTime, "dateTime").with(LocalTime.MAX);
     }
     
     /**
@@ -380,10 +473,7 @@ public class TimeUtil {
      * @throws NullPointerException if date is null.
      */
     public static LocalDateTime getEndOfDay(LocalDate date) {
-        if (date == null) {
-            throw new NullPointerException("Input LocalDate cannot be null.");
-        }
-        return date.atTime(LocalTime.MAX);
+        return Objects.requireNonNull(date, "date").atTime(LocalTime.MAX);
     }
     
     /**

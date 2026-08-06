@@ -30,6 +30,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *   log:
  *     desensitize:
  *       enabled: true
+ *       disabled-environments:
+ *         - dev
+ *         - test
  *       disable-rules:
  *         - bankCard
  *     feishu:
@@ -54,6 +57,13 @@ public class NebulaLogProperties {
          * Whether to mask sensitive fragments in {@code %msg}.
          */
         private boolean enabled = true;
+        
+        /**
+         * Spring profiles where desensitization is skipped entirely, useful for
+         * local debugging. Defaults to {@code dev}, {@code test}; set to empty
+         * list to never skip.
+         */
+        private List<String> disabledEnvironments = new ArrayList<>(List.of("dev", "test"));
         
         /**
          * Built-in rule names to skip: mobile, idCard, bankCard, email, secretKey.
