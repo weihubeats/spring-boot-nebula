@@ -1,0 +1,5 @@
+### Desensitize demo (check console for masked fields)
+GET http://localhost:8099/log/desensitize
+
+### ERROR Feishu alert demo (configure nebula.log.feishu.webhook-url first)
+GET http://localhost:8099/log/error

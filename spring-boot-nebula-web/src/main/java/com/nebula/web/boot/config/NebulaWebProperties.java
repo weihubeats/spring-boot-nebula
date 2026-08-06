@@ -52,19 +52,9 @@ public class NebulaWebProperties {
     private Map<Integer, String> codeMapping = new LinkedHashMap<>();
     
     /**
-     * 报警 webhook
+     * 监控告警配置
      */
-    private String monitorUrl;
-    
-    /**
-     * 是否开启报警
-     */
-    private boolean monitorOpen = false;
-    
-    /**
-     * 报警类型
-     */
-    private String monitorType;
+    private Monitor monitor = new Monitor();
     
     /**
      * 将内部 int 错误码转换为对外写出的协议 code（Integer 或 String）
@@ -77,6 +67,70 @@ public class NebulaWebProperties {
             return parseWireValue(responseCode);
         }
         return code;
+    }
+    
+    /**
+     * 监控告警配置。
+     */
+    @Data
+    public static class Monitor {
+        
+        /**
+         * 告警渠道类型，如 feishu
+         */
+        private String type;
+        
+        /**
+         * 是否开启告警
+         */
+        private boolean open = false;
+        
+        /**
+         * 告警 webhook
+         */
+        private String url;
+        
+        /**
+         * 告警频率限制配置
+         */
+        private Limit limit = new Limit();
+    }
+    
+    /**
+     * 告警频率限制配置。
+     */
+    @Data
+    public static class Limit {
+        
+        /**
+         * 是否开启告警频率限制
+         */
+        private boolean enabled = true;
+        
+        /**
+         * 限流窗口（秒）
+         */
+        private int windowSeconds = 60;
+        
+        /**
+         * 窗口内同 key 最大告警次数
+         */
+        private int maxCount = 3;
+        
+        /**
+         * 限流存储：local（单实例内存）或 redis（多实例共享）
+         */
+        private String storage = "local";
+        
+        /**
+         * Redis 限流 key 前缀（仅 storage=redis 时使用）
+         */
+        private String keyPrefix = "nebula:alert:rate:";
+        
+        /**
+         * Redis 限流 key TTL（秒，需 ≥ 窗口时间）
+         */
+        private int expireSeconds = 120;
     }
     
     /**

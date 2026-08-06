@@ -15,24 +15,27 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.annotation;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package com.nebula.log.logback.desensitize;
 
 /**
- * @author : wh
- * @date : 2023/5/12 10:14
- * @description:
+ * SPI for log message desensitization rules.
+ *
+ * <p>Built-in rules live under {@code com.nebula.log.logback.desensitize.rule}.
+ * Custom rules can be added by:
+ * <ul>
+ *   <li>registering a Spring {@code @Bean} / {@code @Component} of this type, or</li>
+ *   <li>Java {@link java.util.ServiceLoader} entry in {@code META-INF/services/}</li>
+ * </ul>
  */
-@Target({ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface GetTimestamp {
+public interface DesensitizeRule {
     
-    String name() default "";
+    /**
+     * Stable rule id used by {@code nebula.log.desensitize.disable-rules}.
+     */
+    String name();
     
+    /**
+     * Masks sensitive fragments in {@code input}; return {@code input} when nothing matches.
+     */
+    String apply(String input);
 }

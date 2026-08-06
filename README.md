@@ -134,6 +134,7 @@ public String test() {
 | [spring-boot-nebula-distribute-lock](spring-boot-nebula-distribute-lock) | `spring-boot-nebula-distribute-lock` | 分布式锁 |
 | [spring-boot-nebula-excel](spring-boot-nebula-excel) | `spring-boot-nebula-excel` | Excel 导入导出 |
 | [spring-boot-nebula-join](spring-boot-nebula-join) | `spring-boot-nebula-join` | 区域路由 SQL 自动 JOIN |
+| [spring-boot-nebula-log](spring-boot-nebula-log) | `spring-boot-nebula-logback` | 日志脱敏、ERROR 飞书报警 |
 | [spring-boot-nebula-feign](spring-boot-nebula-feign) | `spring-boot-nebula-feign` | OpenFeign 自动解包 NebulaResponse |
 | [spring-boot-nebula-aggregate](spring-boot-nebula-aggregate) | `spring-boot-nebula-aggregate` | DDD 聚合根 |
 | [spring-boot-nebula-aop-base](spring-boot-nebula-aop-base) | `spring-boot-nebula-aop-base` | AOP 基础能力 |
@@ -238,26 +239,92 @@ public NebulaPageRes<StudentVO> list(StudentDTO studentDTO) {
 ```yaml
 nebula:
   web:
-    monitor-open: true
     monitor:
+      open: true
       type: feishu
-    monitor-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxx
+      url: https://open.feishu.cn/open-apis/bot/v2/hook/xxx
+      limit:
+        enabled: true        # 是否开启告警频率限制
+        window-seconds: 60   # 限流窗口（秒）
+        max-count: 3         # 窗口内同 key 最大告警次数
+        storage: local       # local=单实例内存限流；redis=多实例共享限流（需配置 RedissonClient）
+        key-prefix: nebula:alert:rate:   # storage=redis 时使用
+        expire-seconds: 120  # storage=redis 时使用，需 ≥ window-seconds
 ```
 
-自定义告警实现 `NebulaErrorMonitor` 接口即可替换默认行为。
+自定义告警实现 `NebulaErrorMonitor` 接口即可替换默认行为；新增渠道实现 `NebulaAlertChannel` 接口并在 `monitor.type` 下装配。
 
 ![feishu-error.png](doc/images/feishu-error.png)
 
 ### 时间戳参数 `@GetTimestamp`
 
-将请求中的时间戳自动解析为 `LocalDateTime`：
+### Logback 日志脱敏与 ERROR 飞书报警
+
+与上面的 Web 全局异常飞书监控互补：`NebulaErrorMonitor` 覆盖未捕获异常；`spring-boot-nebula-logback` 覆盖业务里的 `log.error(...)`。
+
+1. 引入依赖
+
+```xml
+<dependency>
+    <groupId>io.github.weihubeats</groupId>
+    <artifactId>spring-boot-nebula-logback</artifactId>
+    <version>${nebula.version}</version>
+</dependency>
+```
+
+2. 日志脱敏（logback 仅注册 Converter；规则在 `application.yaml`）
+
+```xml
+<conversionRule conversionWord="msg"
+    converterClass="com.nebula.log.logback.desensitize.DesensitizeMessageConverter"/>
+<pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+```
+
+```yaml
+nebula:
+  log:
+    desensitize:
+      enabled: true
+      disable-rules:
+        - bankCard
+        - email
+```
+
+内置规则：`mobile` / `idCard` / `bankCard` / `email` / `secretKey`。
+
+3. ERROR 日志飞书报警（在 `application.yaml` 配置，不在 logback.xml）
+
+```yaml
+nebula:
+  log:
+    feishu:
+      enabled: true
+      webhook-url: https://open.feishu.cn/open-apis/bot/v2/hook/xxx
+      title: my-app
+      max-per-minute: 10
+```
+
+启用后由 `NebulaLogAutoConfiguration` 自动挂载 `FeishuErrorAppender`。webhook 与 `nebula.web.monitor.url` 相互独立，可填同一地址。
+
+可运行示例模块：`spring-boot-nebula-samples/spring-boot-nebula-logback-sample`
+（`GET /log/desensitize`、`GET /log/error`；飞书地址配在 `application.yaml` 的 `nebula.log.feishu.webhook-url`）。
+
+### LocalDateTime 处理
+
+SDK 通过全局 `JacksonTimeModule` 统一格式化 `LocalDateTime`，JSON body 字段入参/出参均为 `yyyy-MM-dd HH:mm:ss`，无需额外注解：
 
 ```java
-@GetMapping("/test")
-@NebulaResponseBody
-public String test(@GetTimestamp LocalDateTime time) {
-    return time.toString();
+@Data
+public class UserDTO {
+    private LocalDateTime createdAt;  // 入参 / 出参 均为 "yyyy-MM-dd HH:mm:ss"
 }
+```
+
+如需时间戳格式，使用 Jackson 原生注解即可：
+
+```java
+@JsonFormat(shape = Shape.NUMBER)
+private LocalDateTime shipTime;  // JSON 中为毫秒时间戳
 ```
 
 ### 健康探针
@@ -557,7 +624,7 @@ DDD 聚合根支持，提供变更追踪（`AggregateDiff`）与旧对象快照�
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-aggregate</artifactId>
-    <version>3.0.3</version>
+    <version>${version}</version>
 </dependency>
 ```
 
@@ -602,6 +669,7 @@ Web 层基础工具，被 `spring-boot-nebula-web` 间接依赖，也可单独�
 | [spring-boot-nebula-excel-sample](spring-boot-nebula-samples/spring-boot-nebula-excel-sample) | Excel 导出 | `ExcelController` |
 | [spring-boot-nebula-join-sample](spring-boot-nebula-samples/spring-boot-nebula-join-sample) | 区域路由 JOIN | `RegionInterceptorTest` |
 | [spring-boot-nebula-feign-sample](spring-boot-nebula-samples/spring-boot-nebula-feign-sample) | Feign 自动解包 | `ConsumerController` |
+| [spring-boot-nebula-logback-sample](spring-boot-nebula-samples/spring-boot-nebula-logback-sample) | 日志脱敏、ERROR 飞书报警 | `LogDemoController` |
 
 本地运行示例：
 

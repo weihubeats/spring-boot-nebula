@@ -15,25 +15,26 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.jackson;
+package com.nebula.log.logback.desensitize;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import ch.qos.logback.classic.pattern.MessageConverter;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 
 /**
- * @author : wh
- * @date : 2023/5/20 15:34
- * @description:
+ * Logback message converter that desensitizes {@code %msg} output.
+ *
+ * <p>Register via:
+ * <pre>{@code
+ * <conversionRule conversionWord="msg"
+ *     converterClass="com.nebula.log.logback.desensitize.DesensitizeMessageConverter"/>
+ * }</pre>
+ *
+ * <p>Rules are controlled by {@code nebula.log.desensitize.*} through {@link DesensitizeRuntime}.
  */
-public class LocalDateTimeJacksonSerializer extends JsonSerializer<LocalDateTime> {
+public class DesensitizeMessageConverter extends MessageConverter {
     
     @Override
-    public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeNumber(value.toInstant(ZoneOffset.of("+8")).toEpochMilli());
+    public String convert(ILoggingEvent event) {
+        return DesensitizeRuntime.apply(super.convert(event));
     }
-    
 }

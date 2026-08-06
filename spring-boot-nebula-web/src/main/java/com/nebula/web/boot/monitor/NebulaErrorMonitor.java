@@ -15,17 +15,21 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.config;
+package com.nebula.web.boot.monitor;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * spring boot 所有的设置，主要是用于设置全局的中间件
+ * 错误监控告警门面接口。
+ * <p>实现类负责编排：归一化告警 key → 频率限制 → 组装告警消息 → 推送至告警渠道。
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
-@Configuration(proxyBeanMethods = false)
-public class BaseWebMvcConfig implements WebMvcConfigurer {
+public interface NebulaErrorMonitor {
+    
+    /**
+     * 监控并告警异常。
+     *
+     * @param request 请求对象
+     * @param ex      捕获的异常
+     */
+    void monitorError(HttpServletRequest request, Exception ex);
 }

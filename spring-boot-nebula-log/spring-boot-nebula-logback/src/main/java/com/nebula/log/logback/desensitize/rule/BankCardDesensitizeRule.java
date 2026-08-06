@@ -15,17 +15,21 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.config;
+package com.nebula.log.logback.desensitize.rule;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.nebula.log.logback.desensitize.RegexDesensitizeRule;
+import java.util.regex.Pattern;
 
 /**
- * spring boot 所有的设置，主要是用于设置全局的中间件
+ * Bank card-like digit sequences (16–19); keeps last 4.
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
-@Configuration(proxyBeanMethods = false)
-public class BaseWebMvcConfig implements WebMvcConfigurer {
+public final class BankCardDesensitizeRule extends RegexDesensitizeRule {
+    
+    public static final String NAME = "bankCard";
+    
+    private static final Pattern PATTERN = Pattern.compile("(?<!\\d)(\\d{12,15})(\\d{4})(?!\\d)");
+    
+    public BankCardDesensitizeRule() {
+        super(NAME, PATTERN, m -> "****" + m.group(2));
+    }
 }

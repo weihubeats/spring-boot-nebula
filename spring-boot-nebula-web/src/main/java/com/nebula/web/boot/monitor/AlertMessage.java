@@ -15,17 +15,17 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.config;
-
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+package com.nebula.web.boot.monitor;
 
 /**
- * spring boot 所有的设置，主要是用于设置全局的中间件
+ * 告警消息载体，由监控编排器组装，由渠道实现渲染。
+ * <p>堆栈以原始 {@link Throwable} 持有，格式化与长度限制由渠道内部处理。
+ *
+ * @param uri        请求路径
+ * @param parameters 请求参数（JSON 字符串）
+ * @param body       请求体（可能为空字符串）
+ * @param cause      触发告警的异常
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
-@Configuration(proxyBeanMethods = false)
-public class BaseWebMvcConfig implements WebMvcConfigurer {
+public record AlertMessage(String uri, String parameters, String body, Throwable cause) {
+    
 }

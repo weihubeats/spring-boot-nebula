@@ -15,17 +15,17 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.config;
+package com.nebula.log.sample;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import java.util.TimeZone;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * spring boot 所有的设置，主要是用于设置全局的中间件
- */
-@Order(Ordered.HIGHEST_PRECEDENCE)
-@Configuration(proxyBeanMethods = false)
-public class BaseWebMvcConfig implements WebMvcConfigurer {
+@SpringBootApplication
+public class LogbackSampleApplication {
+    
+    public static void main(String[] args) {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
+        SpringApplication.run(LogbackSampleApplication.class, args);
+    }
 }

@@ -15,13 +15,19 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.error;
+package com.nebula.web.boot.monitor;
 
 /**
- * @author : wh
- * @date : 2025/3/18 17:39
- * @description:
+ * 告警渠道抽象。
+ * <p>实现类负责将 {@link AlertMessage} 渲染并推送至具体渠道（飞书、钉钉等），
+ * 渠道自身的长度限制、模板渲染由实现类内部处理。
  */
-public interface NebulaDefaultErrorHandler {
+public interface NebulaAlertChannel {
     
+    /**
+     * 发送告警消息。
+     *
+     * @param message 由监控编排器组装的消息
+     */
+    void send(AlertMessage message);
 }

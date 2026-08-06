@@ -27,6 +27,7 @@
         <module>spring-boot-nebula-excel</module>
         <module>spring-boot-nebula-dynamic-datasource</module>
         <module>spring-boot-nebula-join</module>
+        <module>spring-boot-nebula-log</module>
         <module>spring-boot-nebula-feign</module>
     </modules>
 

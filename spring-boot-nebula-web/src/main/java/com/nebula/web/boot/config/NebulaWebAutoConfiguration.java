@@ -19,10 +19,18 @@ package com.nebula.web.boot.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nebula.alert.feishu.FeiShuRoot;
-import com.nebula.web.boot.error.DefaultNebulaErrorMonitor;
-import com.nebula.web.boot.error.NebulaErrorMonitor;
+import com.nebula.web.boot.monitor.DefaultNebulaErrorMonitor;
+import com.nebula.web.boot.monitor.FeishuAlertChannel;
+import com.nebula.web.boot.monitor.LocalAlertLimiter;
+import com.nebula.web.boot.monitor.NebulaAlertChannel;
+import com.nebula.web.boot.monitor.NebulaAlertLimiter;
+import com.nebula.web.boot.monitor.NebulaErrorMonitor;
+import com.nebula.web.boot.monitor.RedisAlertLimiter;
 import com.nebula.web.boot.annotation.NebulaResponseBodyAdvice;
 import com.nebula.web.boot.filter.RepeatableReadFilter;
+import java.time.Duration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -65,10 +73,47 @@ public class NebulaWebAutoConfiguration {
     }
     
     @ConditionalOnProperty(name = "nebula.web.monitor.type", havingValue = "feishu")
-    @Bean
-    public NebulaErrorMonitor defaultNebulaErrorMonitor(FeiShuRoot feiShuRoot,
-                                                        NebulaWebProperties nebulaWebProperties) {
-        return new DefaultNebulaErrorMonitor(feiShuRoot, nebulaWebProperties);
+    @Configuration(proxyBeanMethods = false)
+    static class FeishuAlertConfiguration {
         
+        @Bean
+        @ConditionalOnMissingBean(NebulaAlertChannel.class)
+        public NebulaAlertChannel feishuAlertChannel(FeiShuRoot feiShuRoot, NebulaWebProperties nebulaWebProperties) {
+            return new FeishuAlertChannel(feiShuRoot, nebulaWebProperties.getMonitor().getUrl());
+        }
+        
+        @Bean
+        @ConditionalOnProperty(name = "nebula.web.monitor.limit.storage", havingValue = "local", matchIfMissing = true)
+        @ConditionalOnMissingBean(NebulaAlertLimiter.class)
+        public NebulaAlertLimiter localAlertLimiter(NebulaWebProperties nebulaWebProperties) {
+            return new LocalAlertLimiter(nebulaWebProperties.getMonitor().getLimit().getWindowSeconds(),
+                    nebulaWebProperties.getMonitor().getLimit().getMaxCount());
+        }
+    }
+    
+    @ConditionalOnProperty(name = "nebula.web.monitor.limit.storage", havingValue = "redis")
+    @ConditionalOnClass(name = "org.redisson.api.RedissonClient")
+    @Configuration(proxyBeanMethods = false)
+    static class RedisAlertLimiterConfiguration {
+        
+        @Bean
+        @ConditionalOnMissingBean(NebulaAlertLimiter.class)
+        public NebulaAlertLimiter redisAlertLimiter(org.redisson.api.RedissonClient redissonClient,
+                                                    NebulaWebProperties nebulaWebProperties) {
+            return new RedisAlertLimiter(redissonClient,
+                    Duration.ofSeconds(nebulaWebProperties.getMonitor().getLimit().getWindowSeconds()),
+                    Duration.ofSeconds(nebulaWebProperties.getMonitor().getLimit().getExpireSeconds()),
+                    nebulaWebProperties.getMonitor().getLimit().getMaxCount(),
+                    nebulaWebProperties.getMonitor().getLimit().getKeyPrefix());
+        }
+    }
+    
+    @ConditionalOnProperty(name = "nebula.web.monitor.type")
+    @ConditionalOnMissingBean(NebulaErrorMonitor.class)
+    @Bean
+    public NebulaErrorMonitor defaultNebulaErrorMonitor(NebulaWebProperties nebulaWebProperties,
+                                                        NebulaAlertLimiter alertLimiter,
+                                                        NebulaAlertChannel alertChannel) {
+        return new DefaultNebulaErrorMonitor(nebulaWebProperties, alertLimiter, alertChannel);
     }
 }

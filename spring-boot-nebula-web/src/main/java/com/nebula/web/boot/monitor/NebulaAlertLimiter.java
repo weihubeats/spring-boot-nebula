@@ -15,17 +15,19 @@
  * limitations under the License.
  */
  
-package com.nebula.web.boot.config;
-
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+package com.nebula.web.boot.monitor;
 
 /**
- * spring boot 所有的设置，主要是用于设置全局的中间件
+ * 告警频率限制抽象。
+ * <p>实现类由 Spring 管理生命周期，所有告警实现（飞书、钉钉等）共享同一个限流器实例。
  */
-@Order(Ordered.HIGHEST_PRECEDENCE)
-@Configuration(proxyBeanMethods = false)
-public class BaseWebMvcConfig implements WebMvcConfigurer {
+public interface NebulaAlertLimiter {
+    
+    /**
+     * 尝试获取告警配额。
+     *
+     * @param key 告警维度，通常为 异常类名:归一化URI
+     * @return true=配额内可发送告警；false=已达窗口上限应丢弃
+     */
+    boolean tryAcquire(String key);
 }

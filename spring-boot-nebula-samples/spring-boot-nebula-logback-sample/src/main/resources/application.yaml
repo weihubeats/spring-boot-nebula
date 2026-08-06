@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: logback-sample
+
+server:
+  port: 8099
+
+nebula:
+  log:
+    desensitize:
+      enabled: true
+      # disable-rules:
+      #   - bankCard
+    feishu:
+      enabled: false
+      webhook-url: ${NEBULA_LOG_FEISHU_WEBHOOK_URL:}
+      title: logback-sample
+      max-per-minute: 10
