@@ -27,7 +27,9 @@ import static org.mockito.Mockito.when;
 import com.nebula.feign.config.NebulaFeignProperties;
 import feign.Client;
 import feign.Request;
+import feign.RequestTemplate;
 import feign.Response;
+import feign.Target;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -109,5 +111,59 @@ class NebulaFeignLogFilterTest {
         Response response = filter.execute(request, new Request.Options());
         
         assertEquals(200, response.status());
+    }
+    
+    @Test
+    void shouldResolveClientNameFromRequestTemplate() {
+        Target<Object> target = new Target.HardCodedTarget<>(Object.class, "userClient", "http://localhost");
+        RequestTemplate template = new RequestTemplate()
+                .feignTarget(target)
+                .method(Request.HttpMethod.GET);
+        Request request = Request.create(Request.HttpMethod.GET, "http://localhost/users",
+                Collections.emptyMap(), null, StandardCharsets.UTF_8, template);
+        
+        assertEquals("userClient", NebulaFeignLogFilter.clientName(request));
+    }
+    
+    @Test
+    void shouldFallbackToUnknownWithoutTemplate() {
+        Request request = Request.create(Request.HttpMethod.GET, "http://localhost/users",
+                Collections.emptyMap(), null, StandardCharsets.UTF_8);
+        
+        assertEquals("unknown", NebulaFeignLogFilter.clientName(request));
+    }
+    
+    @Test
+    void shouldFormatRequestMultilineWithClientName() {
+        Target<Object> target = new Target.HardCodedTarget<>(Object.class, "userClient", "http://localhost");
+        RequestTemplate template = new RequestTemplate()
+                .feignTarget(target)
+                .method(Request.HttpMethod.POST);
+        Request request = Request.create(Request.HttpMethod.POST, "http://localhost/users",
+                Collections.emptyMap(), "{\"name\":\"x\"}".getBytes(StandardCharsets.UTF_8),
+                StandardCharsets.UTF_8, template);
+        NebulaFeignLogFilter filter = new NebulaFeignLogFilter(mock(Client.class), properties);
+        
+        String log = filter.formatRequest(request, 12L, "{\"name\":\"x\"}", 200, "{\"ok\":true}");
+        
+        assertEquals("Feign [userClient] POST http://localhost/users cost=12ms\n"
+                + "requestBody={\"name\":\"x\"}\n"
+                + "responseStatus=200\n"
+                + "responseBody={\"ok\":true}", log);
+    }
+    
+    @Test
+    void shouldTruncateOverlongBody() {
+        properties.getLog().setMaxBodyLength(16);
+        NebulaFeignLogFilter filter = new NebulaFeignLogFilter(mock(Client.class), properties);
+        Request request = Request.create(Request.HttpMethod.GET, "http://localhost/users",
+                Collections.emptyMap(), null, StandardCharsets.UTF_8);
+        
+        String log = filter.formatRequest(request, 1L, "0123456789abcdefghij", 200, "ok");
+        
+        assertEquals("Feign [unknown] GET http://localhost/users cost=1ms\n"
+                + "requestBody=0123456789abcdef...(truncated)\n"
+                + "responseStatus=200\n"
+                + "responseBody=ok", log);
     }
 }

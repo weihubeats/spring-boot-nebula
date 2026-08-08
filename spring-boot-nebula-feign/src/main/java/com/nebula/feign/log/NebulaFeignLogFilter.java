@@ -20,7 +20,9 @@ package com.nebula.feign.log;
 import com.nebula.feign.config.NebulaFeignProperties;
 import feign.Client;
 import feign.Request;
+import feign.RequestTemplate;
 import feign.Response;
+import feign.Target;
 import feign.Util;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -32,18 +34,20 @@ import org.springframework.boot.logging.LogLevel;
 
 /**
  * Feign 日志过滤器：打印请求方法/URL/参数体、响应状态/体、耗时；超时则打慢调用告警。
+ *
+ * <p>请求体与响应体各占一行，便于复制；单次请求只输出一条日志（内部多行）。
  */
 @Slf4j
 public class NebulaFeignLogFilter implements Client {
     
-    private static final int MAX_BODY_LOG_LENGTH = 2048;
-    
     private final Client delegate;
     private final NebulaFeignProperties properties;
+    private final int maxBodyLength;
     
     public NebulaFeignLogFilter(Client delegate, NebulaFeignProperties properties) {
         this.delegate = Objects.requireNonNull(delegate, "delegate");
         this.properties = Objects.requireNonNull(properties, "properties");
+        this.maxBodyLength = properties.getLog().getMaxBodyLength();
     }
     
     @Override
@@ -64,8 +68,7 @@ public class NebulaFeignLogFilter implements Client {
             return response.toBuilder().body(responseBytes).build();
         } catch (IOException ex) {
             long costMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
-            logAt(LogLevel.WARN, "Feign {} {} cost={}ms requestBody={} error={}",
-                    request.httpMethod(), request.url(), costMs, truncate(requestBody), ex.getMessage());
+            logAt(LogLevel.WARN, "{}", formatError(request, costMs, requestBody, ex.getMessage()));
             logSlowCallIfNecessary(request, costMs, requestBody);
             throw ex;
         }
@@ -76,9 +79,7 @@ public class NebulaFeignLogFilter implements Client {
         if (Objects.isNull(level) || level == LogLevel.OFF) {
             return;
         }
-        logAt(level, "Feign {} {} cost={}ms requestBody={} responseStatus={} responseBody={}",
-                request.httpMethod(), request.url(), costMs,
-                truncate(requestBody), status, truncate(responseBody));
+        logAt(level, "{}", formatRequest(request, costMs, requestBody, status, responseBody));
     }
     
     private void logSlowCallIfNecessary(Request request, long costMs, String requestBody) {
@@ -94,9 +95,65 @@ public class NebulaFeignLogFilter implements Client {
         if (level == LogLevel.OFF) {
             return;
         }
-        logAt(level,
-                "Feign slow call alert {} {} cost={}ms threshold={}ms requestBody={}",
-                request.httpMethod(), request.url(), costMs, thresholdMs, truncate(requestBody));
+        logAt(level, "{}", formatSlow(request, costMs, requestBody, thresholdMs));
+    }
+    
+    /**
+     * 组装请求/响应日志（单条多行：请求体、响应状态、响应体各占一行）。
+     */
+    String formatRequest(Request request, long costMs, String requestBody, int status, String responseBody) {
+        return new StringBuilder(256)
+                .append("Feign [").append(clientName(request)).append("] ")
+                .append(request.httpMethod()).append(' ').append(request.url())
+                .append(" cost=").append(costMs).append("ms")
+                .append('\n').append("requestBody=").append(truncate(requestBody))
+                .append('\n').append("responseStatus=").append(status)
+                .append('\n').append("responseBody=").append(truncate(responseBody))
+                .toString();
+    }
+    
+    /**
+     * 组装异常日志（单条多行）。
+     */
+    String formatError(Request request, long costMs, String requestBody, String error) {
+        return new StringBuilder(128)
+                .append("Feign [").append(clientName(request)).append("] ")
+                .append(request.httpMethod()).append(' ').append(request.url())
+                .append(" cost=").append(costMs).append("ms error=").append(error)
+                .append('\n').append("requestBody=").append(truncate(requestBody))
+                .toString();
+    }
+    
+    /**
+     * 组装慢调用告警日志（单条多行）。
+     */
+    String formatSlow(Request request, long costMs, String requestBody, long thresholdMs) {
+        return new StringBuilder(128)
+                .append("Feign slow call alert [").append(clientName(request)).append("] ")
+                .append(request.httpMethod()).append(' ').append(request.url())
+                .append(" cost=").append(costMs).append("ms threshold=").append(thresholdMs).append("ms")
+                .append('\n').append("requestBody=").append(truncate(requestBody))
+                .toString();
+    }
+    
+    /**
+     * 解析 Feign Client 名称（如 {@code userClient}），取不到时返回 {@code unknown}。
+     */
+    static String clientName(Request request) {
+        if (Objects.isNull(request)) {
+            return "unknown";
+        }
+        try {
+            RequestTemplate template = request.requestTemplate();
+            Target<?> target = Objects.isNull(template) ? null : template.feignTarget();
+            if (Objects.isNull(target)) {
+                return "unknown";
+            }
+            String name = target.name();
+            return Objects.isNull(name) || name.isBlank() ? "unknown" : name;
+        } catch (RuntimeException ex) {
+            return "unknown";
+        }
     }
     
     static void logAt(LogLevel level, String format, Object... args) {
@@ -130,10 +187,10 @@ public class NebulaFeignLogFilter implements Client {
         return new String(body, charset);
     }
     
-    private static String truncate(String value) {
-        if (Objects.isNull(value) || value.length() <= MAX_BODY_LOG_LENGTH) {
+    private String truncate(String value) {
+        if (Objects.isNull(value) || value.length() <= maxBodyLength) {
             return value;
         }
-        return value.substring(0, MAX_BODY_LOG_LENGTH) + "...(truncated)";
+        return value.substring(0, maxBodyLength) + "...(truncated)";
     }
 }

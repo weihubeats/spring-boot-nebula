@@ -86,6 +86,12 @@ atlassian-ide-plugin.xml
 # Maven ignore
 .flattened-pom.xml
 
+# Node / VitePress
+node_modules/
+**/node_modules/
+website/.vitepress/dist/
+website/.vitepress/cache/
+
 .vscode
 # Added by code-review-graph
 .code-review-graph/

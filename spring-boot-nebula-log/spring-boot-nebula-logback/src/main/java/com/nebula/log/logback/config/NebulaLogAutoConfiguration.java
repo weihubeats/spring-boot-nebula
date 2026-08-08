@@ -26,6 +26,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 
 /**
  * Auto-configures logback extensions from {@link NebulaLogProperties}.
@@ -38,8 +39,9 @@ public class NebulaLogAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public DesensitizePropertiesBinder desensitizePropertiesBinder(
-                                                                   NebulaLogProperties properties, ObjectProvider<DesensitizeRule> customRules) {
-        return new DesensitizePropertiesBinder(properties, customRules);
+                                                                   NebulaLogProperties properties, ObjectProvider<DesensitizeRule> customRules,
+                                                                   Environment environment) {
+        return new DesensitizePropertiesBinder(properties, customRules, environment);
     }
     
     @Bean

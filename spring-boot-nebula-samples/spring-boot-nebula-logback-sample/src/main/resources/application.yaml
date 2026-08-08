@@ -9,6 +9,8 @@ nebula:
   log:
     desensitize:
       enabled: true
+      # 默认 dev、test 不脱敏；配 [] 则所有环境都脱敏
+      # disabled-environments: []
       # disable-rules:
       #   - bankCard
     feishu:
