@@ -61,6 +61,13 @@ public class NebulaFeignProperties {
          */
         private int maxBodyLength = 8192;
         
+        public void setMaxBodyLength(int maxBodyLength) {
+            if (maxBodyLength < 0) {
+                throw new IllegalArgumentException("maxBodyLength must not be negative, but was: " + maxBodyLength);
+            }
+            this.maxBodyLength = maxBodyLength;
+        }
+        
         /**
          * 慢调用告警配置。
          */

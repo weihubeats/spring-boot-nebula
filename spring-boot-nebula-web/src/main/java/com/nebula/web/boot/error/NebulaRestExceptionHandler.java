@@ -30,6 +30,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -42,6 +46,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 /**
@@ -49,10 +54,14 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  * @date : 2024/3/18
  * @description:
  *
- * <p>由 {@link NebulaRestExceptionHandlerAutoConfiguration} 按条件注册；项目已有自定义
- * {@code @RestControllerAdvice} 或关闭 {@code nebula.web.exception-handler.enabled} 时自动退让。
+ * <p>按条件注册：仅 Servlet Web 环境且 {@code nebula.web.exception-handler.enabled} 未关闭时生效；
+ * 项目已有自定义 {@code @RestControllerAdvice} 或关闭开关时自动退让。
  */
 @Slf4j
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnClass({Servlet.class, DispatcherServlet.class})
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
+@ConditionalOnProperty(prefix = "nebula.web.exception-handler", name = "enabled", havingValue = "true", matchIfMissing = true)
 @RestControllerAdvice
 public class NebulaRestExceptionHandler {
     

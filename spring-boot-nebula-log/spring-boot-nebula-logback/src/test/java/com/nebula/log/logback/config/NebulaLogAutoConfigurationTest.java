@@ -91,12 +91,26 @@ class NebulaLogAutoConfigurationTest {
     }
     
     @Test
-    void skipsDesensitizeByDefaultInDevProfile() {
+    void desensitizesByDefaultInDevProfile() {
         contextRunner
                 .withPropertyValues("spring.profiles.active=dev")
                 .run(context -> {
-                    assertThat(DesensitizeRuntime.enabled()).isFalse();
-                    assertThat(DesensitizeRuntime.apply("13812348000")).isEqualTo("13812348000");
+                    assertThat(DesensitizeRuntime.enabled()).isTrue();
+                    assertThat(DesensitizeRuntime.apply("13812348000")).isEqualTo("138****8000");
+                });
+    }
+    
+    @Test
+    void desensitizesInDevProfileWithExplicitEmptyList() {
+        contextRunner
+                .withPropertyValues(
+                        "spring.profiles.active=dev",
+                        "nebula.log.desensitize.disabled-environments=")
+                .run(context -> {
+                    NebulaLogProperties properties = context.getBean(NebulaLogProperties.class);
+                    assertThat(properties.getDesensitize().getDisabledEnvironments()).isEmpty();
+                    assertThat(DesensitizeRuntime.enabled()).isTrue();
+                    assertThat(DesensitizeRuntime.apply("13812348000")).isEqualTo("138****8000");
                 });
     }
     

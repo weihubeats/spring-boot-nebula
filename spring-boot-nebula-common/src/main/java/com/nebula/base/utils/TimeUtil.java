@@ -107,7 +107,7 @@ public class TimeUtil {
      * @return The corresponding {@link LocalDateTime} in the system default time zone, or null if input is null.
      */
     public static LocalDateTime toLocalDateTime(Long epochMilli) {
-        if (epochMilli == null) {
+        if (Objects.isNull(epochMilli)) {
             return null;
         }
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), ZoneId.systemDefault());
@@ -124,7 +124,7 @@ public class TimeUtil {
      * @throws NullPointerException if epochMilli is not null and zoneId is null.
      */
     public static LocalDateTime toLocalDateTime(Long epochMilli, ZoneId zoneId) {
-        if (epochMilli == null) {
+        if (Objects.isNull(epochMilli)) {
             return null;
         }
         Objects.requireNonNull(zoneId, "ZoneId cannot be null when epochMilli is provided.");
@@ -140,6 +140,7 @@ public class TimeUtil {
      * @throws NullPointerException if localDateTime is null.
      */
     public static long toEpochMilli(LocalDateTime localDateTime) {
+        Objects.requireNonNull(localDateTime, "localDateTime");
         return localDateTime.atZone(ZoneId.systemDefault())
                 .toInstant().toEpochMilli();
     }
@@ -230,7 +231,7 @@ public class TimeUtil {
      * @return The formatted date-time string, or null if localDateTime is null.
      */
     public static String formatLocalDateTime(LocalDateTime localDateTime) {
-        return localDateTime == null ? null : localDateTime.format(DATETIME_FORMATTER);
+        return Objects.isNull(localDateTime) ? null : localDateTime.format(DATETIME_FORMATTER);
     }
     
     /**
@@ -242,7 +243,7 @@ public class TimeUtil {
      * @throws NullPointerException if localDateTime is not null and formatter is null.
      */
     public static String formatLocalDateTime(LocalDateTime localDateTime, DateTimeFormatter formatter) {
-        if (localDateTime == null) {
+        if (Objects.isNull(localDateTime)) {
             return null;
         }
         return localDateTime.format(Objects.requireNonNull(formatter, "formatter"));
@@ -254,11 +255,10 @@ public class TimeUtil {
      * @param localDateTime The {@link LocalDateTime} to format. Can be null.
      * @param pattern The date-time pattern string. Cannot be null or empty if localDateTime is not null.
      * @return The formatted date-time string, or null if localDateTime is null.
-     * @throws NullPointerException if localDateTime is not null and pattern is null.
-     * @throws IllegalArgumentException if the pattern is invalid.
+     * @throws IllegalArgumentException if the pattern is null, empty or invalid.
      */
     public static String formatLocalDateTime(LocalDateTime localDateTime, String pattern) {
-        if (localDateTime == null) {
+        if (Objects.isNull(localDateTime)) {
             return null;
         }
         if (pattern == null || pattern.isEmpty()) {
@@ -274,7 +274,7 @@ public class TimeUtil {
      * @return The formatted date string, or null if localDate is null.
      */
     public static String formatLocalDate(LocalDate localDate) {
-        return localDate == null ? null : localDate.format(DATE_FORMATTER);
+        return Objects.isNull(localDate) ? null : localDate.format(DATE_FORMATTER);
     }
     
     /**
@@ -286,7 +286,7 @@ public class TimeUtil {
      * @throws NullPointerException if localDate is not null and formatter is null.
      */
     public static String formatLocalDate(LocalDate localDate, DateTimeFormatter formatter) {
-        if (localDate == null) {
+        if (Objects.isNull(localDate)) {
             return null;
         }
         return localDate.format(Objects.requireNonNull(formatter, "formatter"));
@@ -298,11 +298,10 @@ public class TimeUtil {
      * @param localDate The {@link LocalDate} to format. Can be null.
      * @param pattern The date pattern string. Cannot be null or empty if localDate is not null.
      * @return The formatted date string, or null if localDate is null.
-     * @throws NullPointerException if localDate is not null and pattern is null.
-     * @throws IllegalArgumentException if the pattern is invalid.
+     * @throws IllegalArgumentException if the pattern is null, empty or invalid.
      */
     public static String formatLocalDate(LocalDate localDate, String pattern) {
-        if (localDate == null) {
+        if (Objects.isNull(localDate)) {
             return null;
         }
         if (pattern == null || pattern.isEmpty()) {

@@ -146,10 +146,11 @@ class NebulaFeignLogFilterTest {
         
         String log = filter.formatRequest(request, 12L, "{\"name\":\"x\"}", 200, "{\"ok\":true}");
         
-        assertEquals("Feign [userClient] POST http://localhost/users cost=12ms\n"
-                + "requestBody={\"name\":\"x\"}\n"
-                + "responseStatus=200\n"
-                + "responseBody={\"ok\":true}", log);
+        assertEquals("""
+                Feign [userClient] POST http://localhost/users cost=12ms
+                requestBody={"name":"x"}
+                responseStatus=200
+                responseBody={"ok":true}""", log);
     }
     
     @Test
@@ -161,9 +162,10 @@ class NebulaFeignLogFilterTest {
         
         String log = filter.formatRequest(request, 1L, "0123456789abcdefghij", 200, "ok");
         
-        assertEquals("Feign [unknown] GET http://localhost/users cost=1ms\n"
-                + "requestBody=0123456789abcdef...(truncated)\n"
-                + "responseStatus=200\n"
-                + "responseBody=ok", log);
+        assertEquals("""
+                Feign [unknown] GET http://localhost/users cost=1ms
+                requestBody=0123456789abcdef...(truncated)
+                responseStatus=200
+                responseBody=ok""", log);
     }
 }

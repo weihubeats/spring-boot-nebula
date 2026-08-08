@@ -9,8 +9,9 @@ nebula:
   log:
     desensitize:
       enabled: true
-      # 默认 dev、test 不脱敏；配 [] 则所有环境都脱敏
-      # disabled-environments: []
+      # 默认所有环境都脱敏；本地调试需跳过时可配置：
+      # disabled-environments:
+      #   - dev
       # disable-rules:
       #   - bankCard
     feishu:

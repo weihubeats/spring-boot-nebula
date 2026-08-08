@@ -188,7 +188,7 @@ public class NebulaFeignLogFilter implements Client {
     }
     
     private String truncate(String value) {
-        if (Objects.isNull(value) || value.length() <= maxBodyLength) {
+        if (Objects.isNull(value) || maxBodyLength <= 0 || value.length() <= maxBodyLength) {
             return value;
         }
         return value.substring(0, maxBodyLength) + "...(truncated)";
