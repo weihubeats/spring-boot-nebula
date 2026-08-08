@@ -13,7 +13,7 @@
     <url>https://github.com/weihubeats/spring-boot-nebula</url>
 
     <properties>
-        <revision>3.0.3</revision>
+        <revision>3.0.4</revision>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -67,7 +67,7 @@
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>3.0.3</version>
+                <version>3.0.4</version>
             </dependency>
 
             <dependency>

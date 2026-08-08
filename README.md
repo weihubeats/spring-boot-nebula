@@ -4,7 +4,7 @@
 
 | 项目 | 说明 |
 |------|------|
-| 当前版本 | `3.0.3` |
+| 当前版本 | `3.0.4` |
 | Java | 17+ |
 | Spring Boot | 3.4.x（由 BOM 统一管理） |
 | GroupId | `io.github.weihubeats` |
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>io.github.weihubeats</groupId>
             <artifactId>spring-boot-nebula-dependencies</artifactId>
-            <version>3.0.3</version>
+            <version>3.0.4</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -153,7 +153,7 @@ public String test() {
         <dependency>
             <groupId>io.github.weihubeats</groupId>
             <artifactId>spring-boot-nebula-dependencies</artifactId>
-            <version>3.0.3</version>
+            <version>3.0.4</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -171,7 +171,7 @@ public String test() {
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
 </dependency>
 ```
 
@@ -360,7 +360,7 @@ MyBatis-Plus 封装，提供基础实体、审计字段自动填充、类型处�
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-mybatis</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
 </dependency>
 ```
 
@@ -395,7 +395,7 @@ return PageHelperUtils.of(list, page);
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-dynamic-datasource</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
 </dependency>
 ```
 
@@ -451,7 +451,7 @@ db:
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-distribute-lock</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
 </dependency>
 ```
 
@@ -490,7 +490,7 @@ public void updateOrder(OrderDTO dto) { ... }
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-excel</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
 </dependency>
 ```
 
@@ -524,7 +524,7 @@ public void exportWithDateSuffix(HttpServletResponse response) {
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-join</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
 </dependency>
 ```
 
@@ -640,7 +640,7 @@ DDD 聚合根支持，提供变更追踪（`AggregateDiff`）与旧对象快照�
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-all</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.4</version>
 </dependency>
 ```
 
