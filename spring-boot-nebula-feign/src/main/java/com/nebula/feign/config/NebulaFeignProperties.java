@@ -30,6 +30,7 @@ import org.springframework.boot.logging.LogLevel;
  *     log:
  *       enabled: true
  *       level: INFO
+ *       max-body-length: 8192
  *       slow:
  *         enabled: true
  *         threshold-millis: 3000
@@ -54,6 +55,11 @@ public class NebulaFeignProperties {
          * 普通请求日志级别。
          */
         private LogLevel level = LogLevel.INFO;
+        
+        /**
+         * 请求/响应体日志最大打印长度（字符），超过则截断。默认 8192。
+         */
+        private int maxBodyLength = 8192;
         
         /**
          * 慢调用告警配置。

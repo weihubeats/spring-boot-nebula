@@ -89,4 +89,36 @@ class NebulaLogAutoConfigurationTest {
                     assertThat(DesensitizeRuntime.apply("13812348000")).isEqualTo("13812348000");
                 });
     }
+    
+    @Test
+    void skipsDesensitizeByDefaultInDevProfile() {
+        contextRunner
+                .withPropertyValues("spring.profiles.active=dev")
+                .run(context -> {
+                    assertThat(DesensitizeRuntime.enabled()).isFalse();
+                    assertThat(DesensitizeRuntime.apply("13812348000")).isEqualTo("13812348000");
+                });
+    }
+    
+    @Test
+    void skipsDesensitizeInCustomDisabledEnvironments() {
+        contextRunner
+                .withPropertyValues(
+                        "spring.profiles.active=local",
+                        "nebula.log.desensitize.disabled-environments=local")
+                .run(context -> {
+                    assertThat(DesensitizeRuntime.enabled()).isFalse();
+                    assertThat(DesensitizeRuntime.apply("13812348000")).isEqualTo("13812348000");
+                });
+    }
+    
+    @Test
+    void desensitizesInProductionProfile() {
+        contextRunner
+                .withPropertyValues("spring.profiles.active=prod")
+                .run(context -> {
+                    assertThat(DesensitizeRuntime.enabled()).isTrue();
+                    assertThat(DesensitizeRuntime.apply("13812348000")).isEqualTo("138****8000");
+                });
+    }
 }

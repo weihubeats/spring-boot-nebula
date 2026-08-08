@@ -24,6 +24,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.env.Environment;
 
 /**
  * Applies {@link NebulaLogProperties#getDesensitize()} and custom {@link DesensitizeRule} beans
@@ -34,14 +35,28 @@ public class DesensitizePropertiesBinder implements InitializingBean {
     
     private final NebulaLogProperties properties;
     private final ObjectProvider<DesensitizeRule> customRules;
+    private final Environment environment;
     
     @Override
     public void afterPropertiesSet() {
         NebulaLogProperties.Desensitize desensitize = properties.getDesensitize();
         List<DesensitizeRule> extras = customRules.orderedStream().toList();
         DesensitizeRuntime.configure(
-                desensitize.isEnabled(),
+                desensitize.isEnabled() && !skippedByEnvironment(desensitize),
                 Objects.requireNonNullElse(desensitize.getDisableRules(), List.of()),
                 extras);
+    }
+    
+    private boolean skippedByEnvironment(NebulaLogProperties.Desensitize desensitize) {
+        List<String> disabled = Objects.requireNonNullElse(desensitize.getDisabledEnvironments(), List.of());
+        if (disabled.isEmpty()) {
+            return false;
+        }
+        for (String profile : environment.getActiveProfiles()) {
+            if (disabled.contains(profile)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
