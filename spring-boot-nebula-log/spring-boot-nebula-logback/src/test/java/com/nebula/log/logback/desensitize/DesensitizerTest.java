@@ -51,8 +51,19 @@ class DesensitizerTest {
     @Test
     void masksSecretKey() {
         assertEquals("password=***", desensitizer.apply("password=secret123"));
-        assertEquals("token=***", desensitizer.apply("token: abc-xyz"));
-        assertEquals("accessKey=***", desensitizer.apply("accessKey=\"AKIA123\""));
+        assertEquals("token: ***", desensitizer.apply("token: abc-xyz"));
+        assertEquals("accessKey=\"***\"", desensitizer.apply("accessKey=\"AKIA123\""));
+    }
+    
+    @Test
+    void masksSecretKeyInJson() {
+        assertEquals("{\"password\":\"***\"}", desensitizer.apply("{\"password\":\"secret123\"}"));
+        assertEquals(
+                "request {\"mobile\":\"138****8000\",\"password\":\"***\",\"email\":\"a***@example.com\"}",
+                desensitizer.apply(
+                        "request {\"mobile\":\"13812348000\",\"password\":\"secret123\",\"email\":\"alice@example.com\"}"));
+        assertEquals("{\"token\":\"***\",\"secret\":\"***\"}",
+                desensitizer.apply("{\"token\":\"eyJhbGciOiJIUzI1NiJ9\",\"secret\":\"abc123\"}"));
     }
     
     @Test

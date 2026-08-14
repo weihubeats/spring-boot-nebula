@@ -28,9 +28,9 @@ public final class SecretKeyDesensitizeRule extends RegexDesensitizeRule {
     public static final String NAME = "secretKey";
     
     private static final Pattern PATTERN = Pattern.compile(
-            "(?i)(password|pwd|token|secret|accessKey)\\s*[=:]\\s*(?:\"([^\"\\\\]*(?:\\\\.[^\"\\\\]*)*)\"|'([^'\\\\]*(?:\\\\.[^'\\\\]*)*)'|([^\"',\\s}]+))");
+            "(?i)([\"']?(password|pwd|token|secret|accessKey)[\"']?\\s*[:=]\\s*[\"']?)([\"'][^\"'}]+[\"']|[^\"'}\\s]+)([\"']?)");
     
     public SecretKeyDesensitizeRule() {
-        super(NAME, PATTERN, m -> m.group(1) + "=***");
+        super(NAME, PATTERN, m -> m.group(1) + "***" + m.group(4));
     }
 }
