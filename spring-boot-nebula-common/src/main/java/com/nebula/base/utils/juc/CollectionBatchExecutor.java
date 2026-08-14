@@ -152,6 +152,18 @@ public class CollectionBatchExecutor {
         public boolean hasChanges() {
             return !(toAdd.isEmpty() && toUpdate.isEmpty() && toDelete.isEmpty());
         }
+        
+        public List<T> getToAdd() {
+            return toAdd;
+        }
+        
+        public List<T> getToUpdate() {
+            return toUpdate;
+        }
+        
+        public List<T> getToDelete() {
+            return toDelete;
+        }
     }
     
     /**
