@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.feign.log;
 
 import com.nebula.feign.config.NebulaFeignProperties;
@@ -39,17 +39,17 @@ import org.springframework.boot.logging.LogLevel;
  */
 @Slf4j
 public class NebulaFeignLogFilter implements Client {
-    
+
     private final Client delegate;
     private final NebulaFeignProperties properties;
     private final int maxBodyLength;
-    
+
     public NebulaFeignLogFilter(Client delegate, NebulaFeignProperties properties) {
         this.delegate = Objects.requireNonNull(delegate, "delegate");
         this.properties = Objects.requireNonNull(properties, "properties");
         this.maxBodyLength = properties.getLog().getMaxBodyLength();
     }
-    
+
     @Override
     public Response execute(Request request, Request.Options options) throws IOException {
         long startNanos = System.nanoTime();
@@ -60,7 +60,7 @@ public class NebulaFeignLogFilter implements Client {
             long costMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
             byte[] responseBytes = readBody(response);
             logRequest(request, costMs, requestBody, response.status(),
-                    bodyToString(responseBytes, StandardCharsets.UTF_8));
+                bodyToString(responseBytes, StandardCharsets.UTF_8));
             logSlowCallIfNecessary(request, costMs, requestBody);
             if (Objects.isNull(response.body())) {
                 return response;
@@ -73,7 +73,7 @@ public class NebulaFeignLogFilter implements Client {
             throw ex;
         }
     }
-    
+
     private void logRequest(Request request, long costMs, String requestBody, int status, String responseBody) {
         LogLevel level = properties.getLog().getLevel();
         if (Objects.isNull(level) || level == LogLevel.OFF) {
@@ -81,7 +81,7 @@ public class NebulaFeignLogFilter implements Client {
         }
         logAt(level, "{}", formatRequest(request, costMs, requestBody, status, responseBody));
     }
-    
+
     private void logSlowCallIfNecessary(Request request, long costMs, String requestBody) {
         NebulaFeignProperties.Slow slow = properties.getLog().getSlow();
         if (Objects.isNull(slow) || !slow.isEnabled()) {
@@ -97,45 +97,45 @@ public class NebulaFeignLogFilter implements Client {
         }
         logAt(level, "{}", formatSlow(request, costMs, requestBody, thresholdMs));
     }
-    
+
     /**
      * 组装请求/响应日志（单条多行：请求体、响应状态、响应体各占一行）。
      */
     String formatRequest(Request request, long costMs, String requestBody, int status, String responseBody) {
         return new StringBuilder(256)
-                .append("Feign [").append(clientName(request)).append("] ")
-                .append(request.httpMethod()).append(' ').append(request.url())
-                .append(" cost=").append(costMs).append("ms")
-                .append('\n').append("requestBody=").append(truncate(requestBody))
-                .append('\n').append("responseStatus=").append(status)
-                .append('\n').append("responseBody=").append(truncate(responseBody))
-                .toString();
+            .append("Feign [").append(clientName(request)).append("] ")
+            .append(request.httpMethod()).append(' ').append(request.url())
+            .append(" cost=").append(costMs).append("ms")
+            .append('\n').append("requestBody=").append(truncate(requestBody))
+            .append('\n').append("responseStatus=").append(status)
+            .append('\n').append("responseBody=").append(truncate(responseBody))
+            .toString();
     }
-    
+
     /**
      * 组装异常日志（单条多行）。
      */
     String formatError(Request request, long costMs, String requestBody, String error) {
         return new StringBuilder(128)
-                .append("Feign [").append(clientName(request)).append("] ")
-                .append(request.httpMethod()).append(' ').append(request.url())
-                .append(" cost=").append(costMs).append("ms error=").append(error)
-                .append('\n').append("requestBody=").append(truncate(requestBody))
-                .toString();
+            .append("Feign [").append(clientName(request)).append("] ")
+            .append(request.httpMethod()).append(' ').append(request.url())
+            .append(" cost=").append(costMs).append("ms error=").append(error)
+            .append('\n').append("requestBody=").append(truncate(requestBody))
+            .toString();
     }
-    
+
     /**
      * 组装慢调用告警日志（单条多行）。
      */
     String formatSlow(Request request, long costMs, String requestBody, long thresholdMs) {
         return new StringBuilder(128)
-                .append("Feign slow call alert [").append(clientName(request)).append("] ")
-                .append(request.httpMethod()).append(' ').append(request.url())
-                .append(" cost=").append(costMs).append("ms threshold=").append(thresholdMs).append("ms")
-                .append('\n').append("requestBody=").append(truncate(requestBody))
-                .toString();
+            .append("Feign slow call alert [").append(clientName(request)).append("] ")
+            .append(request.httpMethod()).append(' ').append(request.url())
+            .append(" cost=").append(costMs).append("ms threshold=").append(thresholdMs).append("ms")
+            .append('\n').append("requestBody=").append(truncate(requestBody))
+            .toString();
     }
-    
+
     /**
      * 解析 Feign Client 名称（如 {@code userClient}），取不到时返回 {@code unknown}。
      */
@@ -155,7 +155,7 @@ public class NebulaFeignLogFilter implements Client {
             return "unknown";
         }
     }
-    
+
     static void logAt(LogLevel level, String format, Object... args) {
         switch (level) {
             case TRACE -> log.trace(format, args);
@@ -167,28 +167,28 @@ public class NebulaFeignLogFilter implements Client {
             }
         }
     }
-    
+
     private static byte[] readBody(Response response) throws IOException {
         if (Objects.isNull(response.body())) {
             return new byte[0];
         }
         return Util.toByteArray(response.body().asInputStream());
     }
-    
+
     private static Charset resolveCharset(Request request) {
         Charset charset = request.charset();
         return Objects.nonNull(charset) ? charset : StandardCharsets.UTF_8;
     }
-    
+
     private static String bodyToString(byte[] body, Charset charset) {
         if (Objects.isNull(body) || body.length == 0) {
             return "";
         }
         return new String(body, charset);
     }
-    
+
     private String truncate(String value) {
-        if (Objects.isNull(value) || maxBodyLength <= 0 || value.length() <= maxBodyLength) {
+        if (Objects.isNull(value) || value.length() <= maxBodyLength) {
             return value;
         }
         return value.substring(0, maxBodyLength) + "...(truncated)";

@@ -60,14 +60,14 @@ public class NebulaFeignProperties {
          * 请求/响应体日志最大打印长度（字符），超过则截断。默认 8192。
          */
         private int maxBodyLength = 8192;
-        
+
         public void setMaxBodyLength(int maxBodyLength) {
             if (maxBodyLength < 0) {
                 throw new IllegalArgumentException("maxBodyLength must not be negative, but was: " + maxBodyLength);
             }
             this.maxBodyLength = maxBodyLength;
         }
-        
+
         /**
          * 慢调用告警配置。
          */

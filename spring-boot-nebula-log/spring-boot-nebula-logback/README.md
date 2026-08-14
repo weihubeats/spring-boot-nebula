@@ -33,7 +33,7 @@ nebula:
   log:
     desensitize:
       enabled: true
-      # 不脱敏的 Spring profile，默认空列表（所有环境都脱敏）；如需本地调试可显式配置
+      # 不脱敏的 Spring profile，默认 dev、test；配空列表 [] 则所有环境都脱敏
       disabled-environments:
         - dev
         - test
@@ -45,7 +45,7 @@ nebula:
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `nebula.log.desensitize.enabled` | `true` | 是否启用脱敏 |
-| `nebula.log.desensitize.disabled-environments` | 空 | 命中当前激活的 Spring profile 时跳过脱敏（便于本地调试），默认空列表表示全部环境都脱敏 |
+| `nebula.log.desensitize.disabled-environments` | `dev, test` | 命中当前激活的 Spring profile 时跳过脱敏（便于本地调试），配 `[]` 则不跳过 |
 | `nebula.log.desensitize.disable-rules` | 空 | 要关闭的内置规则名 |
 
 内置规则：`mobile`、`idCard`、`bankCard`、`email`、`secretKey`（匹配 `password` / `pwd` / `token` / `secret` / `accessKey`）。

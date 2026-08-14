@@ -276,7 +276,7 @@ public class TimeUtil {
     public static String formatLocalDate(LocalDate localDate) {
         return Objects.isNull(localDate) ? null : localDate.format(DATE_FORMATTER);
     }
-    
+
     /**
      * Formats a {@link LocalDate} to a string using the specified {@link DateTimeFormatter}.
      *
@@ -291,7 +291,7 @@ public class TimeUtil {
         }
         return localDate.format(Objects.requireNonNull(formatter, "formatter"));
     }
-    
+
     /**
      * Formats a {@link LocalDate} to a string using the specified pattern.
      *
@@ -336,7 +336,7 @@ public class TimeUtil {
     }
     
     // --- Parsing Methods ---
-    
+
     /**
      * Parses a string into a {@link LocalDateTime} using the default {@link #DATETIME_FORMATTER} (yyyy-MM-dd HH:mm:ss).
      *
@@ -347,7 +347,7 @@ public class TimeUtil {
     public static LocalDateTime parseLocalDateTime(String text) {
         return DataUtils.isEmpty(text) ? null : LocalDateTime.parse(text, DATETIME_FORMATTER);
     }
-    
+
     /**
      * Parses a string into a {@link LocalDateTime} using the specified {@link DateTimeFormatter}.
      *
@@ -363,7 +363,7 @@ public class TimeUtil {
         }
         return LocalDateTime.parse(text, Objects.requireNonNull(formatter, "formatter"));
     }
-    
+
     /**
      * Parses a string into a {@link LocalDateTime} using the specified pattern.
      *
@@ -382,7 +382,7 @@ public class TimeUtil {
         }
         return LocalDateTime.parse(text, DateTimeFormatter.ofPattern(pattern));
     }
-    
+
     /**
      * Parses a string into a {@link LocalDate} using the default {@link #DATE_FORMATTER} (yyyy-MM-dd).
      *
@@ -393,7 +393,7 @@ public class TimeUtil {
     public static LocalDate parseLocalDate(String text) {
         return DataUtils.isEmpty(text) ? null : LocalDate.parse(text, DATE_FORMATTER);
     }
-    
+
     /**
      * Parses a string into a {@link LocalDate} using the specified {@link DateTimeFormatter}.
      *
@@ -409,7 +409,7 @@ public class TimeUtil {
         }
         return LocalDate.parse(text, Objects.requireNonNull(formatter, "formatter"));
     }
-    
+
     /**
      * Parses a string into a {@link LocalDate} using the specified pattern.
      *
@@ -428,7 +428,7 @@ public class TimeUtil {
         }
         return LocalDate.parse(text, DateTimeFormatter.ofPattern(pattern));
     }
-    
+
     // --- Start/End of Day Methods ---
     
     /**

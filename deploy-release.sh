@@ -11,7 +11,7 @@ set -e
 
 VERSION=$(grep -o '<revision>[^<]*</revision>' pom.xml | sed 's/<revision>//;s/<\/revision>//')
 echo "=============================================="
-echo "  spring-boot-nebula Deploy"
+echo "  Spring Boot Nebula Deploy"
 echo "  Version: ${VERSION}"
 echo "=============================================="
 
@@ -89,8 +89,8 @@ if [ -z "$CENTRAL_USER" ] || [ -z "$CENTRAL_PASS" ]; then
 fi
 
 echo ">>> 校验 Central token..."
-TOKEN_HTTP=$(curl -s --max-time 30 -o /tmp/spring-boot-nebula-token-check.json -w "%{http_code}" -u "${CENTRAL_USER}:${CENTRAL_PASS}" "https://central.sonatype.com/api/v1/publisher/status")
-if [ "$TOKEN_HTTP" = "401" ] || grep -q "Invalid token" /tmp/spring-boot-nebula-token-check.json 2>/dev/null; then
+TOKEN_HTTP=$(curl -s --max-time 30 -o /tmp/nebula-token-check.json -w "%{http_code}" -u "${CENTRAL_USER}:${CENTRAL_PASS}" "https://central.sonatype.com/api/v1/publisher/status")
+if [ "$TOKEN_HTTP" = "401" ] || grep -q "Invalid token" /tmp/nebula-token-check.json 2>/dev/null; then
     echo "❌ Central token 无效（HTTP ${TOKEN_HTTP}）"
     echo ""
     echo "   请重新生成 token："
@@ -150,22 +150,68 @@ echo ""
 echo "=============================================="
 echo "  Step 2/3: Deploy to Central Portal"
 echo "=============================================="
+DEPLOY_LOG="/tmp/nebula-deploy-${VERSION}.log"
 if [ "$SNAPSHOT" = true ]; then
-    mvn -s "$SETTINGS" deploy -DskipTests=false -Dgpg.skip=true -Dmaven.test.skip=false
+    mvn -s "$SETTINGS" deploy -DskipTests=false -Dgpg.skip=true -Dmaven.test.skip=false 2>&1 | tee "$DEPLOY_LOG"
 else
-    mvn -s "$SETTINGS" deploy -DskipTests=false -Dmaven.test.skip=false
+    mvn -s "$SETTINGS" deploy -DskipTests=false -Dmaven.test.skip=false 2>&1 | tee "$DEPLOY_LOG"
+fi
+if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+    echo "❌ mvn deploy 失败，完整日志: ${DEPLOY_LOG}"
+    exit 1
+fi
+
+DEPLOYMENT_ID=$(grep -o 'deploymentId: [0-9a-f-]*' "$DEPLOY_LOG" | sed 's/deploymentId: //' | head -1)
+if [ -z "$DEPLOYMENT_ID" ]; then
+    echo ""
+    echo "⚠️  未捕获到 deploymentId（bundle 可能未上传）"
+    echo "   请手动到 https://central.sonatype.com/publishing 确认"
+    echo "   完整日志: ${DEPLOY_LOG}"
+    exit 0
 fi
 
 echo ""
 echo "=============================================="
 echo "  Step 3/3: 等待发布完成"
 echo "=============================================="
+echo ">>> deploymentId: ${DEPLOYMENT_ID}"
+echo ">>> 轮询发布状态（每 30s，最长 30 分钟，Ctrl-C 可中断）"
+
+BEARER=$(printf '%s:%s' "${CENTRAL_USER}" "${CENTRAL_PASS}" | base64)
+STATUS_URL="https://central.sonatype.com/api/v1/publisher/status?id=${DEPLOYMENT_ID}"
+
+POLL_TIMES=60
+POLL_INTERVAL=30
+for ((i = 1; i <= POLL_TIMES; i++)); do
+    STATE=$(curl -s --request POST --header "Authorization: Bearer ${BEARER}" "${STATUS_URL}" \
+        | grep -o '"deploymentState":"[^"]*"' | sed 's/.*:"//;s/"//')
+
+    case "$STATE" in
+        PUBLISHED)
+            echo ""
+            echo "✅ 发布成功！已同步到 Maven Central"
+            echo "   查看: https://central.sonatype.com/artifact-overview"
+            exit 0
+            ;;
+        FAILED)
+            echo ""
+            echo "❌ 发布失败"
+            echo "   详情: https://central.sonatype.com/publishing/deployments/${DEPLOYMENT_ID}"
+            curl -s --request POST --header "Authorization: Bearer ${BEARER}" "${STATUS_URL}" \
+                | grep -o '"errors":\[.*\]' | head -1
+            exit 1
+            ;;
+        PENDING|VALIDATING|VALIDATED|PUBLISHING)
+            echo "[$(date '+%H:%M:%S')] 状态: ${STATE}，等待中...（第 ${i}/${POLL_TIMES} 次）"
+            ;;
+        *)
+            echo "[$(date '+%H:%M:%S')] 状态: ${STATE:-未知}，等待中..."
+            ;;
+    esac
+    sleep "${POLL_INTERVAL}"
+done
+
 echo ""
-echo "✅ 发布命令已执行，已配置 autoPublish=true，等待发布完成"
-echo ""
-echo "说明："
-echo "  1. central-publishing-maven-plugin 会自动上传并发布（无需手动操作）"
-echo "  2. 如果 mvn deploy 正常结束即表示已发布成功"
-echo "  3. 可在 https://central.sonatype.com/publishing 查看发布记录"
-echo "  4. 在 Maven Central 搜索确认: https://central.sonatype.com/artifact-overview"
-echo ""
+echo "⏰ 已等待 ${POLL_TIMES}x${POLL_INTERVAL}s 仍未发布完成"
+echo "   请到 https://central.sonatype.com/publishing/deployments/${DEPLOYMENT_ID} 查看"
+exit 1

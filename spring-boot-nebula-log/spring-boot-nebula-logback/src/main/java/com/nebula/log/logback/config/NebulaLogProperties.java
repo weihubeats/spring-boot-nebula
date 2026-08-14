@@ -60,11 +60,11 @@ public class NebulaLogProperties {
         
         /**
          * Spring profiles where desensitization is skipped entirely, useful for
-         * local debugging. Empty by default: desensitization applies everywhere
-         * unless a profile is explicitly listed here.
+         * local debugging. Defaults to {@code dev}, {@code test}; set to empty
+         * list to never skip.
          */
-        private List<String> disabledEnvironments = new ArrayList<>();
-        
+        private List<String> disabledEnvironments = new ArrayList<>(List.of("dev", "test"));
+
         /**
          * Built-in rule names to skip: mobile, idCard, bankCard, email, secretKey.
          */

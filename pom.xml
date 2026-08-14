@@ -32,7 +32,7 @@
     </modules>
 
     <properties>
-        <revision>3.0.3</revision>
+        <revision>3.0.5</revision>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <maven.compiler.source>17</maven.compiler.source>
@@ -100,7 +100,8 @@
                 <configuration>
                     <publishingServerId>central</publishingServerId>
                     <autoPublish>true</autoPublish>
-                    <waitUntil>published</waitUntil>
+                    <waitUntil>UPLOADED</waitUntil>
+                    <deploymentName>spring-boot-nebula-${revision}</deploymentName>
                 </configuration>
             </plugin>
 
