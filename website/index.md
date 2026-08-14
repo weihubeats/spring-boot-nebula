@@ -7,7 +7,7 @@ hero:
   text: Spring Boot 3 企业级组件库
   tagline: 统一响应封装 · 异常飞书告警 · 分布式锁 · 读写分离 · Excel · 区域路由 JOIN
   image:
-    src: /spring-boot-nebula/nebula-logo.svg
+    src: /nebula-logo.svg
     alt: Nebula
   actions:
     - theme: brand

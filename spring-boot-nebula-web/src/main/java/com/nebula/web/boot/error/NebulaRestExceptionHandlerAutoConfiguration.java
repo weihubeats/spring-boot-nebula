@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.web.boot.error;
 
 import com.nebula.web.boot.config.NebulaWebAutoConfiguration;
@@ -48,8 +48,9 @@ import org.springframework.web.servlet.DispatcherServlet;
 @ConditionalOnProperty(prefix = "nebula.web.exception-handler", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnMissingBean(annotation = RestControllerAdvice.class)
 public class NebulaRestExceptionHandlerAutoConfiguration {
-    
+
     @Bean
+    @ConditionalOnMissingBean
     public NebulaRestExceptionHandler nebulaRestExceptionHandler(NebulaSysWebUtils nebulaSysWebUtils,
                                                                  NebulaWebProperties nebulaWebProperties,
                                                                  ObjectProvider<NebulaErrorMonitor> nebulaErrorMonitor) {

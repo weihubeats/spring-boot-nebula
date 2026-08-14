@@ -111,7 +111,16 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,beans,trace
+        include: health,beans,httpexchanges
+```
+
+需额外注册 `HttpExchangeRepository`：
+
+```java
+@Bean
+public HttpExchangeRepository httpExchangeRepository() {
+    return new InMemoryHttpExchangeRepository();
+}
 ```
 
 ```http

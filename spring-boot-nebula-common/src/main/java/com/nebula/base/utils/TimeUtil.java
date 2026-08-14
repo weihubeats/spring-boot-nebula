@@ -261,7 +261,7 @@ public class TimeUtil {
         if (Objects.isNull(localDateTime)) {
             return null;
         }
-        if (pattern == null || pattern.isEmpty()) {
+        if (Objects.isNull(pattern) || pattern.isEmpty()) {
             throw new IllegalArgumentException("Pattern cannot be null or empty when localDateTime is provided.");
         }
         return localDateTime.format(DateTimeFormatter.ofPattern(pattern));
@@ -304,7 +304,7 @@ public class TimeUtil {
         if (Objects.isNull(localDate)) {
             return null;
         }
-        if (pattern == null || pattern.isEmpty()) {
+        if (Objects.isNull(pattern) || pattern.isEmpty()) {
             throw new IllegalArgumentException("Pattern cannot be null or empty when localDate is provided.");
         }
         return localDate.format(DateTimeFormatter.ofPattern(pattern));
@@ -329,7 +329,7 @@ public class TimeUtil {
      * @throws IllegalArgumentException if the pattern is invalid or null/empty.
      */
     public static String formatCurrentDateTime(String pattern) {
-        if (pattern == null || pattern.isEmpty()) {
+        if (Objects.isNull(pattern) || pattern.isEmpty()) {
             throw new IllegalArgumentException("Pattern cannot be null or empty.");
         }
         return getCurrentLocalDateTime().format(DateTimeFormatter.ofPattern(pattern));
@@ -377,7 +377,7 @@ public class TimeUtil {
         if (DataUtils.isEmpty(text)) {
             return null;
         }
-        if (pattern == null || pattern.isEmpty()) {
+        if (Objects.isNull(pattern) || pattern.isEmpty()) {
             throw new IllegalArgumentException("Pattern cannot be null or empty when text is provided.");
         }
         return LocalDateTime.parse(text, DateTimeFormatter.ofPattern(pattern));
@@ -423,7 +423,7 @@ public class TimeUtil {
         if (DataUtils.isEmpty(text)) {
             return null;
         }
-        if (pattern == null || pattern.isEmpty()) {
+        if (Objects.isNull(pattern) || pattern.isEmpty()) {
             throw new IllegalArgumentException("Pattern cannot be null or empty when text is provided.");
         }
         return LocalDate.parse(text, DateTimeFormatter.ofPattern(pattern));

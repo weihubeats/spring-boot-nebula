@@ -63,7 +63,7 @@ public class NebulaLogProperties {
          * local debugging. Defaults to {@code dev}, {@code test}; set to empty
          * list to never skip.
          */
-        private List<String> disabledEnvironments = new ArrayList<>(List.of("dev", "test"));
+        private List<String> disabledEnvironments = new ArrayList<>();
 
         /**
          * Built-in rule names to skip: mobile, idCard, bankCard, email, secretKey.

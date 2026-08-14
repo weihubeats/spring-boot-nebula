@@ -1,6 +1,6 @@
 # Excel `spring-boot-nebula-excel`
 
-基于 FastExcel 的 Excel 导入导出工具类封装。
+基于 EasyExcel 的 Excel 导入导出工具类封装。
 
 ## 引入依赖
 

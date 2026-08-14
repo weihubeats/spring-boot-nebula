@@ -166,4 +166,16 @@ class NebulaFeignLogFilterTest {
                 + "responseStatus=200\n"
                 + "responseBody=ok", log);
     }
+
+    @Test
+    void shouldRejectNegativeMaxBodyLength() {
+        assertThrows(IllegalArgumentException.class,
+                () -> properties.getLog().setMaxBodyLength(-1));
+    }
+
+    @Test
+    void shouldAcceptZeroMaxBodyLength() {
+        properties.getLog().setMaxBodyLength(0);
+        assertEquals(0, properties.getLog().getMaxBodyLength());
+    }
 }

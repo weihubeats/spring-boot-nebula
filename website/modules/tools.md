@@ -17,6 +17,6 @@ Web 层基础工具，被 `spring-boot-nebula-web` 间接依赖，也可单独�
 ```xml
 <dependency>
     <groupId>io.github.weihubeats</groupId>
-    <artifactId>spring-boot-nebula-common</artifactId>
+    <artifactId>spring-boot-nebula-web-common</artifactId>
 </dependency>
 ```

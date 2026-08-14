@@ -4,7 +4,7 @@
 
 ## 目录结构
 
-```
+```text
 website/
 ├── .vitepress/
 │   ├── config.ts       # 站点配置（导航、侧边栏、base 路径）

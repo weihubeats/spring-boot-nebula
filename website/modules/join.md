@@ -28,6 +28,8 @@ region-route:
 
 在 Mapper 方法上标注 `@AutoJoin`，框架根据请求头 `X-REGION` 自动拼接 JOIN：
 
+> **安全提醒**：`X-REGION` 不是鉴权边界。`RegionWebInterceptor` 接受任意合法数值，优先使用请求头，回退到 `RegionProvider`。网关必须剥离并重写该头，或从已认证身份派生区域值。
+
 ```java
 @AutoJoin
 List<UserDO> selectUsers();

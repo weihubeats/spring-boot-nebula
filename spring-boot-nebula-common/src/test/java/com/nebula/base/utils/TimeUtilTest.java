@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.base.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,38 +30,38 @@ import org.junit.jupiter.api.Test;
  * TimeUtil 格式化 / 解析行为校验。
  */
 class TimeUtilTest {
-    
+
     @Test
     void shouldParseLocalDateTimeWithDefaultFormatter() {
         LocalDateTime parsed = TimeUtil.parseLocalDateTime("2024-01-02 03:04:05");
         assertEquals(LocalDateTime.of(2024, 1, 2, 3, 4, 5), parsed);
     }
-    
+
     @Test
     void shouldParseLocalDateTimeWithFormatter() {
         LocalDateTime parsed = TimeUtil.parseLocalDateTime(
                 "20240102030405", TimeUtil.COMPACT_DATETIME_FORMATTER);
         assertEquals(LocalDateTime.of(2024, 1, 2, 3, 4, 5), parsed);
     }
-    
+
     @Test
     void shouldParseLocalDateTimeWithPattern() {
         LocalDateTime parsed = TimeUtil.parseLocalDateTime("20240102030405", TimeUtil.YYYYMMDDHHMMSS);
         assertEquals(LocalDateTime.of(2024, 1, 2, 3, 4, 5), parsed);
     }
-    
+
     @Test
     void shouldReturnNullWhenParsingBlankLocalDateTime() {
         assertNull(TimeUtil.parseLocalDateTime(null));
         assertNull(TimeUtil.parseLocalDateTime(""));
     }
-    
+
     @Test
     void shouldRejectInvalidDateTimePattern() {
         assertThrows(IllegalArgumentException.class,
                 () -> TimeUtil.parseLocalDateTime("2024-01-02 03:04:05", ""));
     }
-    
+
     @Test
     void testParseLocalDateWithDefaultFormatter() {
         LocalDate parsed = TimeUtil.parseLocalDate("2024-01-02");
@@ -69,7 +69,7 @@ class TimeUtilTest {
         assertNull(TimeUtil.parseLocalDate(null));
         assertNull(TimeUtil.parseLocalDate(""));
     }
-    
+
     @Test
     void testFormatLocalDateOverloads() {
         LocalDate date = LocalDate.of(2024, 1, 2);
@@ -79,14 +79,20 @@ class TimeUtilTest {
         assertNull(TimeUtil.formatLocalDate(null));
         assertNull(TimeUtil.formatLocalDate(null, TimeUtil.DATE_FORMATTER));
     }
-    
+
     @Test
     void testFormatParseRoundTrip() {
         LocalDateTime value = LocalDateTime.of(2024, 6, 7, 8, 9, 10);
         String text = TimeUtil.formatLocalDateTime(value);
         assertEquals(value, TimeUtil.parseLocalDateTime(text));
-        
+
         LocalDate date = LocalDate.of(2024, 6, 7);
         assertEquals(date, TimeUtil.parseLocalDate(TimeUtil.formatLocalDate(date)));
+    }
+
+    @Test
+    void shouldRejectNullLocalDateTimeForEpochConversion() {
+        assertThrows(NullPointerException.class,
+                () -> TimeUtil.toEpochMilli((LocalDateTime) null));
     }
 }
