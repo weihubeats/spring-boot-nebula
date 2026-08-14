@@ -5,11 +5,13 @@ on:
     branches:
       - master
       - develop
+      - main
       - spring-boot-3.x
   pull_request:
     branches:
       - master
       - develop
+      - main
       - spring-boot-3.x
 
 jobs:
