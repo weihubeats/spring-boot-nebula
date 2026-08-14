@@ -24,6 +24,10 @@
         <module>spring-boot-nebula-feign-sample</module>
     </modules>
 
+    <properties>
+        <skipPublishing>true</skipPublishing>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>

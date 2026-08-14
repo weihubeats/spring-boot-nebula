@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="nebula-bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.9"/>
+      <stop offset="60%" stop-color="#4f46e5" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#312e81" stop-opacity="0.2"/>
+    </radialGradient>
+    <linearGradient id="nebula-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#818cf8"/>
+      <stop offset="100%" stop-color="#4338ca"/>
+    </linearGradient>
+    <linearGradient id="nebula-ring" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a5b4fc" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#818cf8" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#a5b4fc" stop-opacity="0.3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer nebula glow -->
+  <circle cx="100" cy="100" r="90" fill="url(#nebula-bg)"/>
+
+  <!-- Orbital ring (rotated) -->
+  <ellipse cx="100" cy="100" rx="72" ry="24" fill="none" stroke="url(#nebula-ring)" stroke-width="2"/>
+  <ellipse cx="100" cy="100" rx="72" ry="24" fill="none" stroke="url(#nebula-ring)" stroke-width="2" transform="rotate(60 100 100)"/>
+  <ellipse cx="100" cy="100" rx="72" ry="24" fill="none" stroke="url(#nebula-ring)" stroke-width="2" transform="rotate(120 100 100)"/>
+
+  <!-- Core nebula cluster -->
+  <circle cx="100" cy="100" r="42" fill="url(#nebula-bg)" stroke="url(#nebula-stroke)" stroke-width="2"/>
+
+  <!-- Stars in the nebula -->
+  <circle cx="82" cy="85" r="4" fill="#e0e7ff"/>
+  <circle cx="112" cy="80" r="3" fill="#c7d2fe"/>
+  <circle cx="95" cy="105" r="5" fill="#e0e7ff"/>
+  <circle cx="118" cy="112" r="3" fill="#c7d2fe"/>
+  <circle cx="80" cy="118" r="2.5" fill="#a5b4fc"/>
+
+  <!-- Spring Boot coffee cup icon (simplified) -->
+  <g transform="translate(75,80)">
+    <rect x="0" y="0" width="50" height="40" rx="6" fill="#fff" fill-opacity="0.9" stroke="#4f46e5" stroke-width="2"/>
+    <path d="M50 8 Q60 8 60 18 Q60 28 50 28" fill="none" stroke="#4f46e5" stroke-width="2"/>
+    <line x1="8" y1="12" x2="42" y2="12" stroke="#4f46e5" stroke-width="1.5"/>
+    <line x1="8" y1="20" x2="35" y2="20" stroke="#4f46e5" stroke-width="1.5"/>
+    <line x1="8" y1="28" x2="30" y2="28" stroke="#4f46e5" stroke-width="1.5"/>
+  </g>
+</svg>
