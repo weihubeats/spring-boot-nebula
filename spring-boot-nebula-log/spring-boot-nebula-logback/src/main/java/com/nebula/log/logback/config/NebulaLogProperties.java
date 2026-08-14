@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.log.logback.config;
 
 import java.util.ArrayList;
@@ -45,19 +45,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @ConfigurationProperties(prefix = "nebula.log")
 public class NebulaLogProperties {
-    
+
     private final Desensitize desensitize = new Desensitize();
-    
+
     private final Feishu feishu = new Feishu();
-    
+
     @Data
     public static class Desensitize {
-        
+
         /**
          * Whether to mask sensitive fragments in {@code %msg}.
          */
         private boolean enabled = true;
-        
+
         /**
          * Spring profiles where desensitization is skipped entirely, useful for
          * local debugging. Defaults to {@code dev}, {@code test}; set to empty
@@ -70,30 +70,30 @@ public class NebulaLogProperties {
          */
         private List<String> disableRules = new ArrayList<>();
     }
-    
+
     @Data
     public static class Feishu {
-        
+
         /**
          * Whether to register {@code FeishuErrorAppender} on the root logger.
          */
         private boolean enabled = false;
-        
+
         /**
          * Feishu bot webhook URL.
          */
         private String webhookUrl;
-        
+
         /**
          * Alert title prefix.
          */
         private String title = "nebula";
-        
+
         /**
          * Max ERROR alerts sent per minute.
          */
         private int maxPerMinute = 10;
-        
+
         /**
          * Async send queue capacity.
          */

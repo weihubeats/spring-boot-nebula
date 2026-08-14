@@ -60,7 +60,7 @@ public class NebulaFeignLogFilter implements Client {
             long costMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
             byte[] responseBytes = readBody(response);
             logRequest(request, costMs, requestBody, response.status(),
-                bodyToString(responseBytes, StandardCharsets.UTF_8));
+                    bodyToString(responseBytes, StandardCharsets.UTF_8));
             logSlowCallIfNecessary(request, costMs, requestBody);
             if (Objects.isNull(response.body())) {
                 return response;
@@ -103,13 +103,13 @@ public class NebulaFeignLogFilter implements Client {
      */
     String formatRequest(Request request, long costMs, String requestBody, int status, String responseBody) {
         return new StringBuilder(256)
-            .append("Feign [").append(clientName(request)).append("] ")
-            .append(request.httpMethod()).append(' ').append(request.url())
-            .append(" cost=").append(costMs).append("ms")
-            .append('\n').append("requestBody=").append(truncate(requestBody))
-            .append('\n').append("responseStatus=").append(status)
-            .append('\n').append("responseBody=").append(truncate(responseBody))
-            .toString();
+                .append("Feign [").append(clientName(request)).append("] ")
+                .append(request.httpMethod()).append(' ').append(request.url())
+                .append(" cost=").append(costMs).append("ms")
+                .append('\n').append("requestBody=").append(truncate(requestBody))
+                .append('\n').append("responseStatus=").append(status)
+                .append('\n').append("responseBody=").append(truncate(responseBody))
+                .toString();
     }
 
     /**
@@ -117,11 +117,11 @@ public class NebulaFeignLogFilter implements Client {
      */
     String formatError(Request request, long costMs, String requestBody, String error) {
         return new StringBuilder(128)
-            .append("Feign [").append(clientName(request)).append("] ")
-            .append(request.httpMethod()).append(' ').append(request.url())
-            .append(" cost=").append(costMs).append("ms error=").append(error)
-            .append('\n').append("requestBody=").append(truncate(requestBody))
-            .toString();
+                .append("Feign [").append(clientName(request)).append("] ")
+                .append(request.httpMethod()).append(' ').append(request.url())
+                .append(" cost=").append(costMs).append("ms error=").append(error)
+                .append('\n').append("requestBody=").append(truncate(requestBody))
+                .toString();
     }
 
     /**
@@ -129,11 +129,11 @@ public class NebulaFeignLogFilter implements Client {
      */
     String formatSlow(Request request, long costMs, String requestBody, long thresholdMs) {
         return new StringBuilder(128)
-            .append("Feign slow call alert [").append(clientName(request)).append("] ")
-            .append(request.httpMethod()).append(' ').append(request.url())
-            .append(" cost=").append(costMs).append("ms threshold=").append(thresholdMs).append("ms")
-            .append('\n').append("requestBody=").append(truncate(requestBody))
-            .toString();
+                .append("Feign slow call alert [").append(clientName(request)).append("] ")
+                .append(request.httpMethod()).append(' ').append(request.url())
+                .append(" cost=").append(costMs).append("ms threshold=").append(thresholdMs).append("ms")
+                .append('\n').append("requestBody=").append(truncate(requestBody))
+                .toString();
     }
 
     /**

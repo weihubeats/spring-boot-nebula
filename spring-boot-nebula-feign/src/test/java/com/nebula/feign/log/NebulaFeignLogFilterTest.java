@@ -57,15 +57,15 @@ class NebulaFeignLogFilterTest {
     void shouldDelegateAndPreserveResponseBody() throws IOException {
         Client delegate = mock(Client.class);
         Request request = Request.create(Request.HttpMethod.POST, "http://localhost/users?id=1",
-            Collections.emptyMap(), "{\"name\":\"小奏\"}".getBytes(StandardCharsets.UTF_8),
-            StandardCharsets.UTF_8);
+                Collections.emptyMap(), "{\"name\":\"小奏\"}".getBytes(StandardCharsets.UTF_8),
+                StandardCharsets.UTF_8);
         Response origin = Response.builder()
-            .status(200)
-            .reason("OK")
-            .request(request)
-            .headers(Collections.emptyMap())
-            .body("{\"ok\":true}", StandardCharsets.UTF_8)
-            .build();
+                .status(200)
+                .reason("OK")
+                .request(request)
+                .headers(Collections.emptyMap())
+                .body("{\"ok\":true}", StandardCharsets.UTF_8)
+                .build();
         when(delegate.execute(any(Request.class), any(Request.Options.class))).thenReturn(origin);
 
         NebulaFeignLogFilter filter = new NebulaFeignLogFilter(delegate, properties);
@@ -80,9 +80,9 @@ class NebulaFeignLogFilterTest {
     void shouldRethrowWhenDelegateFails() throws IOException {
         Client delegate = mock(Client.class);
         Request request = Request.create(Request.HttpMethod.GET, "http://localhost/users",
-            Collections.emptyMap(), null, StandardCharsets.UTF_8);
+                Collections.emptyMap(), null, StandardCharsets.UTF_8);
         when(delegate.execute(any(Request.class), any(Request.Options.class)))
-            .thenThrow(new IOException("connection reset"));
+                .thenThrow(new IOException("connection reset"));
 
         NebulaFeignLogFilter filter = new NebulaFeignLogFilter(delegate, properties);
 
@@ -93,15 +93,15 @@ class NebulaFeignLogFilterTest {
     void shouldTriggerSlowCallWhenExceedThreshold() throws Exception {
         Client delegate = mock(Client.class);
         Request request = Request.create(Request.HttpMethod.POST, "http://localhost/users",
-            Collections.emptyMap(), "{\"name\":\"slow\"}".getBytes(StandardCharsets.UTF_8),
-            StandardCharsets.UTF_8);
+                Collections.emptyMap(), "{\"name\":\"slow\"}".getBytes(StandardCharsets.UTF_8),
+                StandardCharsets.UTF_8);
         Response origin = Response.builder()
-            .status(200)
-            .reason("OK")
-            .request(request)
-            .headers(Collections.emptyMap())
-            .body("{\"ok\":true}", StandardCharsets.UTF_8)
-            .build();
+                .status(200)
+                .reason("OK")
+                .request(request)
+                .headers(Collections.emptyMap())
+                .body("{\"ok\":true}", StandardCharsets.UTF_8)
+                .build();
         when(delegate.execute(any(Request.class), any(Request.Options.class))).thenAnswer(invocation -> {
             Thread.sleep(80);
             return origin;
@@ -117,10 +117,10 @@ class NebulaFeignLogFilterTest {
     void shouldResolveClientNameFromRequestTemplate() {
         Target<Object> target = new Target.HardCodedTarget<>(Object.class, "userClient", "http://localhost");
         RequestTemplate template = new RequestTemplate()
-            .feignTarget(target)
-            .method(Request.HttpMethod.GET);
+                .feignTarget(target)
+                .method(Request.HttpMethod.GET);
         Request request = Request.create(Request.HttpMethod.GET, "http://localhost/users",
-            Collections.emptyMap(), null, StandardCharsets.UTF_8, template);
+                Collections.emptyMap(), null, StandardCharsets.UTF_8, template);
 
         assertEquals("userClient", NebulaFeignLogFilter.clientName(request));
     }
@@ -128,7 +128,7 @@ class NebulaFeignLogFilterTest {
     @Test
     void shouldFallbackToUnknownWithoutTemplate() {
         Request request = Request.create(Request.HttpMethod.GET, "http://localhost/users",
-            Collections.emptyMap(), null, StandardCharsets.UTF_8);
+                Collections.emptyMap(), null, StandardCharsets.UTF_8);
 
         assertEquals("unknown", NebulaFeignLogFilter.clientName(request));
     }
@@ -137,19 +137,19 @@ class NebulaFeignLogFilterTest {
     void shouldFormatRequestMultilineWithClientName() {
         Target<Object> target = new Target.HardCodedTarget<>(Object.class, "userClient", "http://localhost");
         RequestTemplate template = new RequestTemplate()
-            .feignTarget(target)
-            .method(Request.HttpMethod.POST);
+                .feignTarget(target)
+                .method(Request.HttpMethod.POST);
         Request request = Request.create(Request.HttpMethod.POST, "http://localhost/users",
-            Collections.emptyMap(), "{\"name\":\"x\"}".getBytes(StandardCharsets.UTF_8),
-            StandardCharsets.UTF_8, template);
+                Collections.emptyMap(), "{\"name\":\"x\"}".getBytes(StandardCharsets.UTF_8),
+                StandardCharsets.UTF_8, template);
         NebulaFeignLogFilter filter = new NebulaFeignLogFilter(mock(Client.class), properties);
 
         String log = filter.formatRequest(request, 12L, "{\"name\":\"x\"}", 200, "{\"ok\":true}");
 
         assertEquals("Feign [userClient] POST http://localhost/users cost=12ms\n"
-            + "requestBody={\"name\":\"x\"}\n"
-            + "responseStatus=200\n"
-            + "responseBody={\"ok\":true}", log);
+                + "requestBody={\"name\":\"x\"}\n"
+                + "responseStatus=200\n"
+                + "responseBody={\"ok\":true}", log);
     }
 
     @Test
@@ -157,13 +157,13 @@ class NebulaFeignLogFilterTest {
         properties.getLog().setMaxBodyLength(16);
         NebulaFeignLogFilter filter = new NebulaFeignLogFilter(mock(Client.class), properties);
         Request request = Request.create(Request.HttpMethod.GET, "http://localhost/users",
-            Collections.emptyMap(), null, StandardCharsets.UTF_8);
+                Collections.emptyMap(), null, StandardCharsets.UTF_8);
 
         String log = filter.formatRequest(request, 1L, "0123456789abcdefghij", 200, "ok");
 
         assertEquals("Feign [unknown] GET http://localhost/users cost=1ms\n"
-            + "requestBody=0123456789abcdef...(truncated)\n"
-            + "responseStatus=200\n"
-            + "responseBody=ok", log);
+                + "requestBody=0123456789abcdef...(truncated)\n"
+                + "responseStatus=200\n"
+                + "responseBody=ok", log);
     }
 }

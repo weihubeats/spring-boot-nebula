@@ -2,7 +2,7 @@ name: Deploy Website to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, spring-boot-3.x]
     paths:
       - 'website/**'
       - '.github/workflows/deploy-website.yml'
@@ -28,7 +28,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: website
 
       - name: Build VitePress site

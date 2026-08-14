@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 package com.nebula.feign.config;
 
 import lombok.Data;
@@ -40,22 +40,22 @@ import org.springframework.boot.logging.LogLevel;
 @Data
 @ConfigurationProperties(prefix = "nebula.feign")
 public class NebulaFeignProperties {
-    
+
     private Log log = new Log();
-    
+
     @Data
     public static class Log {
-        
+
         /**
          * 是否启用 Feign 请求/响应日志过滤器。
          */
         private boolean enabled = true;
-        
+
         /**
          * 普通请求日志级别。
          */
         private LogLevel level = LogLevel.INFO;
-        
+
         /**
          * 请求/响应体日志最大打印长度（字符），超过则截断。默认 8192。
          */
@@ -73,20 +73,20 @@ public class NebulaFeignProperties {
          */
         private Slow slow = new Slow();
     }
-    
+
     @Data
     public static class Slow {
-        
+
         /**
          * 是否启用慢调用告警。
          */
         private boolean enabled = true;
-        
+
         /**
          * 慢调用阈值（毫秒），耗时超过该值则打印告警日志。默认 3000ms（3 秒）。
          */
         private long thresholdMillis = 3000L;
-        
+
         /**
          * 慢调用告警日志级别。
          */
