@@ -22,11 +22,9 @@ import com.nebula.distribute.lock.core.DistributedLock;
 import com.nebula.distribute.lock.core.NebulaDistributedLockTemplate;
 import com.nebula.distribute.lock.exception.DistributedLockException;
 import com.nebula.web.common.utils.ExpressionUtil;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import java.lang.reflect.Method;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -42,14 +40,6 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
     
     private final NebulaDistributedLockTemplate lockTemplate;
     
-    private final Cache<String, String> lockNameCache = Caffeine.newBuilder()
-            .maximumSize(1000)
-            .build();
-    
-    private final Cache<String, String> elExpressionCache = Caffeine.newBuilder()
-            .maximumSize(500)
-            .build();
-    
     public NebulaDistributedLockAnnotationInterceptor(NebulaDistributedLockTemplate lockTemplate) {
         if (lockTemplate == null) {
             throw new IllegalArgumentException("DistributedLockTemplate cannot be null");
@@ -59,7 +49,7 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
     
     @Nullable
     @Override
-    public Object invoke(@Nonnull MethodInvocation methodInvocation) throws Throwable {
+    public Object invoke(@NonNull MethodInvocation methodInvocation) throws Throwable {
         
         Method method = methodInvocation.getMethod();
         NebulaDistributedLock annotation = method.getAnnotation(NebulaDistributedLock.class);
@@ -162,25 +152,18 @@ public class NebulaDistributedLockAnnotationInterceptor implements MethodInterce
     }
     
     /**
-     * 解析锁名的一部分（前缀或后缀）
-     * - 非 EL 表达式：按 Method 缓存
-     * - EL 表达式：缓存解析后的结果
+     * 解析锁名的一部分（前缀或后缀）。
+     * SpEL 表达式每次调用都要重新求值：解析结果依赖方法参数（如订单号），
+     * 绝不能按表达式字符串缓存，否则所有调用会复用第一次的锁名。
      */
     private String resolveLockPart(String part, Method method, Object[] args) {
         if (!StringUtils.hasText(part)) {
             return null;
         }
         if (ExpressionUtil.isEl(part)) {
-            String cached = elExpressionCache.getIfPresent(part);
-            if (cached != null) {
-                return cached;
-            }
-            String resolved = parseExpression(part, method, args);
-            elExpressionCache.put(part, resolved);
-            return resolved;
+            return parseExpression(part, method, args);
         }
-        String cacheKey = method.toString() + "::" + part;
-        return lockNameCache.get(cacheKey, k -> part);
+        return part;
     }
     
     private String parseExpression(String expression, Method method, Object[] args) {

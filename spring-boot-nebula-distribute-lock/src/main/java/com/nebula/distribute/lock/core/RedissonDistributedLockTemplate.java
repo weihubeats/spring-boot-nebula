@@ -127,9 +127,12 @@ public class RedissonDistributedLockTemplate implements NebulaDistributedLockTem
      * 此时跳过 unlock() 是正确的行为。
      */
     private void tryUnlock(RLock lock, String lockName) {
-        if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+        if (lock.isHeldByCurrentThread()) {
             lock.unlock();
             log.debug("Lock released: {}", lockName);
+        } else {
+            log.warn("Lock {} expired before business logic finished; mutual exclusion may have been broken. "
+                    + "Consider a longer lease time or enabling the watch-dog.", lockName);
         }
     }
     
