@@ -23,8 +23,6 @@ import java.util.List;
 
 public class RegionRouteHelper {
     
-    private static final ThreadLocal<Boolean> ENABLED = ThreadLocal.withInitial(() -> false);
-    
     private static final TransmittableThreadLocal<List<Long>> USER_REGION_HOLDER = new TransmittableThreadLocal<>();
     // 使用 Integer 实现引用计数，支持嵌套调用
     private static final TransmittableThreadLocal<Integer> REWRITE_COUNT_HOLDER = TransmittableThreadLocal.withInitial(() -> 0);

@@ -46,10 +46,11 @@ public class RegionWebInterceptor implements HandlerInterceptor {
     private final Cache<Long, List<Long>> providerCache;
     
     public RegionWebInterceptor(ObjectProvider<RegionProvider> regionProvider, RegionRouteProperties properties) {
-        this.regionProvider = regionProvider.getIfAvailable();;
+        this.regionProvider = regionProvider.getIfAvailable();
         this.properties = properties;
         
-        // 初始化缓存：3分钟过期，最大1万条
+        // 初始化缓存：10分钟过期，最大1万条
+        // 注意：这是权限数据缓存，权限回收后最长有 10 分钟延迟生效窗口
         this.providerCache = Caffeine.newBuilder()
                 .expireAfterWrite(10, TimeUnit.MINUTES)
                 .maximumSize(10_000)
