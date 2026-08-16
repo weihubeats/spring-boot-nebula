@@ -116,12 +116,17 @@ public class CompletableFutureUtils {
         return startAsync(supplier, defaultExecutor());
     }
     
-    /* 多任务 2~5 */
+    /**
+     * @deprecated 返回类型依赖 io.vavr（已标记 optional，不再传递依赖）。
+     *             请改用 {@link #allSupplyAndGetResults}，或自行声明 io.vavr:vavr 依赖后继续使用本方法。
+     */
+    @Deprecated
     public static <R1, R2> Tuple2<R1, R2> allSupplyAndGet(Supplier<R1> s1,
                                                           Supplier<R2> s2) throws CompletableException {
         return allSupplyAndGet(s1, s2, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT, defaultExecutor());
     }
     
+    @Deprecated
     public static <R1, R2> Tuple2<R1, R2> allSupplyAndGet(Supplier<R1> s1,
                                                           Supplier<R2> s2,
                                                           long timeout,
@@ -129,6 +134,7 @@ public class CompletableFutureUtils {
         return allSupplyAndGet(s1, s2, timeout, unit, defaultExecutor());
     }
     
+    @Deprecated
     public static <R1, R2> Tuple2<R1, R2> allSupplyAndGet(Supplier<R1> s1,
                                                           Supplier<R2> s2,
                                                           long timeout,
@@ -142,12 +148,14 @@ public class CompletableFutureUtils {
         return Tuple.of(r1, r2);
     }
     
+    @Deprecated
     public static <R1, R2, R3> Tuple3<R1, R2, R3> allSupplyAndGet(Supplier<R1> s1,
                                                                   Supplier<R2> s2,
                                                                   Supplier<R3> s3) throws CompletableException {
         return allSupplyAndGet(s1, s2, s3, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT, defaultExecutor());
     }
     
+    @Deprecated
     public static <R1, R2, R3> Tuple3<R1, R2, R3> allSupplyAndGet(Supplier<R1> s1,
                                                                   Supplier<R2> s2,
                                                                   Supplier<R3> s3,
@@ -164,6 +172,7 @@ public class CompletableFutureUtils {
         return Tuple.of(r1, r2, r3);
     }
     
+    @Deprecated
     public static <R1, R2, R3, R4> Tuple4<R1, R2, R3, R4> allSupplyAndGet(Supplier<R1> s1,
                                                                           Supplier<R2> s2,
                                                                           Supplier<R3> s3,
@@ -171,6 +180,7 @@ public class CompletableFutureUtils {
         return allSupplyAndGet(s1, s2, s3, s4, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT, defaultExecutor());
     }
     
+    @Deprecated
     public static <R1, R2, R3, R4> Tuple4<R1, R2, R3, R4> allSupplyAndGet(Supplier<R1> s1,
                                                                           Supplier<R2> s2,
                                                                           Supplier<R3> s3,
@@ -190,6 +200,7 @@ public class CompletableFutureUtils {
         return Tuple.of(r1, r2, r3, r4);
     }
     
+    @Deprecated
     public static <R1, R2, R3, R4, R5> Tuple5<R1, R2, R3, R4, R5> allSupplyAndGet(Supplier<R1> s1,
                                                                                   Supplier<R2> s2,
                                                                                   Supplier<R3> s3,
@@ -198,6 +209,7 @@ public class CompletableFutureUtils {
         return allSupplyAndGet(s1, s2, s3, s4, s5, DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT, defaultExecutor());
     }
     
+    @Deprecated
     public static <R1, R2, R3, R4, R5> Tuple5<R1, R2, R3, R4, R5> allSupplyAndGet(Supplier<R1> s1,
                                                                                   Supplier<R2> s2,
                                                                                   Supplier<R3> s3,
@@ -218,6 +230,27 @@ public class CompletableFutureUtils {
         @SuppressWarnings("unchecked")
         R5 r5 = (R5) arr[4];
         return Tuple.of(r1, r2, r3, r4, r5);
+    }
+    
+    /**
+     * 并发执行多个任务并按入参顺序返回结果数组，作为已废弃的 Tuple 系列方法的无第三方依赖替代。
+     *
+     * @param suppliers 任务列表
+     * @return 结果数组，下标与 suppliers 一致
+     */
+    @SafeVarargs
+    public static Object[] allSupplyAndGetResults(Supplier<?>... suppliers) throws CompletableException {
+        return allSupplyAndGetResults(DEFAULT_TIMEOUT, DEFAULT_TIME_UNIT, defaultExecutor(), suppliers);
+    }
+    
+    /**
+     * 并发执行多个任务并按入参顺序返回结果数组（自定义超时与线程池）。
+     */
+    @SafeVarargs
+    public static Object[] allSupplyAndGetResults(long timeout, TimeUnit unit,
+                                                  Executor executor,
+                                                  Supplier<?>... suppliers) throws CompletableException {
+        return runAll(timeout, unit, executor, DEFAULT_FAST_FAIL, suppliers);
     }
     
     /* Internal core */

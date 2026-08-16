@@ -102,7 +102,8 @@ public class HttpUtils {
                 return handleResponse(response);
             }
         } catch (IOException e) {
-            log.error("POST表单失败 url={}, headers={}, params={}", url, headers, params, e);
+            log.error("POST表单失败 url={}, headers={}, paramCount={}", url, headers,
+                    params == null ? 0 : params.size(), e);
             throw new HttpException("HTTP请求失败", e);
         }
     }
@@ -137,7 +138,8 @@ public class HttpUtils {
                 return handleResponse(response);
             }
         } catch (IOException e) {
-            log.error("POST JSON失败 url={}, headers={}, json={}", url, headers, json, e);
+            log.error("POST JSON失败 url={}, headers={}, bodyLength={}", url, headers,
+                    json == null ? 0 : json.length(), e);
             throw new HttpException("HTTP请求失败", e);
         }
     }

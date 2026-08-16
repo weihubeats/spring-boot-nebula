@@ -34,6 +34,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.helpers.FormattingTuple;
 
@@ -42,7 +43,13 @@ import org.slf4j.helpers.FormattingTuple;
  * @date : 2023/11/18 13:58
  * @description:
  */
+@Slf4j
 public class StringUtils {
+    
+    private static final Pattern INTEGER_PATTERN = Pattern.compile("^[0-9]*$");
+    
+    private static final Pattern EMOJI_FILTER_PATTERN =
+            Pattern.compile("([\\x{10000}-\\x{10ffff}\ud800-\udfff])");
     
     public static final String SPACE = " ";
     public static final String TAB = "	";
@@ -91,8 +98,7 @@ public class StringUtils {
      * @return
      */
     public static boolean isInteger(String str) {
-        Pattern pattern = Pattern.compile("^[0-9]*$");
-        return pattern.matcher(str).matches();
+        return INTEGER_PATTERN.matcher(str).matches();
     }
     
     /**
@@ -107,14 +113,14 @@ public class StringUtils {
                 try {
                     return "[[EMOJI:" + URLEncoder.encode(a, "UTF-8") + "]]";
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    log.error("emoji encode error", e);
                 }
                 throw new RuntimeException("emoji encode error");
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("emoji filter error", e);
+            throw new RuntimeException("emoji filter error", e);
         }
-        throw new RuntimeException("emoji filter error");
     }
     
     /**
@@ -129,14 +135,14 @@ public class StringUtils {
                 try {
                     return URLDecoder.decode(a, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    log.error("emoji decode error", e);
                 }
                 throw new RuntimeException("emoji decode error");
             }, 1);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("emoji decode error", e);
+            throw new RuntimeException("emoji decode error", e);
         }
-        throw new RuntimeException("emoji decode error");
     }
     
     public static String[] splitc(final String src, final char[] delimiters) {
@@ -399,9 +405,7 @@ public class StringUtils {
                 String oAsString = o.toString();
                 sbuf.append(oAsString);
             } catch (Throwable t) {
-                System.err.println("SLF4J: Failed toString() invocation on an object of type [" + o.getClass().getName() + "]");
-                System.err.println("Reported exception:");
-                t.printStackTrace();
+                log.error("Failed toString() invocation on an object of type [{}]", o.getClass().getName(), t);
                 sbuf.append("[FAILED toString()]");
             }
             
@@ -518,17 +522,14 @@ public class StringUtils {
         if (str == null) {
             return null;
         }
-        String patternString = "([\\x{10000}-\\x{10ffff}\ud800-\udfff])";
-        
-        Pattern pattern = Pattern.compile(patternString);
-        Matcher matcher = pattern.matcher(str);
+        Matcher matcher = EMOJI_FILTER_PATTERN.matcher(str);
         
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             try {
                 matcher.appendReplacement(sb, "[[EMOJI:" + URLEncoder.encode(matcher.group(1), "UTF-8") + "]]");
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                log.error("emoji filter encode error", e);
             }
         }
         matcher.appendTail(sb);
@@ -671,7 +672,7 @@ public class StringUtils {
      * 去除字符串所有空格
      */
     public static String trimAnySpace(String str) {
-        return str.replaceAll("\\s*", "");
+        return str.replaceAll("\\s+", "");
     }
     
     /**
@@ -682,7 +683,7 @@ public class StringUtils {
             return "";
         }
         var chars = str.toCharArray();
-        chars[0] += 32;
+        chars[0] = Character.toLowerCase(chars[0]);
         return String.valueOf(chars);
     }
     
@@ -694,7 +695,7 @@ public class StringUtils {
             return "";
         }
         char[] cs = str.toCharArray();
-        cs[0] -= 32;
+        cs[0] = Character.toUpperCase(cs[0]);
         return String.valueOf(cs);
     }
     
