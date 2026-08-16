@@ -57,7 +57,8 @@ public class RedisAlertLimiter implements NebulaAlertLimiter {
                     "return 1";
     
     private final RScript lua;
-    private String scriptId;
+    // tryAcquire 的重试路径会并发重写 scriptId，需保证可见性
+    private volatile String scriptId;
     
     public RedisAlertLimiter(RedissonClient redissonClient, Duration window, Duration expire,
                              int maxCount, String keyPrefix) {

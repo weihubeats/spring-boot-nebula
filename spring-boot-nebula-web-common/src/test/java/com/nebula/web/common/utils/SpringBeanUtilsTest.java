@@ -52,6 +52,27 @@ public class SpringBeanUtilsTest {
     static final class TestBean {
     }
     
+    @Test
+    public void getBeanThrowsIllegalStateWhenContextMissing() {
+        SpringBeanUtils springBeanUtils = new SpringBeanUtils();
+        org.springframework.context.ApplicationContext original = null;
+        try {
+            original = SpringBeanUtils.getBean(org.springframework.context.ApplicationContext.class);
+        } catch (Exception ignored) {
+            // 上下文尚未注入时忽略
+        }
+        springBeanUtils.setApplicationContext(null);
+        try {
+            assertThrowsExactly(IllegalStateException.class, () -> SpringBeanUtils.getBean("testBean"));
+            assertThrowsExactly(IllegalStateException.class, () -> SpringBeanUtils.getBean(TestBean.class));
+            assertThrowsExactly(IllegalStateException.class,
+                    () -> SpringBeanUtils.getBean("testBean", TestBean.class));
+            assertTrue(!SpringBeanUtils.containsBean(TestBean.class));
+        } finally {
+            springBeanUtils.setApplicationContext(original);
+        }
+    }
+    
     static final class NoTestBean {
     }
     

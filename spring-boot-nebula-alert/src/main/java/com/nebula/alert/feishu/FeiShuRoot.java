@@ -25,8 +25,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
 
 /**
  * @author : wh
@@ -34,8 +34,7 @@ import lombok.extern.slf4j.Slf4j;
  * @description:
  */
 @Slf4j
-@RequiredArgsConstructor
-public class FeiShuRoot {
+public class FeiShuRoot implements DisposableBean {
     
     private final NebulaSysWebUtils nebulaSysWebUtils;
     
@@ -43,8 +42,23 @@ public class FeiShuRoot {
     
     public FeiShuRoot(NebulaSysWebUtils nebulaSysWebUtils) {
         this.nebulaSysWebUtils = nebulaSysWebUtils;
-        this.threadPoolTaskExecutor = new ThreadPoolExecutor(3, 5, 60, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<>(100), new ThreadFactoryImpl("feishu-"));
+        this.threadPoolTaskExecutor = new ThreadPoolExecutor(2, 4, 60, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(100), new ThreadFactoryImpl("feishu-"),
+                // 告警路径不应因队列满而同步抛异常打断调用方；由调用线程兜底执行
+                new ThreadPoolExecutor.CallerRunsPolicy());
+    }
+    
+    ExecutorService getThreadPoolTaskExecutor() {
+        return threadPoolTaskExecutor;
+    }
+    
+    @Override
+    public void destroy() throws InterruptedException {
+        threadPoolTaskExecutor.shutdown();
+        if (!threadPoolTaskExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+            log.warn("FeiShu alert executor did not terminate in 5s, forcing shutdown");
+            threadPoolTaskExecutor.shutdownNow();
+        }
     }
     
     private final static String FEISHU_CAR = "{\n" +

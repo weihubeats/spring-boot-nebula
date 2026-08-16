@@ -166,7 +166,10 @@ public class NebulaRestExceptionHandler {
     
     private NebulaResponse<?> handleError(HttpServletRequest request, BindingResult result) {
         FieldError error = result.getFieldError();
-        assert error != null;
+        if (error == null) {
+            // assert 在生产环境不生效，显式兜底
+            return NebulaResponse.fail(ResultCode.PARAM_BIND_ERROR, "Parameter validation failed");
+        }
         String message = String.format("%s:%s", error.getField(), error.getDefaultMessage());
         return NebulaResponse.fail(ResultCode.PARAM_BIND_ERROR, message);
     }

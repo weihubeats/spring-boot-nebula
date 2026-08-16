@@ -60,9 +60,9 @@ public class NebulaWebAutoConfiguration {
     }
     
     @Bean
-    public FilterRegistrationBean<RepeatableReadFilter> repeatableReadFilterRegistration() {
+    public FilterRegistrationBean<RepeatableReadFilter> repeatableReadFilterRegistration(NebulaWebProperties nebulaWebProperties) {
         FilterRegistrationBean<RepeatableReadFilter> registration = new FilterRegistrationBean<>();
-        registration.setFilter(new RepeatableReadFilter());
+        registration.setFilter(new RepeatableReadFilter(nebulaWebProperties.getMaxCachedRequestBodyBytes()));
         // 拦截所有路径
         registration.addUrlPatterns("/*");
         registration.setName("nebulaRepeatableReadFilter");

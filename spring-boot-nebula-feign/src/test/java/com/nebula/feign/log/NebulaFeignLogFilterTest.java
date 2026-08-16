@@ -33,6 +33,8 @@ import feign.Target;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.logging.LogLevel;
@@ -177,5 +179,49 @@ class NebulaFeignLogFilterTest {
     void shouldAcceptZeroMaxBodyLength() {
         properties.getLog().setMaxBodyLength(0);
         assertEquals(0, properties.getLog().getMaxBodyLength());
+    }
+    
+    @Test
+    void shouldNotReadResponseBodyWhenLoggingDisabled() throws IOException {
+        properties = new NebulaFeignProperties();
+        properties.getLog().setLevel(LogLevel.OFF);
+        properties.getLog().getSlow().setEnabled(false);
+        Client delegate = mock(Client.class);
+        Request request = Request.create(Request.HttpMethod.GET, "http://localhost/users",
+                Collections.emptyMap(), null, StandardCharsets.UTF_8);
+        Response.Body body = mock(Response.Body.class);
+        Response origin = Response.builder()
+                .status(200).reason("OK").request(request)
+                .headers(Collections.emptyMap()).body(body).build();
+        when(delegate.execute(any(Request.class), any(Request.Options.class))).thenReturn(origin);
+        
+        NebulaFeignLogFilter filter = new NebulaFeignLogFilter(delegate, properties);
+        Response response = filter.execute(request, new Request.Options());
+        
+        // 日志关闭时应直接透传原始 response，不读取 body 流
+        assertEquals(origin, response);
+        verify(body, org.mockito.Mockito.never()).asInputStream();
+    }
+    
+    @Test
+    void shouldMaskSensitiveFieldsInBody() {
+        String masked = NebulaFeignLogFilter.maskSensitive(
+                "{\"username\":\"tom\",\"password\":\"p@ss\",\"access_token\":\"abc123\"}");
+        
+        assertFalse(masked.contains("p@ss"));
+        assertFalse(masked.contains("abc123"));
+        assertTrue(masked.contains("\"password\":\"***\""));
+        assertTrue(masked.contains("\"username\":\"tom\""));
+    }
+    
+    @Test
+    void shouldMaskBeforeTruncate() {
+        properties.getLog().setMaxBodyLength(10);
+        NebulaFeignLogFilter filter = new NebulaFeignLogFilter(mock(Client.class), properties);
+        
+        String result = filter.truncate("{\"token\":\"secret-value-too-long\"}");
+        
+        assertFalse(result.contains("secret-value"));
+        assertTrue(result.endsWith("...(truncated)"));
     }
 }

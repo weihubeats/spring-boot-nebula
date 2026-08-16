@@ -62,6 +62,12 @@ public class NebulaWebProperties {
     private ExceptionHandler exceptionHandler = new ExceptionHandler();
     
     /**
+     * 请求体缓存大小上限（字节），超出则拒绝请求（413），防止 OOM。
+     * <p>{@code nebula.web.max-cached-request-body-bytes: 1048576}
+     */
+    private int maxCachedRequestBodyBytes = 1024 * 1024;
+    
+    /**
      * 将内部 int 错误码转换为对外写出的协议 code（Integer 或 String）
      */
     public Object toWireCode(int code) {

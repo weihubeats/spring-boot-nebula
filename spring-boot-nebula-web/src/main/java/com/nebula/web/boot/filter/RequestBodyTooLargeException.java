@@ -15,20 +15,17 @@
  * limitations under the License.
  */
  
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+package com.nebula.web.boot.filter;
+
+import java.io.IOException;
 
 /**
- * @author : wh
- * @date : 2023/12/26 15:13
- * @description:
+ * 请求体超过缓存上限（nebula.web.max-cached-request-body-bytes）时抛出，
+ * 由 {@link RepeatableReadFilter} 转为 413 响应。
  */
-@ExtendWith(MockitoExtension.class)
-public class ActionTest {
+public class RequestBodyTooLargeException extends IOException {
     
-    @Test
-    public void test() {
-        System.out.println("hahah");
+    public RequestBodyTooLargeException(long maxBytes) {
+        super("Request body exceeds max cached size: " + maxBytes + " bytes");
     }
 }
