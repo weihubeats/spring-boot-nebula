@@ -28,7 +28,7 @@ import org.springframework.context.ApplicationContextAware;
  */
 public class SpringBeanUtils implements ApplicationContextAware {
     
-    private static ApplicationContext applicationContext;
+    private static volatile ApplicationContext applicationContext;
     
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
@@ -36,7 +36,12 @@ public class SpringBeanUtils implements ApplicationContextAware {
     }
     
     private static ApplicationContext getApplicationContext() {
-        return applicationContext;
+        ApplicationContext context = applicationContext;
+        if (context == null) {
+            throw new IllegalStateException(
+                    "ApplicationContext is not injected yet: SpringBeanUtils must be registered as a Spring bean before use");
+        }
+        return context;
     }
     
     public static Object getBean(String name) {
@@ -52,7 +57,7 @@ public class SpringBeanUtils implements ApplicationContextAware {
     }
     
     public static boolean containsBean(Class<?> clazz) {
-        ApplicationContext context = getApplicationContext();
+        ApplicationContext context = applicationContext;
         if (context == null) {
             return false;
         }

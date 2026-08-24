@@ -34,9 +34,12 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
+        <!-- optional: 仅为 CompletableFutureUtils 中已废弃的 Tuple 系列返回值提供类型，
+             不再传递给使用方；如需继续使用请显式声明 io.vavr:vavr -->
         <dependency>
             <groupId>io.vavr</groupId>
             <artifactId>vavr</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -47,24 +50,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

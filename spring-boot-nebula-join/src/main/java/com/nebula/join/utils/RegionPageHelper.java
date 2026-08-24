@@ -24,11 +24,13 @@ import com.nebula.join.context.RegionRouteHelper;
 public class RegionPageHelper {
     
     /**
-     * 改写计数器统一由 拦截器释放
-     * @param pageNum
-     * @param pageSize
-     * @return
-     * @param <E>
+     * 分页并开启区域路由改写。
+     * scope 计数不再由 SQL 拦截器递减：Web 场景下由 RegionWebInterceptor.afterCompletion 统一 clear()，
+     * 非 Web 场景请用 RegionRouteTemplate 包裹业务并在 finally 中释放。
+     * @param pageNum 页码
+     * @param pageSize 页大小
+     * @return 分页 Page
+     * @param <E> 元素类型
      */
     public static <E> Page<E> startPage(int pageNum, int pageSize) {
         RegionRouteHelper.startScope();

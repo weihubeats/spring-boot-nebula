@@ -29,6 +29,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @Slf4j
 public class RepeatableReadFilter extends OncePerRequestFilter {
     
+    private final int maxCachedBodyBytes;
+    
+    public RepeatableReadFilter() {
+        this(RepeatableReadRequestWrapper.DEFAULT_MAX_CACHED_BODY_BYTES);
+    }
+    
+    public RepeatableReadFilter(int maxCachedBodyBytes) {
+        this.maxCachedBodyBytes = maxCachedBodyBytes;
+    }
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         
@@ -40,19 +50,22 @@ public class RepeatableReadFilter extends OncePerRequestFilter {
             return;
         }
         
-        // 2. 包装 Request
-        RepeatableReadRequestWrapper requestWrapper = null;
+        // 2. 包装 Request。包装失败时原始输入流可能已被部分消费，放行原 request 会导致下游读到残缺 body，
+        // 因此必须中止请求而不是继续过滤器链
+        RepeatableReadRequestWrapper requestWrapper;
         try {
-            requestWrapper = new RepeatableReadRequestWrapper(request);
+            requestWrapper = new RepeatableReadRequestWrapper(request, maxCachedBodyBytes);
+        } catch (RequestBodyTooLargeException e) {
+            log.warn("Nebula SDK: 请求体超过缓存上限({} bytes), 拒绝请求: uri={}", maxCachedBodyBytes, request.getRequestURI());
+            response.sendError(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE, e.getMessage());
+            return;
         } catch (Exception e) {
-            log.error("Nebula SDK: 包装请求体失败", e);
+            log.warn("Nebula SDK: 包装请求体失败, 中止请求: uri={}", request.getRequestURI(), e);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Bad request body");
+            return;
         }
         
-        // 3. 将包装后的 request 往下传递（如果没有包装成功则传递原对象）
-        if (requestWrapper == null) {
-            filterChain.doFilter(request, response);
-        } else {
-            filterChain.doFilter(requestWrapper, response);
-        }
+        // 3. 将包装后的 request 往下传递
+        filterChain.doFilter(requestWrapper, response);
     }
 }

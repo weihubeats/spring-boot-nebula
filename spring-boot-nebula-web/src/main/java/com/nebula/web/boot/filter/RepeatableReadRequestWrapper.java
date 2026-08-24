@@ -21,21 +21,30 @@ import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
-import org.springframework.util.StreamUtils;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 public class RepeatableReadRequestWrapper extends HttpServletRequestWrapper {
+    
+    /**
+     * 默认请求体缓存上限 1MB，与 {@code nebula.web.max-cached-request-body-bytes} 默认值一致
+     */
+    public static final int DEFAULT_MAX_CACHED_BODY_BYTES = 1024 * 1024;
     
     private final byte[] bodyCache;
     // 标记当前请求是否被缓存。如果是不支持缓存的类型（如文件上传），则设为 false
     private final boolean isCacheable;
     
     public RepeatableReadRequestWrapper(HttpServletRequest request) throws IOException {
+        this(request, DEFAULT_MAX_CACHED_BODY_BYTES);
+    }
+    
+    public RepeatableReadRequestWrapper(HttpServletRequest request, int maxCachedBodyBytes) throws IOException {
         super(request);
         
         String contentType = request.getContentType();
@@ -45,9 +54,30 @@ public class RepeatableReadRequestWrapper extends HttpServletRequestWrapper {
             this.bodyCache = new byte[0];
         } else {
             this.isCacheable = true;
-            // 只有普通的文本/JSON请求才将其完整读取到内存
-            this.bodyCache = StreamUtils.copyToByteArray(request.getInputStream());
+            // 只有普通的文本/JSON请求才将其完整读取到内存，超过上限直接拒绝（超限时输入流已被部分消费，
+            // 原请求无法再安全放行，故必须由 Filter 中止请求）
+            long contentLength = request.getContentLengthLong();
+            if (contentLength > maxCachedBodyBytes) {
+                throw new RequestBodyTooLargeException(maxCachedBodyBytes);
+            }
+            this.bodyCache = readBounded(request, maxCachedBodyBytes);
         }
+    }
+    
+    private static byte[] readBounded(HttpServletRequest request, int maxCachedBodyBytes) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        InputStream in = request.getInputStream();
+        byte[] buf = new byte[8192];
+        int total = 0;
+        int n;
+        while ((n = in.read(buf)) != -1) {
+            total += n;
+            if (total > maxCachedBodyBytes) {
+                throw new RequestBodyTooLargeException(maxCachedBodyBytes);
+            }
+            bos.write(buf, 0, n);
+        }
+        return bos.toByteArray();
     }
     
     @Override

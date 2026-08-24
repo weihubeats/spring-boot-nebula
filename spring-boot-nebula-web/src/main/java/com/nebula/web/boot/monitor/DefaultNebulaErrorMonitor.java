@@ -83,27 +83,10 @@ public class DefaultNebulaErrorMonitor implements NebulaErrorMonitor {
             if (buf.length < MAX_BODY_BYTES) {
                 return new String(buf, StandardCharsets.UTF_8);
             }
-            int end = findUtf8Boundary(buf, 0, buf.length);
+            int end = Utf8TextUtils.findUtf8Boundary(buf, 0, buf.length);
             return new String(buf, 0, end, StandardCharsets.UTF_8);
         } catch (IOException e) {
             return "";
         }
-    }
-    
-    private static int findUtf8Boundary(byte[] buf, int off, int len) {
-        int end = off;
-        for (int i = len - 1; i >= off; i--) {
-            int b = buf[i] & 0xFF;
-            if (b < 0x80) {
-                end = i + 1;
-                break;
-            }
-            if ((b & 0xC0) == 0x80) {
-                end = i + 1;
-            } else {
-                break;
-            }
-        }
-        return end;
     }
 }

@@ -158,17 +158,44 @@ public class NebulaResponse<T> implements Serializable {
     }
     
     /**
+     * 一次性缓存的 code 映射配置，避免每次请求都做全量 bean 类型扫描。
+     * 上下文可能在类加载后才就绪，故未解析前（null）每次调用都会尝试解析一次；
+     * 无上下文时 containsBean 仅做空判断，开销可忽略。
+     */
+    private static volatile NebulaWebProperties cachedWebProperties;
+    
+    /**
      * 内部 int → 对外协议 code
      */
     static Object toWireCode(int code) {
+        NebulaWebProperties properties = cachedWebProperties;
+        if (properties == null) {
+            properties = resolveWebProperties();
+        }
+        if (properties != null) {
+            return properties.toWireCode(code);
+        }
+        return code;
+    }
+    
+    private static NebulaWebProperties resolveWebProperties() {
         try {
             if (SpringBeanUtils.containsBean(NebulaWebProperties.class)) {
-                return SpringBeanUtils.getBean(NebulaWebProperties.class).toWireCode(code);
+                NebulaWebProperties properties = SpringBeanUtils.getBean(NebulaWebProperties.class);
+                cachedWebProperties = properties;
+                return properties;
             }
         } catch (Exception ignored) {
             // 无 Spring 环境时保持 int
         }
-        return code;
+        return null;
+    }
+    
+    /**
+     * 仅供测试重置缓存
+     */
+    static void resetCodeResolverForTest() {
+        cachedWebProperties = null;
     }
     
     /**

@@ -35,4 +35,10 @@ public class RegionRouteProperties {
     private String mainColumn = "uid";
     
     private String headerName = "X-REGION";
+    
+    /**
+     * 遇到无法安全改写的 SQL（如 FROM 子查询）时是否快速失败。
+     * 关闭后此类 SQL 将跳过区域过滤直接执行（存在越权风险，不建议关闭）。
+     */
+    private boolean failOnUnrewritable = true;
 }

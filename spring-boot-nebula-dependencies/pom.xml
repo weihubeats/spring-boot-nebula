@@ -21,10 +21,12 @@
         <lombok.version>1.18.36</lombok.version>
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>33.4.8-jre</guava.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <javers-core.version>6.6.5</javers-core.version>
         <pagehelper-spring-boot-starter.version>1.4.2</pagehelper-spring-boot-starter.version>
+        <mybatis-spring-boot-starter.version>3.0.4</mybatis-spring-boot-starter.version>
+        <gson.version>2.11.0</gson.version>
         <redisson.version>3.45.1</redisson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <vavr.version>0.10.6</vavr.version>
@@ -34,7 +36,7 @@
         <mybatis-plus-spring-boot3-starter-version>3.5.16</mybatis-plus-spring-boot3-starter-version>
         <mybatis-spring-version>3.0.5</mybatis-spring-version>
         <mybatis-version>3.5.19</mybatis-version>
-        <pagehelper-verson>5.3.2</pagehelper-verson>
+        <pagehelper-version>5.3.2</pagehelper-version>
         <spring-cloud.version>2024.0.2</spring-cloud.version>
 
         <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
@@ -131,7 +133,7 @@
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>3.0.4</version>
+                <version>${mybatis-spring-boot-starter.version}</version>
             </dependency>
 
             <dependency>
@@ -149,7 +151,7 @@
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper</artifactId>
-                <version>${pagehelper-verson}</version>
+                <version>${pagehelper-version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.mybatis</groupId>

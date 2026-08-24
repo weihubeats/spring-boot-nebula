@@ -322,4 +322,16 @@ class CompletableFutureUtilsTest {
             Thread.currentThread().interrupt();
         }
     }
+    
+    @Test
+    @DisplayName("多任务：allSupplyAndGetResults 按入参顺序返回结果（Tuple 系列的无依赖替代）")
+    void testAllSupplyAndGetResults() {
+        Object[] results = CompletableFutureUtils.allSupplyAndGetResults(
+                () -> "a", () -> 2, () -> 3L);
+        
+        assertEquals(3, results.length);
+        assertEquals("a", results[0]);
+        assertEquals(2, results[1]);
+        assertEquals(3L, results[2]);
+    }
 }

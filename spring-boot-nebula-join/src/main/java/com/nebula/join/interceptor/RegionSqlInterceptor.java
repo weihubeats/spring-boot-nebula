@@ -41,8 +41,6 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.*;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.core.Ordered;
@@ -93,10 +91,11 @@ public class RegionSqlInterceptor implements Interceptor {
             boundSql = (BoundSql) args[5];
         }
         
-        if (!shouldRewrite(ms)) {
+        RouteContextConfig routeConfig = resolveFinalConfig(ms);
+        // 手动开启的 scope 优先；其次看 @AutoJoin 注解配置
+        if (!RegionRouteHelper.isRewriteEnabled() && (routeConfig == null || !routeConfig.isEnabled())) {
             return invocation.proceed();
         }
-        RouteContextConfig routeConfig = resolveFinalConfig(ms);
         
         List<Long> regions = RegionRouteHelper.getRegions();
         if (regions == null || regions.isEmpty()) {
@@ -110,27 +109,29 @@ public class RegionSqlInterceptor implements Interceptor {
             return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, newBoundSql);
         } catch (JSQLParserException e) {
             throw new SQLException("Region Route SQL rewrite failed", e);
-        } finally {
-            // 手动开启 需要计数器 -1
-            if (RegionRouteHelper.isRewriteEnabled()) {
-                RegionRouteHelper.endScope();
-            }
+        }
+        // 注意：scope 的计数由开启方（RegionRouteTemplate / RegionRouteHelper.clear）负责释放，
+        // 拦截器不能按查询次数递减，否则多条 SQL 时第二条起改写会被静默关闭。
+    }
+    
+    /**
+     * BoundSql.additionalParameters 是私有属性，必须复制否则动态 SQL 参数会丢失
+     */
+    private static final Field ADDITIONAL_PARAMETERS_FIELD;
+    
+    static {
+        try {
+            ADDITIONAL_PARAMETERS_FIELD = BoundSql.class.getDeclaredField("additionalParameters");
+            ADDITIONAL_PARAMETERS_FIELD.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw new ExceptionInInitializerError(e);
         }
     }
     
     private BoundSql copyBoundSql(MappedStatement ms, BoundSql boundSql, String newSql) {
         BoundSql newBoundSql = new BoundSql(ms.getConfiguration(), newSql, boundSql.getParameterMappings(), boundSql.getParameterObject());
-        
-        // 使用 MetaObject 复制 additionalParameters (这是 BoundSql 的私有属性，必须复制否则动态 SQL 参数会丢失)
-        MetaObject oldMeta = SystemMetaObject.forObject(boundSql);
-        MetaObject newMeta = SystemMetaObject.forObject(newBoundSql);
-        
-        // 这一步比较 tricky，因为 BoundSql 没有直接暴露 additionalParameters 的 getter
-        // 我们可以通过遍历 parameterMappings 中的属性来尝试迁移，或者通过反射暴力获取 map
         try {
-            Field additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
-            additionalParametersField.setAccessible(true);
-            Map<String, Object> additionalParameters = (Map<String, Object>) additionalParametersField.get(boundSql);
+            Map<String, Object> additionalParameters = (Map<String, Object>) ADDITIONAL_PARAMETERS_FIELD.get(boundSql);
             for (Map.Entry<String, Object> entry : additionalParameters.entrySet()) {
                 newBoundSql.setAdditionalParameter(entry.getKey(), entry.getValue());
             }
@@ -140,34 +141,17 @@ public class RegionSqlInterceptor implements Interceptor {
         return newBoundSql;
     }
     
-    private boolean shouldRewrite(MappedStatement ms) {
-        // 优先判断手动开启
-        if (RegionRouteHelper.isRewriteEnabled()) {
-            return true;
-        }
-        // 再判断注解配置
-        RouteContextConfig config = resolveFinalConfig(ms);
-        return config != null && config.isEnabled();
-    }
-    
     private RouteContextConfig resolveFinalConfig(MappedStatement ms) {
         
         RouteContextConfig config = RegionRouteHelper.getContextConfig();
         
-        // 1. 应用上下文配置 (Context) - 覆盖默认值
+        // 应用上下文配置，未填写的字段回退到全局默认值。
+        // 返回副本，避免修改调用方放入 ThreadLocal 的原始对象
         if (Objects.nonNull(config)) {
-            
-            if (Objects.isNull(config.getMainColumn())) {
-                config.setMainColumn(properties.getMainColumn());
-            }
-            
-            if (Objects.isNull(config.getJoinTable())) {
-                config.setJoinTable(properties.getJoinTable());
-            }
-            if (Objects.isNull(config.getJoinColumn())) {
-                config.setJoinColumn(properties.getJoinColumn());
-            }
-            return config;
+            return new RouteContextConfig(config.isEnabled(),
+                    Objects.nonNull(config.getMainColumn()) ? config.getMainColumn() : properties.getMainColumn(),
+                    Objects.nonNull(config.getJoinTable()) ? config.getJoinTable() : properties.getJoinTable(),
+                    Objects.nonNull(config.getJoinColumn()) ? config.getJoinColumn() : properties.getJoinColumn());
         }
         return getRouteConfig(ms);
     }
@@ -208,6 +192,7 @@ public class RegionSqlInterceptor implements Interceptor {
     private String rewriteSql(String sql, List<Long> regions, RouteContextConfig config) throws JSQLParserException {
         Statement statement = CCJSqlParserUtil.parse(sql);
         if (!(statement instanceof Select select)) {
+            // 本拦截器只做读隔离；非 SELECT 语句（insert/update/delete）不经过 Executor.query，正常不会到这里
             return sql;
         }
         
@@ -215,9 +200,13 @@ public class RegionSqlInterceptor implements Interceptor {
         
         FromItem fromItem = plainSelect.getFromItem();
         if (!(fromItem instanceof Table mainTable)) {
-            // 如果 FromItem 不是一个简单的 Table (例如是子查询或复杂的 Join)，
-            // 这种情况下，我们通常无法进行权限 Join，或者需要更复杂的逻辑来识别主表。
-            // 为了安全起见，这里选择跳过或抛出异常。
+            // FromItem 不是简单 Table（如子查询）时无法安全注入权限 Join。
+            // 默认快速失败，防止未加区域过滤的 SQL 越权执行；
+            // 可通过 region-route.fail-on-unrewritable=false 显式关闭（有越权风险）。
+            if (properties.isFailOnUnrewritable()) {
+                throw new NoRegionException("Unable to apply region route: unsupported FROM clause in SQL: " + sql);
+            }
+            log.warn("Region route skipped for unsupported FROM clause, SQL executes without region filter: {}", sql);
             return sql;
         }
         

@@ -29,6 +29,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.logging.LogLevel;
 
@@ -54,10 +55,17 @@ public class NebulaFeignLogFilter implements Client {
     public Response execute(Request request, Request.Options options) throws IOException {
         long startNanos = System.nanoTime();
         Charset charset = resolveCharset(request);
-        String requestBody = bodyToString(request.body(), charset);
+        // 仅在需要打印请求/慢调用日志时才读取请求体，避免无谓开销
+        boolean bodyLoggingNeeded = isRequestLoggingEnabled() || isSlowCallEnabled();
+        String requestBody = bodyLoggingNeeded ? bodyToString(request.body(), charset) : "";
         try {
             Response response = delegate.execute(request, options);
             long costMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos);
+            if (!isRequestLoggingEnabled()) {
+                // 日志关闭时不读取响应体（大响应整包读入内存无意义），直接透传
+                logSlowCallIfNecessary(request, costMs, requestBody);
+                return response;
+            }
             byte[] responseBytes = readBody(response);
             logRequest(request, costMs, requestBody, response.status(),
                     bodyToString(responseBytes, StandardCharsets.UTF_8));
@@ -72,6 +80,16 @@ public class NebulaFeignLogFilter implements Client {
             logSlowCallIfNecessary(request, costMs, requestBody);
             throw ex;
         }
+    }
+    
+    private boolean isRequestLoggingEnabled() {
+        LogLevel level = properties.getLog().getLevel();
+        return Objects.nonNull(level) && level != LogLevel.OFF;
+    }
+    
+    private boolean isSlowCallEnabled() {
+        NebulaFeignProperties.Slow slow = properties.getLog().getSlow();
+        return Objects.nonNull(slow) && slow.isEnabled() && slow.getThresholdMillis() > 0;
     }
     
     private void logRequest(Request request, long costMs, String requestBody, int status, String responseBody) {
@@ -187,10 +205,25 @@ public class NebulaFeignLogFilter implements Client {
         return new String(body, charset);
     }
     
-    private String truncate(String value) {
+    String truncate(String value) {
         if (Objects.isNull(value) || value.length() <= maxBodyLength) {
+            return maskSensitive(value);
+        }
+        return maskSensitive(value.substring(0, maxBodyLength)) + "...(truncated)";
+    }
+    
+    /**
+     * 掩码常见敏感字段（password/token/secret 等）的 JSON 值，避免凭证进日志。
+     */
+    static String maskSensitive(String value) {
+        if (Objects.isNull(value) || value.isEmpty()) {
             return value;
         }
-        return value.substring(0, maxBodyLength) + "...(truncated)";
+        Matcher matcher = SENSITIVE_PATTERN.matcher(value);
+        return matcher.replaceAll("$1***$2");
     }
+    
+    private static final java.util.regex.Pattern SENSITIVE_PATTERN = java.util.regex.Pattern.compile(
+            "(\"(?:password|passwd|pwd|token|access_token|secret|accessKey|access_key|apiKey|api_key)\"\\s*:\\s*\")[^\"]*(\")",
+            java.util.regex.Pattern.CASE_INSENSITIVE);
 }

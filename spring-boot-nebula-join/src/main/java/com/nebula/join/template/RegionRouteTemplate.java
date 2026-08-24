@@ -32,7 +32,11 @@ public class RegionRouteTemplate {
      */
     public <T> T execute(Supplier<T> supplier) {
         RegionRouteHelper.startScope();
-        return supplier.get();
+        try {
+            return supplier.get();
+        } finally {
+            RegionRouteHelper.endScope();
+        }
     }
     
     /**

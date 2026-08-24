@@ -958,9 +958,9 @@ public class FileUtil {
         }
         
         final byte[] bytes = new byte[(int) numToRead];
-        final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-        randomAccessFile.readFully(bytes);
-        randomAccessFile.close();
+        try (final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
+            randomAccessFile.readFully(bytes);
+        }
         
         return bytes;
     }

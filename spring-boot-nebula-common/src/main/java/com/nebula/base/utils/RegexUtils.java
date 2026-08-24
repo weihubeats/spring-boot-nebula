@@ -25,12 +25,14 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author : wh
  * @date : 2023/11/18 13:59
  * @description:
  */
+@Slf4j
 public class RegexUtils {
     
     /**
@@ -249,7 +251,7 @@ public class RegexUtils {
                 String replace = function.apply(matcher.group(group));
                 matcher.appendReplacement(sb, replace);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("replaceAll replace failed, content matching error", e);
             }
         }
         matcher.appendTail(sb);

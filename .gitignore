@@ -95,3 +95,5 @@ website/.vitepress/cache/
 .vscode
 # Added by code-review-graph
 .code-review-graph/
+# Python venv (local tooling)
+venv_crg/

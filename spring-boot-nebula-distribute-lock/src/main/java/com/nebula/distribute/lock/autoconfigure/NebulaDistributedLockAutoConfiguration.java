@@ -24,7 +24,6 @@ import com.nebula.distribute.lock.core.NebulaDistributedLockTemplate;
 import com.nebula.distribute.lock.core.RedissonDistributedLockTemplate;
 import org.redisson.api.RedissonClient;
 import org.springframework.aop.Advisor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,9 +37,6 @@ import org.springframework.core.annotation.Order;
  */
 @Configuration(proxyBeanMethods = false)
 public class NebulaDistributedLockAutoConfiguration {
-    
-    @Value("${nebula.distributed-lock.order:Ordered.HIGHEST_PRECEDENCE}")
-    private int advisorOrder;
     
     @Bean
     @ConditionalOnBean(RedissonClient.class)

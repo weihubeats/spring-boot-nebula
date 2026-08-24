@@ -80,32 +80,7 @@ public class FeishuAlertChannel implements NebulaAlertChannel {
     }
     
     private static String truncateByUtf8Bytes(String value, int maxBytes) {
-        if (Objects.isNull(value)) {
-            return "";
-        }
-        byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
-        if (bytes.length <= maxBytes) {
-            return value;
-        }
-        int end = findUtf8Boundary(bytes, 0, maxBytes);
-        return new String(bytes, 0, end, StandardCharsets.UTF_8);
-    }
-    
-    private static int findUtf8Boundary(byte[] buf, int off, int len) {
-        int end = off;
-        for (int i = len - 1; i >= off; i--) {
-            int b = buf[i] & 0xFF;
-            if (b < 0x80) {
-                end = i + 1;
-                break;
-            }
-            if ((b & 0xC0) == 0x80) {
-                end = i + 1;
-            } else {
-                break;
-            }
-        }
-        return end;
+        return Utf8TextUtils.truncateByUtf8Bytes(value, maxBytes);
     }
     
     private static String stackTraceToJsonValue(Throwable ex) {
