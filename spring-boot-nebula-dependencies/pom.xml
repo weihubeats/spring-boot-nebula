@@ -216,6 +216,12 @@
 
             <dependency>
                 <groupId>io.github.weihubeats</groupId>
+                <artifactId>spring-boot-nebula-i18n</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.weihubeats</groupId>
                 <artifactId>spring-boot-nebula-distribute-lock</artifactId>
                 <version>${revision}</version>
             </dependency>

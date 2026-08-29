@@ -21,6 +21,7 @@
         <module>spring-boot-nebula-aop-base</module>
         <module>spring-boot-nebula-distribute-lock</module>
         <module>spring-boot-nebula-web-common</module>
+        <module>spring-boot-nebula-i18n</module>
         <module>spring-boot-nebula-all</module>
         <module>spring-boot-nebula-alert</module>
         <module>spring-boot-nebula-integration-test</module>

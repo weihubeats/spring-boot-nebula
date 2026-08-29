@@ -40,6 +40,7 @@ export default defineConfig({
                 {
                     text: 'Web 能力', items: [
                         { text: 'Web 封装', link: '/modules/web' },
+                        { text: '国际化', link: '/modules/i18n' },
                         { text: '通用工具', link: '/modules/tools' },
                         { text: '日志与告警', link: '/modules/log' }
                     ]

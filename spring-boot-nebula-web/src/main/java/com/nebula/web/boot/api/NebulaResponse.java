@@ -29,6 +29,8 @@ import java.util.Optional;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.lang.Nullable;
 
 /**
@@ -57,7 +59,7 @@ public class NebulaResponse<T> implements Serializable {
     private String msg;
     
     private NebulaResponse(IErrorCode resultCode) {
-        this(resultCode, null, resultCode.getMessage());
+        this(resultCode, null, resolveMessage(resultCode));
     }
     
     private NebulaResponse(IErrorCode resultCode, String msg) {
@@ -65,7 +67,7 @@ public class NebulaResponse<T> implements Serializable {
     }
     
     private NebulaResponse(IErrorCode resultCode, T data) {
-        this(resultCode, data, resultCode.getMessage());
+        this(resultCode, data, resolveMessage(resultCode));
     }
     
     private NebulaResponse(IErrorCode resultCode, T data, String msg) {
@@ -143,7 +145,7 @@ public class NebulaResponse<T> implements Serializable {
     }
     
     public static <T> NebulaResponse<T> fail(IErrorCode resultCode) {
-        return new NebulaResponse<>(resultCode, resultCode.getMessage());
+        return new NebulaResponse<>(resultCode, resolveMessage(resultCode));
     }
     
     /**
@@ -196,6 +198,38 @@ public class NebulaResponse<T> implements Serializable {
      */
     static void resetCodeResolverForTest() {
         cachedWebProperties = null;
+    }
+    
+    /**
+     * 解析错误码消息：存在消息 key（显式指定或自动生成）且 MessageSource 可用时按请求语言翻译，
+     * 否则回退默认 message。翻译失败时同样回退默认 message，不抛异常。
+     */
+    static String resolveMessage(IErrorCode resultCode) {
+        String key = resultCode.resolveMessageKey();
+        if (key == null) {
+            return resultCode.getMessage();
+        }
+        return translate(key, null, resultCode.getMessage());
+    }
+    
+    /**
+     * 按当前请求语言翻译文案；MessageSource 不可用或未命中时返回默认文案。
+     *
+     * @param code          消息 key
+     * @param args          占位符参数
+     * @param defaultMessage 未命中时的兜底文案
+     * @return 翻译后文案
+     */
+    public static String translate(String code, Object[] args, String defaultMessage) {
+        try {
+            if (SpringBeanUtils.containsBean(MessageSource.class)) {
+                MessageSource messageSource = SpringBeanUtils.getBean(MessageSource.class);
+                return messageSource.getMessage(code, args, defaultMessage, LocaleContextHolder.getLocale());
+            }
+        } catch (Exception ignored) {
+            // 无 Spring 环境或解析失败时回退默认文案
+        }
+        return defaultMessage;
     }
     
     /**

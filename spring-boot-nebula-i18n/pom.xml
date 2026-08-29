@@ -2,45 +2,50 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>io.github.weihubeats</groupId>
         <artifactId>spring-boot-nebula</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>spring-boot-nebula-all</artifactId>
-    <name>spring-boot-nebula-all</name>
+    <artifactId>spring-boot-nebula-i18n</artifactId>
+    <name>spring-boot-nebula-i18n</name>
 
     <dependencies>
 
         <dependency>
             <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-web</artifactId>
+            <artifactId>spring-boot-nebula-common</artifactId>
         </dependency>
 
         <dependency>
             <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-i18n</artifactId>
+            <artifactId>spring-boot-nebula-web-common</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-mybatis</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- optional: web 场景的 LocaleResolver -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- optional: HttpRemoteMessageLoader 所需 -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>
-            <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-distribute-lock</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-excel</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.weihubeats</groupId>
-            <artifactId>spring-boot-nebula-dynamic-datasource</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
 
     </dependencies>

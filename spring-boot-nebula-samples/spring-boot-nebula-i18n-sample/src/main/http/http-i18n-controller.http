@@ -1,0 +1,43 @@
+### 中文（默认语言）
+GET localhost:8091/i18n/error
+
+### 英文 - 通过 X-Lang header
+GET localhost:8091/i18n/error
+X-Lang: en_US
+
+### 英文 - 通过 lang query
+GET localhost:8091/i18n/error?lang=en_US
+
+### 未授权
+GET localhost:8091/i18n/unauthorized
+X-Lang: en_US
+
+### 404
+GET localhost:8091/i18n/not-found
+X-Lang: en_US
+
+### 业务异常（默认中文）
+GET localhost:8091/i18n/biz-error
+
+### 自定义错误码 - 注解指定 key（英文）
+GET localhost:8091/i18n/order-not-found
+X-Lang: en_US
+
+### 自定义错误码 - 自动生成 key（英文）
+GET localhost:8091/i18n/stock-not-enough
+X-Lang: en_US
+
+### 远程加载文案（本地无此 key，仅 mock 远程服务提供，证明远程加载生效）
+GET localhost:8091/i18n/remote-only
+X-Lang: en_US
+
+### greeting 被远程文案覆盖（远程优先于本地）
+GET localhost:8091/i18n/greeting?name=nebula
+X-Lang: en_US
+
+### 带参数文案
+GET localhost:8091/i18n/greeting?name=nebula
+
+### 带参数文案（英文）
+GET localhost:8091/i18n/greeting?name=nebula
+X-Lang: en_US

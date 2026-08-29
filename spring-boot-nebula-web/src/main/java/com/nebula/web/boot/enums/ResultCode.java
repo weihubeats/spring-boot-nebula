@@ -25,7 +25,7 @@ import lombok.Getter;
 /**
  * @author : wh
  * @date : 2021/12/22 14:37
- * @description: 业务代码枚举
+ * @description: 业务代码枚举；message 为中文兜底文案，国际化 key 按「类名.常量名」自动生成（见 IErrorCode）
  */
 @Getter
 @AllArgsConstructor
@@ -57,7 +57,7 @@ public enum ResultCode implements IErrorCode {
      */
     final int code;
     /**
-     * 中文信息描述
+     * 中文信息描述（兜底）
      */
     final String message;
     

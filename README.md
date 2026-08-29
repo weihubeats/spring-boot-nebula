@@ -22,6 +22,7 @@
 - [模块一览](#模块一览)
 - [spring-boot-nebula-dependencies](#spring-boot-nebula-dependencies)
 - [spring-boot-nebula-web](#spring-boot-nebula-web)
+- [spring-boot-nebula-i18n](#spring-boot-nebula-i18n)
 - [spring-boot-nebula-mybatis](#spring-boot-nebula-mybatis)
 - [spring-boot-nebula-dynamic-datasource](#spring-boot-nebula-dynamic-datasource)
 - [spring-boot-nebula-distribute-lock](#spring-boot-nebula-distribute-lock)
@@ -108,6 +109,7 @@ public String test() {
 | 统一依赖管理 | 通过 BOM 锁定 Spring Boot、MyBatis-Plus、Redisson 等版本 |
 | Web 响应封装 | `@NebulaResponseBody` 自动包装统一 JSON 结构 |
 | 统一异常处理 | 全局异常拦截，支持飞书 Webhook 告警 |
+| 多语言国际化 | 自动解析请求语言，`msg`/错误码按语言翻译，支持远程文案加载 |
 | 分页对象 | `NebulaPageQuery` / `NebulaPageRes` 开箱即用 |
 | 时间戳解析 | `@GetTimestamp` 自动将时间戳参数转为 `LocalDateTime` |
 | 分布式锁 | `@NebulaDistributedLock` 基于 Redisson |
@@ -129,6 +131,7 @@ public String test() {
 | [spring-boot-nebula-web-common](spring-boot-nebula-web-common) | `spring-boot-nebula-web-common` | Web 工具类（Bean 获取、EL 解析等） |
 | [spring-boot-nebula-alert](spring-boot-nebula-alert) | `spring-boot-nebula-alert` | 告警模块（飞书等） |
 | [spring-boot-nebula-web](spring-boot-nebula-web) | `spring-boot-nebula-web` | Web 封装（响应、异常、告警） |
+| [spring-boot-nebula-i18n](spring-boot-nebula-i18n) | `spring-boot-nebula-i18n` | 国际化（多语言响应、远程文案加载） |
 | [spring-boot-nebula-mybatis](spring-boot-nebula-mybatis) | `spring-boot-nebula-mybatis` | MyBatis-Plus 封装 |
 | [spring-boot-nebula-dynamic-datasource](spring-boot-nebula-dynamic-datasource) | `spring-boot-nebula-dynamic-datasource` | 动态数据源（读写分离） |
 | [spring-boot-nebula-distribute-lock](spring-boot-nebula-distribute-lock) | `spring-boot-nebula-distribute-lock` | 分布式锁 |
@@ -347,6 +350,69 @@ GET http://localhost:8088/actuator/health
 
 1. 运行 [Application.java](spring-boot-nebula-samples/spring-boot-nebula-web-sample/src/main/java/com/nebula/web/sample/Application.java)
 2. 执行 [http-test-controller.http](spring-boot-nebula-samples/spring-boot-nebula-web-sample/src/main/http/http-test-controller.http) 中的 `GET localhost:8088/test`
+
+---
+
+## spring-boot-nebula-i18n
+
+国际化组件：自动解析请求语言，按语言翻译 `NebulaResponse.msg` 与错误码文案；支持本地资源与远程配置中心（HTTP）加载。
+
+### 引入依赖
+
+```xml
+<dependency>
+    <groupId>io.github.weihubeats</groupId>
+    <artifactId>spring-boot-nebula-i18n</artifactId>
+</dependency>
+```
+
+### 配置
+
+```yaml
+nebula:
+  i18n:
+    default-locale: zh_CN
+    basename: i18n/messages
+    supported-locales:
+      - zh_CN
+      - en_US
+    header-name: X-Lang
+    param-name: lang
+```
+
+### 资源文件
+
+`i18n/messages_zh_CN.properties` 与 `i18n/messages_en_US.properties`（对应 basename 路径）。
+
+### 消息 key
+
+错误码消息 key 三种方式（优先级从高到低）：显式 `getMessageKey()` → `@NebulaMessageKey` 注解 → 自动生成（蛇形类名.蛇形常量名，如 `ResultCode.PARAM_MISS → result_code.param_miss`）。
+
+```java
+@NebulaMessageKey("order.not_found")   // 注解手动指定
+ORDER_NOT_FOUND(40001, "订单不存在"),
+
+STOCK_NOT_ENOUGH(40002, "库存不足");    // 自动生成 sample_error_code.stock_not_enough
+```
+
+### 远程文案加载
+
+```yaml
+nebula:
+  i18n:
+    remote:
+      enabled: true
+      url-template: "http://config.xxx/i18n/{basename}_{locale}.properties"
+      refresh-interval-seconds: 300
+```
+
+远程优先、本地兜底；也可注册自定义 `RemoteMessageLoader` bean 接入任意配置中心。
+
+### 本地调试
+
+运行 [I18nApplication.java](spring-boot-nebula-samples/spring-boot-nebula-i18n-sample/src/main/java/com/nebula/i18n/sample/I18nApplication.java)，执行 [http-i18n-controller.http](spring-boot-nebula-samples/spring-boot-nebula-i18n-sample/src/main/http/http-i18n-controller.http)。
+
+> 完整文档见 [国际化模块](website/modules/i18n.md)。
 
 ---
 

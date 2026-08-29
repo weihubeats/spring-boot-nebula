@@ -1,0 +1,21 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: i18n-sample
+
+nebula:
+  i18n:
+    default-locale: zh_CN
+    basename: i18n/messages
+    supported-locales:
+      - zh_CN
+      - en_US
+    header-name: X-Lang
+    param-name: lang
+    remote:
+      enabled: true
+      # 指向 sample 内置的 mock 远程配置服务（见 MockRemoteMessageServer）
+      url-template: "http://localhost:8092/remote/{basename}_{locale}.properties"
+      refresh-interval-seconds: 60

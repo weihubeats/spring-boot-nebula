@@ -146,7 +146,7 @@ public class NebulaRestExceptionHandler {
     public NebulaResponse<?> httpMessageNotReadableExceptionHandle(HttpServletRequest request,
                                                                    HttpMessageNotReadableException e) {
         log.error("数据格式错误 ", e);
-        return NebulaResponse.fail(ResultCode.PARAM_BIND_ERROR, "数据格式错误");
+        return NebulaResponse.fail(ResultCode.PARAM_BIND_ERROR);
     }
     
     @ExceptionHandler(Exception.class)
@@ -156,7 +156,8 @@ public class NebulaRestExceptionHandler {
         baseResponse.setCode(nebulaWebProperties.toWireCode(ResultCode.INTERNAL_SERVER_ERROR.getCode()));
         if (nebulaSysWebUtils.isPrd() && nebulaWebProperties.getMonitor().isOpen() && !Objects.isNull(nebulaErrorMonitor)) {
             nebulaErrorMonitor.monitorError(request, ex);
-            baseResponse.setMsg("Server busy");
+            baseResponse.setMsg(NebulaResponse.translate(ResultCode.INTERNAL_SERVER_ERROR.resolveMessageKey(),
+                    null, "Server busy"));
         } else {
             baseResponse.setMsg("错误消息:" + ex.getMessage());
         }
@@ -168,7 +169,9 @@ public class NebulaRestExceptionHandler {
         FieldError error = result.getFieldError();
         if (error == null) {
             // assert 在生产环境不生效，显式兜底
-            return NebulaResponse.fail(ResultCode.PARAM_BIND_ERROR, "Parameter validation failed");
+            return NebulaResponse.fail(ResultCode.PARAM_BIND_ERROR,
+                    NebulaResponse.translate(ResultCode.PARAM_BIND_ERROR.resolveMessageKey(), null,
+                            "Parameter validation failed"));
         }
         String message = String.format("%s:%s", error.getField(), error.getDefaultMessage());
         return NebulaResponse.fail(ResultCode.PARAM_BIND_ERROR, message);
