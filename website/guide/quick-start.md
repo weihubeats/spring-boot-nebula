@@ -1,6 +1,32 @@
 # 快速开始
 
-## 1. 引入 BOM（推荐）
+## 方式一：脚手架一键生成（推荐）
+
+适合新服务。**在想放置项目的父目录执行**（如 `~/projects`），生成器会在当前目录创建以 `artifactId` 命名的新文件夹：
+
+```bash
+mvn archetype:generate \
+    -DarchetypeGroupId=io.github.weihubeats \
+    -DarchetypeArtifactId=spring-boot-nebula-archetype \
+    -DarchetypeVersion=3.0.5 \
+    -DgroupId=com.example \
+    -DartifactId=demo \
+    -Dversion=1.0.0-SNAPSHOT \
+    -Dpackage=com.example.demo \
+    -DinteractiveMode=false
+```
+
+生成后即可运行：
+
+```bash
+cd demo && mvn verify && mvn spring-boot:run -pl demo-start
+```
+
+详见 [项目脚手架](/modules/archetype)。
+
+## 方式二：手动引入
+
+### 1. 引入 BOM（推荐）
 
 在父 POM 中统一版本，避免各项目依赖版本不一致（如 Redisson 3.14 vs 3.61 导致行为差异）：
 
@@ -18,7 +44,7 @@
 </dependencyManagement>
 ```
 
-## 2. 引入 Web 模块
+### 2. 引入 Web 模块
 
 ```xml
 <dependency>
@@ -27,7 +53,7 @@
 </dependency>
 ```
 
-## 3. 编写启动类
+### 3. 编写启动类
 
 ```java
 @SpringBootApplication
@@ -40,9 +66,9 @@ public class WebApplication {
 }
 ```
 
-## 4. 编写接口
+### 4. 编写接口
 
-无需手动包装 `Response`，在 Controller 方法上添加 `@NebulaResponseBody` 即可：
+无需手动包装 `Response`，在 Controller 方法上添加 `@NebulaResponseBody` 即可（也支持标注在类上，对全部方法生效）：
 
 ```java
 @GetMapping("/test")
@@ -62,7 +88,7 @@ public String test() {
 }
 ```
 
-## 5. 按需引入更多模块
+### 5. 按需引入更多模块
 
 | 能力 | ArtifactId | 文档 |
 |------|------------|------|

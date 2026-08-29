@@ -22,6 +22,23 @@ public String test() {
 }
 ```
 
+**支持标注在类上**，对该 Controller 全部方法生效，无需逐个方法添加：
+
+```java
+@NebulaResponseBody
+@RestController
+@RequestMapping("/users")
+public class UserController { ... }
+```
+
+规则：
+
+| 场景 | 行为 |
+|------|------|
+| 方法与类同时标注 | 方法优先（如方法级指定了不同的 `objectMapper`） |
+| 返回值已是 `NebulaResponse` | 不重复包装 |
+| 自定义序列化 | `objectMapper()` 属性指定 `ObjectMapper` 子类，类/方法均可配置 |
+
 ## Feign / RPC 调用
 
 推荐引入 [spring-boot-nebula-feign](/modules/feign)：Feign 方法直接声明业务返回类型，框架自动将 `NebulaResponse` 解包。
