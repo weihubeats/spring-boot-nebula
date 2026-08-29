@@ -27,6 +27,11 @@ export default defineConfig({
             '/modules/': [
                 { text: '模块一览', link: '/modules/' },
                 {
+                    text: '脚手架', items: [
+                        { text: '项目脚手架', link: '/modules/archetype' }
+                    ]
+                },
+                {
                     text: '依赖管理', items: [
                         { text: 'BOM 依赖', link: '/modules/dependencies' },
                         { text: '一键聚合', link: '/modules/all' }

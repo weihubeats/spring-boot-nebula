@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: ${rootArtifactId}
+  datasource:
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+    url: jdbc:h2:mem:appdb;DB_CLOSE_DELAY=-1
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 8080
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  # 接入 OpenTelemetry Collector 时打开（未配置 endpoint 则只打印 tid 不上报，零噪音）
+#  otlp:
+#    tracing:
+#      endpoint: http://localhost:4318/v1/traces

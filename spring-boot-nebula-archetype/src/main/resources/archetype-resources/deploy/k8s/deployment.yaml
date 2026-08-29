@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${rootArtifactId}
+  labels:
+    app: ${rootArtifactId}
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ${rootArtifactId}
+  template:
+    metadata:
+      labels:
+        app: ${rootArtifactId}
+    spec:
+      # 挂载 Java Agent：OpenTelemetry（链路追踪/自动埋点） + Alibaba TTL（线程池 ThreadLocal 传递）
+      # 通过 init-container 下载到共享 emptyDir，主容器只读挂载，镜像本身保持干净
+      initContainers:
+        - name: download-agents
+          image: curlimages/curl:8.10.1
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+              curl -fsSL -o /agents/opentelemetry-javaagent.jar \
+                "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_AGENT_VERSION}/opentelemetry-javaagent.jar"
+              curl -fsSL -o /agents/ttl-agent.jar \
+                "https://repo1.maven.org/maven2/com/alibaba/transmittable-thread-local/${TTL_VERSION}/transmittable-thread-local-${TTL_VERSION}.jar"
+          env:
+            - name: OTEL_AGENT_VERSION
+              value: "2.10.0"
+            - name: TTL_VERSION
+              value: "2.14.5"
+          volumeMounts:
+            - name: agents
+              mountPath: /agents
+      containers:
+        - name: app
+          image: registry.example.com/${rootArtifactId}:latest   # TODO 替换为实际镜像仓库地址
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/agents/opentelemetry-javaagent.jar -javaagent:/agents/ttl-agent.jar"
+            # ---- OpenTelemetry agent 上报配置 ----
+            - name: OTEL_SERVICE_NAME
+              value: ${rootArtifactId}
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector.observability.svc.cluster.local:4317"
+            - name: OTEL_TRACES_SAMPLER
+              value: parentbased_traceidratio
+            - name: OTEL_TRACES_SAMPLER_ARG
+              value: "1"
+            # ---- JVM ----
+            - name: JAVA_OPTS
+              value: "-XX:MaxRAMPercentage=75.0"
+          volumeMounts:
+            - name: agents
+              mountPath: /agents
+              readOnly: true
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 250m
+              memory: 768Mi
+            limits:
+              cpu: "1"
+              memory: 1536Mi
+      volumes:
+        - name: agents
+          emptyDir: { }

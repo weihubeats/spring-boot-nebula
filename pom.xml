@@ -29,6 +29,7 @@
         <module>spring-boot-nebula-join</module>
         <module>spring-boot-nebula-log</module>
         <module>spring-boot-nebula-feign</module>
+        <module>spring-boot-nebula-archetype</module>
     </modules>
 
     <properties>
