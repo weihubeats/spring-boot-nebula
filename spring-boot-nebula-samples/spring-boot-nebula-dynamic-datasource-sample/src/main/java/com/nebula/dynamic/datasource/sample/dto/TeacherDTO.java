@@ -17,7 +17,7 @@
  
 package com.nebula.dynamic.datasource.sample.dto;
 
-import com.nebula.base.model.NebulaPageQuery;
+import com.nebula.base.pagination.NebulaPageQuery;
 import lombok.Data;
 
 /**
@@ -26,5 +26,7 @@ import lombok.Data;
  * @description:
  */
 @Data
-public class TeacherDTO extends NebulaPageQuery {
+public class TeacherDTO {
+    
+    private NebulaPageQuery page = new NebulaPageQuery();
 }

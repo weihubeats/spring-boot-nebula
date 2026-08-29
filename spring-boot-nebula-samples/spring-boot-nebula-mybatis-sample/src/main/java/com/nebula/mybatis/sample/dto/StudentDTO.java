@@ -17,7 +17,7 @@
  
 package com.nebula.mybatis.sample.dto;
 
-import com.nebula.base.model.NebulaPageQuery;
+import com.nebula.base.pagination.NebulaPageQuery;
 import lombok.Data;
 
 /**
@@ -26,7 +26,9 @@ import lombok.Data;
  * @description:
  */
 @Data
-public class StudentDTO extends NebulaPageQuery {
+public class StudentDTO {
+    
+    private NebulaPageQuery page = new NebulaPageQuery();
     
     private Long id;
     

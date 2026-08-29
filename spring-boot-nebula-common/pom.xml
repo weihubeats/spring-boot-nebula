@@ -52,6 +52,13 @@
             <artifactId>commons-collections4</artifactId>
         </dependency>
 
+        <!-- optional: 仅 NebulaPageQuery 上的 Bean Validation 注解声明需要 -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>

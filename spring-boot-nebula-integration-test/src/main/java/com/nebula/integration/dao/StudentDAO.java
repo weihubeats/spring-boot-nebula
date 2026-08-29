@@ -18,7 +18,7 @@
 package com.nebula.integration.dao;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.nebula.base.model.NebulaPageRes;
+import com.nebula.base.pagination.NebulaPageRes;
 import com.nebula.integration.dao.entity.StudentDO;
 import com.nebula.integration.dto.StudentDTO;
 import com.nebula.integration.vo.StudentVO;

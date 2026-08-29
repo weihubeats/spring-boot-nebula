@@ -17,7 +17,7 @@
  
 package com.nebula.mybatis.sample.service.impl;
 
-import com.nebula.base.model.NebulaPageRes;
+import com.nebula.base.pagination.NebulaPageRes;
 import com.nebula.mybatis.sample.dao.StudentDAO;
 import com.nebula.mybatis.sample.dto.StudentDTO;
 import com.nebula.mybatis.sample.service.StudentService;

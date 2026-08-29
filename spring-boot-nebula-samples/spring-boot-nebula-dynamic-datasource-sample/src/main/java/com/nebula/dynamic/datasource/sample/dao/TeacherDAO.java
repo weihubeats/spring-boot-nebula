@@ -18,7 +18,7 @@
 package com.nebula.dynamic.datasource.sample.dao;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.nebula.base.model.NebulaPageRes;
+import com.nebula.base.pagination.NebulaPageRes;
 import com.nebula.dynamic.datasource.sample.dao.entity.TeacherDO;
 import com.nebula.dynamic.datasource.sample.dto.TeacherDTO;
 import com.nebula.dynamic.datasource.sample.vo.TeacherVO;

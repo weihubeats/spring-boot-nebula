@@ -15,9 +15,9 @@
  * limitations under the License.
  */
  
-package com.nebula.base.model;
+package com.nebula.base.pagination;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -26,90 +26,52 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * 基础分页结果（不可变）
+ *
  * @author : wh
  * @date : 2023/8/16 10:02
- * @description: 基础分页对象
  */
-public class NebulaPageRes<T> {
+public record NebulaPageRes<T>(List<T> list, long totalCount, int pageSize, int pageIndex)
+        implements Serializable {
     
-    private static final int DEFAULT_PAGE_SIZE = 1;
+    private static final long serialVersionUID = 3375291462084173562L;
     
     private static final int MIN_PAGE_SIZE = 1;
     
-    private static final long EMPTY_TOTAL_COUNT = 0L;
+    private static final int DEFAULT_PAGE_INDEX = 1;
     
-    private Collection<T> list = Collections.emptyList();
-    
-    private long totalCount = EMPTY_TOTAL_COUNT;
-    
-    private int pageSize = DEFAULT_PAGE_SIZE;
-    
-    public long getTotalCount() {
-        return totalCount;
+    public NebulaPageRes {
+        list = (list == null) ? List.of() : List.copyOf(list);
+        totalCount = Math.max(0L, totalCount);
+        pageSize = Math.max(MIN_PAGE_SIZE, pageSize);
+        pageIndex = Math.max(DEFAULT_PAGE_INDEX, pageIndex);
     }
     
-    public void setTotalCount(long totalCount) {
-        this.totalCount = Math.max(EMPTY_TOTAL_COUNT, totalCount);
-    }
-    
-    public int getPageSize() {
-        return pageSize;
-    }
-    
-    public void setPageSize(int pageSize) {
-        this.pageSize = Math.max(MIN_PAGE_SIZE, pageSize);
-        
-    }
-    
-    public Collection<T> getList() {
-        return list;
-    }
-    
-    public void setList(Collection<T> list) {
-        this.list = (list != null) ? new ArrayList<>(list) : Collections.emptyList();
-    }
-    
-    /**
-     * 构造器
-     *
-     * @param list
-     * @param total
-     * @param pageSize
-     * @param <T>
-     * @return
-     */
     public static <T> NebulaPageRes<T> of(Collection<T> list, long total, int pageSize) {
-        NebulaPageRes<T> page = new NebulaPageRes<>();
-        page.setList(list);
-        page.setTotalCount(total);
-        page.setPageSize(pageSize);
-        return page;
+        return of(list, total, pageSize, DEFAULT_PAGE_INDEX);
+    }
+    
+    public static <T> NebulaPageRes<T> of(Collection<T> list, long total, int pageSize, int pageIndex) {
+        return new NebulaPageRes<>(toList(list), total, pageSize, pageIndex);
     }
     
     public static <T> NebulaPageRes<T> of(Collection<T> list, int pageSize) {
-        return of(list, list != null ? list.size() : 0, pageSize);
+        return of(list, (list == null) ? 0L : list.size(), pageSize);
     }
     
     /**
      * 内存分页
-     *
-     * @param source
-     * @param pageQuery
-     * @param <T>
-     * @return
      */
     public static <T> NebulaPageRes<T> ofMemory(Collection<T> source, NebulaPageQuery pageQuery) {
         if (source == null || source.isEmpty()) {
-            return of(Collections.emptyList(), 0, pageQuery.getPageSize());
+            return of(Collections.emptyList(), 0, pageQuery.getPageSize(), pageQuery.getPageIndex());
         }
         
         int pageSize = pageQuery.getPageSize();
-        int pageIndex = pageQuery.getPageIndex();
-        long skip = (long) (pageIndex - 1) * pageSize;
+        long skip = pageQuery.getOffset();
         
-        // 处理超出范围的情况
         if (skip >= source.size()) {
-            return of(Collections.emptyList(), source.size(), pageSize);
+            return of(Collections.emptyList(), source.size(), pageSize, pageQuery.getPageIndex());
         }
         
         List<T> pageList = source.stream()
@@ -117,29 +79,30 @@ public class NebulaPageRes<T> {
                 .limit(pageSize)
                 .collect(Collectors.toList());
         
-        return of(pageList, source.size(), pageSize);
+        return of(pageList, source.size(), pageSize, pageQuery.getPageIndex());
     }
     
     public static <T, R> NebulaPageRes<R> copy(NebulaPageRes<T> source, Function<T, R> converter) {
         Objects.requireNonNull(source, "Source page cannot be null");
         Objects.requireNonNull(converter, "Converter function cannot be null");
         
-        NebulaPageRes<R> result = new NebulaPageRes<>();
-        result.setList(
-                source.getList().stream()
-                        .map(converter)
-                        .collect(Collectors.toList()));
-        result.setTotalCount(source.getTotalCount());
-        result.setPageSize(source.getPageSize());
-        return result;
+        return new NebulaPageRes<>(
+                source.list().stream().map(converter).collect(Collectors.toList()),
+                source.totalCount(),
+                source.pageSize(),
+                source.pageIndex());
     }
     
     public boolean isEmpty() {
         return list.isEmpty();
     }
     
+    public long totalPages() {
+        return (totalCount + pageSize - 1) / pageSize;
+    }
+    
     public static <T> NebulaPageRes<T> empty() {
-        return empty(DEFAULT_PAGE_SIZE);
+        return empty(MIN_PAGE_SIZE);
     }
     
     public static <T> NebulaPageRes<T> empty(int pageSize) {
@@ -147,7 +110,22 @@ public class NebulaPageRes<T> {
     }
     
     public static <T> NebulaPageRes<T> empty(NebulaPageQuery pageQuery) {
-        return empty(pageQuery.getPageSize());
+        return of(Collections.emptyList(), 0, pageQuery.getPageSize(), pageQuery.getPageIndex());
     }
     
+    private static <T> List<T> toList(Collection<T> collection) {
+        if (collection == null) {
+            return Collections.emptyList();
+        }
+        if (collection instanceof List<T> l) {
+            return l;
+        }
+        return List.copyOf(collection);
+    }
+    
+    @Override
+    public String toString() {
+        return "NebulaPageRes{totalCount=" + totalCount + ", pageSize=" + pageSize
+                + ", pageIndex=" + pageIndex + ", listSize=" + list.size() + '}';
+    }
 }

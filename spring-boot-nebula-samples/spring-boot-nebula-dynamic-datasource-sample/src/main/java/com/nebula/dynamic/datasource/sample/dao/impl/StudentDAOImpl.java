@@ -19,7 +19,7 @@ package com.nebula.dynamic.datasource.sample.dao.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.Page;
-import com.nebula.base.model.NebulaPageRes;
+import com.nebula.base.pagination.NebulaPageRes;
 import com.nebula.dynamic.datasource.sample.converter.StudentConverter;
 import com.nebula.dynamic.datasource.sample.dao.StudentDAO;
 import com.nebula.dynamic.datasource.sample.dao.entity.StudentDO;
@@ -44,7 +44,7 @@ public class StudentDAOImpl extends ServiceImpl<StudentMapper, StudentDO> implem
     
     @Override
     public NebulaPageRes<StudentVO> getStudents(StudentDTO dto) {
-        Page<StudentDO> page = PageHelperUtils.startPage(dto);
+        Page<StudentDO> page = PageHelperUtils.startPage(dto.getPage());
         List<StudentDO> dos = studentMapper.selectList(null);
         List<StudentVO> studentVO = StudentConverter.toStudentVOs(dos);
         return PageHelperUtils.of(studentVO, page);

@@ -17,7 +17,7 @@
  
 package com.nebula.integration.controller;
 
-import com.nebula.base.model.NebulaPageRes;
+import com.nebula.base.pagination.NebulaPageRes;
 import com.nebula.integration.dto.StudentDTO;
 import com.nebula.integration.service.StudentService;
 import com.nebula.integration.vo.StudentVO;

@@ -15,29 +15,18 @@
  * limitations under the License.
  */
  
-package com.nebula.integration.service.impl;
-
-import com.nebula.base.pagination.NebulaPageRes;
-import com.nebula.integration.dao.StudentDAO;
-import com.nebula.integration.dto.StudentDTO;
-import com.nebula.integration.service.StudentService;
-import com.nebula.integration.vo.StudentVO;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+package com.nebula.base.pagination;
 
 /**
+ * 排序方向
+ *
  * @author : wh
- * @date : 2025/1/8
- * @description:
+ * @date : 2026/8/24
  */
-@Service
-@RequiredArgsConstructor
-public class StudentServiceImpl implements StudentService {
+public enum SortDirection {
     
-    private final StudentDAO studentDAO;
+    ASC,
     
-    @Override
-    public NebulaPageRes<StudentVO> list(StudentDTO dto) {
-        return studentDAO.getStudents(dto);
-    }
+    DESC
+
 }

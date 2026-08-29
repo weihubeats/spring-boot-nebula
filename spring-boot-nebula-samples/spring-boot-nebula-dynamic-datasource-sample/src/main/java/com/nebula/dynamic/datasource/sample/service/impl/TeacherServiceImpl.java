@@ -17,7 +17,7 @@
  
 package com.nebula.dynamic.datasource.sample.service.impl;
 
-import com.nebula.base.model.NebulaPageRes;
+import com.nebula.base.pagination.NebulaPageRes;
 import com.nebula.dynamic.datasource.sample.dao.TeacherDAO;
 import com.nebula.dynamic.datasource.sample.dto.TeacherDTO;
 import com.nebula.dynamic.datasource.sample.service.TeacherService;
