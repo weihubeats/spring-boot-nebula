@@ -11,7 +11,7 @@
 | [MyBatis-Plus](/modules/mybatis) | `spring-boot-nebula-mybatis` | 基础实体、审计填充、分页 |
 | [动态数据源](/modules/dynamic-datasource) | `spring-boot-nebula-dynamic-datasource` | 读写分离 |
 | [分布式锁](/modules/distribute-lock) | `spring-boot-nebula-distribute-lock` | Redisson 声明式锁 |
-| [Excel](/modules/excel) | `spring-boot-nebula-excel` | FastExcel 导出 |
+| [Excel](/modules/excel) | `spring-boot-nebula-excel` | FastExcel 导入导出 |
 | [区域路由 JOIN](/modules/join) | `spring-boot-nebula-join` | 自动拼接路由表 JOIN |
 | [Feign](/modules/feign) | `spring-boot-nebula-feign` | 自动解包 NebulaResponse |
 | [聚合根 DDD](/modules/aggregate) | `spring-boot-nebula-aggregate` | 聚合变更追踪 |

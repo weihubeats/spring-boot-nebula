@@ -4,7 +4,7 @@
 
 | 项目 | 说明 |
 |------|------|
-| 当前版本 | `3.0.4` |
+| 当前版本 | `3.0.6` |
 | Java | 17+ |
 | Spring Boot | 3.4.x（由 BOM 统一管理） |
 | GroupId | `io.github.weihubeats` |
@@ -20,6 +20,7 @@
 - [快速开始](#快速开始)
 - [核心能力](#核心能力)
 - [模块一览](#模块一览)
+- [spring-boot-nebula-archetype](#spring-boot-nebula-archetype)
 - [spring-boot-nebula-dependencies](#spring-boot-nebula-dependencies)
 - [spring-boot-nebula-web](#spring-boot-nebula-web)
 - [spring-boot-nebula-i18n](#spring-boot-nebula-i18n)
@@ -48,7 +49,7 @@
         <dependency>
             <groupId>io.github.weihubeats</groupId>
             <artifactId>spring-boot-nebula-dependencies</artifactId>
-            <version>3.0.4</version>
+            <version>3.0.6</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -126,6 +127,7 @@ public String test() {
 
 | 模块 | ArtifactId | 说明 |
 |------|------------|------|
+| [spring-boot-nebula-archetype](spring-boot-nebula-archetype) | `spring-boot-nebula-archetype` | 项目脚手架（一键生成多模块 DDD 骨架） |
 | [spring-boot-nebula-dependencies](spring-boot-nebula-dependencies) | `spring-boot-nebula-dependencies` | 统一依赖 BOM |
 | [spring-boot-nebula-common](spring-boot-nebula-common) | `spring-boot-nebula-common` | 基础工具与分页模型 |
 | [spring-boot-nebula-web-common](spring-boot-nebula-web-common) | `spring-boot-nebula-web-common` | Web 工具类（Bean 获取、EL 解析等） |
@@ -156,7 +158,7 @@ public String test() {
         <dependency>
             <groupId>io.github.weihubeats</groupId>
             <artifactId>spring-boot-nebula-dependencies</artifactId>
-            <version>3.0.4</version>
+            <version>3.0.6</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency>
@@ -174,7 +176,7 @@ public String test() {
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-web</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 
@@ -215,8 +217,8 @@ nebula.web.code-mapping:
 
 ### 分页对象
 
-- 查询参数继承 [NebulaPageQuery](spring-boot-nebula-common/src/main/java/com/nebula/base/model/NebulaPageQuery.java)
-- 返回结果使用 [NebulaPageRes](spring-boot-nebula-common/src/main/java/com/nebula/base/model/NebulaPageRes.java)
+- 查询参数继承 [NebulaPageQuery](spring-boot-nebula-common/src/main/java/com/nebula/base/pagination/NebulaPageQuery.java)
+- 返回结果使用 [NebulaPageRes](spring-boot-nebula-common/src/main/java/com/nebula/base/pagination/NebulaPageRes.java)
 
 ```java
 @Data
@@ -426,7 +428,7 @@ MyBatis-Plus 封装，提供基础实体、审计字段自动填充、类型处�
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-mybatis</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 
@@ -461,7 +463,7 @@ return PageHelperUtils.of(list, page);
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-dynamic-datasource</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 
@@ -517,7 +519,7 @@ db:
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-distribute-lock</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 
@@ -556,7 +558,7 @@ public void updateOrder(OrderDTO dto) { ... }
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-excel</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 
@@ -590,7 +592,7 @@ public void exportWithDateSuffix(HttpServletResponse response) {
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-join</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 
@@ -698,6 +700,27 @@ DDD 聚合根支持，提供变更追踪（`AggregateDiff`）与旧对象快照�
 
 ---
 
+## spring-boot-nebula-archetype
+
+项目脚手架，基于 Maven Archetype 一键生成多模块 DDD 项目骨架，生成的项目开箱即用 Nebula 全家桶：
+
+```bash
+cd ~/projects                 # 项目将生成在 ~/projects/demo
+mvn archetype:generate \
+    -DarchetypeGroupId=io.github.weihubeats \
+    -DarchetypeArtifactId=spring-boot-nebula-archetype \
+    -DarchetypeVersion=3.0.6 \
+    -DgroupId=com.example \
+    -DartifactId=demo \
+    -Dversion=1.0.0-SNAPSHOT \
+    -Dpackage=com.example.demo \
+    -DinteractiveMode=false
+```
+
+生成的项目默认 `nebula.version=3.0.6`，升级时同步修改生成项目 pom 中的该属性即可。完整说明见 [spring-boot-nebula-archetype](spring-boot-nebula-archetype/README.md)。
+
+---
+
 ## spring-boot-nebula-all
 
 一站式引入常用模块（web + mybatis + distribute-lock + excel + dynamic-datasource），适合快速搭建新项目：
@@ -706,7 +729,7 @@ DDD 聚合根支持，提供变更追踪（`AggregateDiff`）与旧对象快照�
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-all</artifactId>
-    <version>3.0.4</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 
@@ -732,7 +755,7 @@ Web 层基础工具，被 `spring-boot-nebula-web` 间接依赖，也可单独�
 | [spring-boot-nebula-mybatis-sample](spring-boot-nebula-samples/spring-boot-nebula-mybatis-sample) | MyBatis-Plus 分页 | `StudentController` |
 | [spring-boot-nebula-dynamic-datasource-sample](spring-boot-nebula-samples/spring-boot-nebula-dynamic-datasource-sample) | 读写分离 | `TeacherController` |
 | [spring-boot-nebula-distribute-lock-sample](spring-boot-nebula-samples/spring-boot-nebula-distribute-lock-sample) | 分布式锁 | `TestService` |
-| [spring-boot-nebula-excel-sample](spring-boot-nebula-samples/spring-boot-nebula-excel-sample) | Excel 导出 | `ExcelController` |
+| [spring-boot-nebula-excel-sample](spring-boot-nebula-samples/spring-boot-nebula-excel-sample) | Excel 导入导出 | `ExcelController` |
 | [spring-boot-nebula-join-sample](spring-boot-nebula-samples/spring-boot-nebula-join-sample) | 区域路由 JOIN | `RegionInterceptorTest` |
 | [spring-boot-nebula-feign-sample](spring-boot-nebula-samples/spring-boot-nebula-feign-sample) | Feign 自动解包 | `ConsumerController` |
 | [spring-boot-nebula-logback-sample](spring-boot-nebula-samples/spring-boot-nebula-logback-sample) | 日志脱敏、ERROR 飞书报警 | `LogDemoController` |

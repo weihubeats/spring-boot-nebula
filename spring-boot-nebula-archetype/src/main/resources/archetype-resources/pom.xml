@@ -20,7 +20,7 @@
 
     <properties>
         <!-- 升级 nebula 时同步修改此处 -->
-        <nebula.version>3.0.5</nebula.version>
+        <nebula.version>3.0.6</nebula.version>
         <java.version>17</java.version>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

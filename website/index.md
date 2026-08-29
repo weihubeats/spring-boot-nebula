@@ -62,12 +62,15 @@ public String test() {
 
 | 模块 | ArtifactId | 说明 |
 |------|------------|------|
+| [项目脚手架](/modules/archetype) | `spring-boot-nebula-archetype` | 一键生成多模块 DDD 项目骨架 |
 | [BOM 依赖](/modules/dependencies) | `spring-boot-nebula-dependencies` | 统一依赖版本管理 |
 | [Web 封装](/modules/web) | `spring-boot-nebula-web` | 统一响应、异常处理、飞书告警 |
+| [国际化](/modules/i18n) | `spring-boot-nebula-i18n` | 多语言响应、远程文案加载 |
+| [日志与告警](/modules/log) | `spring-boot-nebula-logback` | 日志脱敏、ERROR 飞书报警 |
 | [MyBatis-Plus](/modules/mybatis) | `spring-boot-nebula-mybatis` | 基础实体、审计填充、分页 |
 | [动态数据源](/modules/dynamic-datasource) | `spring-boot-nebula-dynamic-datasource` | 读写分离 |
 | [分布式锁](/modules/distribute-lock) | `spring-boot-nebula-distribute-lock` | Redisson 声明式锁 |
-| [Excel](/modules/excel) | `spring-boot-nebula-excel` | FastExcel 导出 |
+| [Excel](/modules/excel) | `spring-boot-nebula-excel` | FastExcel 导入导出 |
 | [区域路由 JOIN](/modules/join) | `spring-boot-nebula-join` | 自动拼接路由表 JOIN |
 | [Feign 自动解包](/modules/feign) | `spring-boot-nebula-feign` | 自动解包 NebulaResponse |
 | [聚合根 DDD](/modules/aggregate) | `spring-boot-nebula-aggregate` | 聚合变更追踪 |
@@ -79,7 +82,7 @@ public String test() {
 |------|------|
 | Java | 17+ |
 | Spring Boot | 3.4.x |
-| 当前版本 | `3.0.3` |
+| 当前版本 | `3.0.6` |
 | 许可证 | Apache 2.0 |
 
 <footer class="vp-flex" style="margin-top:40px">

@@ -8,7 +8,7 @@ DDD 聚合根支持，提供变更追踪（`AggregateDiff`）与旧对象快照�
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-aggregate</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 

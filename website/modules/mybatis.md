@@ -8,7 +8,7 @@ MyBatis-Plus 封装，提供基础实体、审计字段自动填充、类型处�
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-mybatis</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 

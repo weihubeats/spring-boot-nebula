@@ -2,7 +2,7 @@
 
 ## spring-boot-nebula-common
 
-基础工具与分页模型，如 [NebulaPageQuery](https://github.com/weihubeats/spring-boot-nebula/tree/main/spring-boot-nebula-common/src/main/java/com/nebula/base/model)。
+基础工具与分页模型，如 [NebulaPageQuery](https://github.com/weihubeats/spring-boot-nebula/tree/main/spring-boot-nebula-common/src/main/java/com/nebula/base/pagination)。
 
 ## spring-boot-nebula-web-common
 

@@ -9,7 +9,7 @@
 <dependency>
     <groupId>io.github.weihubeats</groupId>
     <artifactId>spring-boot-nebula-excel</artifactId>
-    <version>3.0.3</version>
+    <version>3.0.6</version>
 </dependency>
 ```
 

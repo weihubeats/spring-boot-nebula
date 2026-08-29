@@ -13,7 +13,7 @@ cd ~/projects                 # 生成位置：~/projects/demo
 mvn archetype:generate \
     -DarchetypeGroupId=io.github.weihubeats \
     -DarchetypeArtifactId=spring-boot-nebula-archetype \
-    -DarchetypeVersion=3.0.5 \
+    -DarchetypeVersion=3.0.6 \
     -DgroupId=com.example \
     -DartifactId=demo \
     -Dversion=1.0.0-SNAPSHOT \
